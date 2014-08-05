@@ -536,7 +536,8 @@ public class EntityJump extends Entity
 					catch (Exception e) {}
 				}
 			}
-			worldObj.setBlockToAir(jb.x, jb.y, jb.z);
+			worldObj.setBlock(jb.x, jb.y, jb.z,0,0,2);
+//			worldObj.setBlockToAir(jb.x, jb.y, jb.z);
 			currentIndexInShip++;
 		}
 		LocalProfiler.stop();
