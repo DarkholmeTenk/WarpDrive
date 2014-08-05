@@ -8,6 +8,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -91,6 +92,9 @@ public class EntityJump extends Entity
 	private boolean fromSpace, toSpace, betweenWorlds;
 	public boolean toHyperSpace, fromHyperSpace;
 	private boolean isInHyperSpace;
+	
+	private static HashMap<World,EntityJump> lockedWorlds = new HashMap<World,EntityJump>();
+	//private static ArrayList<World> lockedWorlds = new ArrayList<World>();
 
 	int destX, destY, destZ;
 	boolean isCoordJump;
@@ -143,6 +147,13 @@ public class EntityJump extends Entity
 		unforceChunks();
 		worldObj.removeEntity(this);
 	}
+	
+	private boolean isWorldLocked()
+	{
+		if(lockedWorlds.containsKey(worldObj) || lockedWorlds.containsKey(targetWorld))
+			return (lockedWorlds.get(worldObj) != this);
+		return false;
+	}
 
 	@Override
 	public void onUpdate()
@@ -163,6 +174,9 @@ public class EntityJump extends Entity
 			killEntity("Y-coord error!");
 			return;
 		}
+		
+		if(isWorldLocked())
+			return;
 
 		if (state == STATE_IDLE)
 		{
@@ -172,21 +186,11 @@ public class EntityJump extends Entity
 		}
 		else if (state == STATE_JUMPING)
 		{
-			if (currentIndexInShip >= ship.length - 1)
-			{
-				moveEntities(false);
-				currentIndexInShip = 0;
-				state = STATE_REMOVING;
-			}
-			else
-			{
-				//moveEntities(true);
-				moveShip();
-				currentIndexInShip = ship.length;
-			}
-		}
-		else if (state == STATE_REMOVING)
-		{
+			//moveEntities(true);
+			moveShip();
+			moveEntities(false);
+			currentIndexInShip = 0;
+			
 			WarpDrive.debugPrint("REMOVING!");
 			ASTurbines = new ArrayList<TileEntity>();
 			removeShip();
@@ -280,23 +284,23 @@ public class EntityJump extends Entity
 	public void lockWorlds()
 	{
 		WarpDrive.debugPrint("[JE@" + this + "] Locking worlds...");
-		targetWorld.isRemote = true;
+		lockedWorlds.put(targetWorld,this);
 
 		// When warping between dimensions is need to lock both worlds
-		if (targetWorld.provider.dimensionId != worldObj.provider.dimensionId)
+		if (!targetWorld.equals(worldObj))
 		{
-			worldObj.isRemote = true;
+			lockedWorlds.put(targetWorld,this);
 		}
 	}
 
 	public void unlockWorlds()
 	{
 		WarpDrive.debugPrint("[JE@" + this + "] Unlocking worlds..");
-		targetWorld.isRemote = false;
+		lockedWorlds.remove(targetWorld);
 
-		if (targetWorld.provider.dimensionId != worldObj.provider.dimensionId)
+		if (!targetWorld.equals(worldObj))
 		{
-			worldObj.isRemote = false;
+			lockedWorlds.remove(worldObj);
 		}
 	}
 
@@ -642,6 +646,7 @@ public class EntityJump extends Entity
 			int newX = oldX + moveX;
 			int newY = oldY + moveY;
 			int newZ = oldZ + moveZ;
+			targetWorld.markBlockForUpdate(newX, newY, newZ);
 			currentIndexInShip++;
 		}
 	}
@@ -1160,7 +1165,7 @@ public class EntityJump extends Entity
 
 			if (l1 != 0)
 			{
-				if (!c.worldObj.isRemote)
+				if (!isWorldLocked())
 				{
 					Block.blocksList[l1].breakBlock(c.worldObj, j2, y, k2, l1, i2);
 				}
