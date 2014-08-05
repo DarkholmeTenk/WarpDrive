@@ -151,7 +151,10 @@ public class EntityJump extends Entity
 	private boolean isWorldLocked()
 	{
 		if(lockedWorlds.containsKey(worldObj) || lockedWorlds.containsKey(targetWorld))
+		{
+			WarpDrive.debugPrint("LOCK:" + (lockedWorlds.get(worldObj) != this));
 			return (lockedWorlds.get(worldObj) != this);
+		}
 		return false;
 	}
 
@@ -289,7 +292,7 @@ public class EntityJump extends Entity
 		// When warping between dimensions is need to lock both worlds
 		if (!targetWorld.equals(worldObj))
 		{
-			lockedWorlds.put(targetWorld,this);
+			lockedWorlds.put(worldObj,this);
 		}
 	}
 
