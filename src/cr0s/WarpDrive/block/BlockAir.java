@@ -2,6 +2,7 @@ package cr0s.WarpDrive.block;
 
 import java.util.Random;
 
+import cr0s.WarpDrive.EntityJump;
 import cr0s.WarpDrive.WarpDrive;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -9,6 +10,7 @@ import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeDirection;
 
 public class BlockAir extends Block
 {
@@ -105,6 +107,10 @@ public class BlockAir extends Block
     @Override
     public void updateTick(World par1World, int x, int y, int z, Random par5Random)
     {
+    	par1World.scheduleBlockUpdate(x, y, z, this.blockID, 20);
+    	if(EntityJump.lockedWorlds.containsKey(par1World.provider.dimensionId))
+    		return;
+    	
         int concentration = par1World.getBlockMetadata(x, y, z);
         boolean isInSpaceWorld = par1World.provider.dimensionId == WarpDrive.instance.spaceDimID || par1World.provider.dimensionId == WarpDrive.instance.hyperSpaceDimID;
 
@@ -120,8 +126,6 @@ public class BlockAir extends Block
             // Try to spread the air
             spreadAirBlock(par1World, x, y, z, concentration);
         }
-
-        par1World.scheduleBlockUpdate(x, y, z, this.blockID, 20);
     }
 
     @Override
@@ -187,74 +191,27 @@ public class BlockAir extends Block
         mid_concentration = worldObj.getBlockMetadata(x, y, z);// * K;
 
         // Count air in adjacent blocks
-        if (worldObj.isAirBlock(x + 1, y, z))
+        for(ForgeDirection dir:ForgeDirection.VALID_DIRECTIONS)
         {
-            block_count++;
-            mid_concentration += worldObj.getBlockMetadata(x + 1, y, z);// * K;
+        	if(worldObj.isAirBlock(x+dir.offsetX, y+dir.offsetY, z+dir.offsetZ))
+        	{
+        		block_count++;
+        		mid_concentration += worldObj.getBlockMetadata(x+dir.offsetX, y+dir.offsetY, z+dir.offsetZ);
+        	}
         }
 
-        if (worldObj.isAirBlock(x - 1, y, z))
-        {
-            block_count++;
-            mid_concentration += worldObj.getBlockMetadata(x - 1, y, z);// * K;
-        }
-
-        if (worldObj.isAirBlock(x, y + 1, z))
-        {
-            block_count++;
-            mid_concentration += worldObj.getBlockMetadata(x, y + 1, z);// * K;
-        }
-
-        if (worldObj.isAirBlock(x, y - 1, z))
-        {
-            block_count++;
-            mid_concentration += worldObj.getBlockMetadata(x, y - 1, z);// * K;
-        }
-
-        if (worldObj.isAirBlock(x, y, z + 1))
-        {
-            block_count++;
-            mid_concentration += worldObj.getBlockMetadata(x, y, z + 1);// * K;
-        }
-
-        if (worldObj.isAirBlock(x, y, z - 1))
-        {
-            block_count++;
-            mid_concentration += worldObj.getBlockMetadata(x, y, z - 1);// * K;
-        }
-
-        mid_concentration = (int) Math.floor(mid_concentration * 1.0f / block_count);
+        mid_concentration = mid_concentration / block_count;
         setNewAirBlockWithConcentration(worldObj, x, y, z, mid_concentration);// / K);
 
-        // Check and setup air to adjacent blocks
-        if (worldObj.isAirBlock(x + 1, y, z) && (mid_concentration > worldObj.getBlockMetadata(x + 1, y, z)))// * K))
+        for(ForgeDirection dir:ForgeDirection.VALID_DIRECTIONS)
         {
-           setNewAirBlockWithConcentration(worldObj, x + 1, y, z, mid_concentration);// / K);
-        }
-
-        if (worldObj.isAirBlock(x - 1, y, z) && (mid_concentration > worldObj.getBlockMetadata(x - 1, y, z)))// * K))
-        {
-           setNewAirBlockWithConcentration(worldObj, x - 1, y, z, mid_concentration);// / K);
-        }
-
-        if (worldObj.isAirBlock(x, y + 1, z) && (mid_concentration > worldObj.getBlockMetadata(x, y + 1, z)))// * K))
-        {
-           setNewAirBlockWithConcentration(worldObj, x, y + 1, z, mid_concentration);// / K);
-        }
-
-        if (worldObj.isAirBlock(x, y - 1, z) && (mid_concentration > worldObj.getBlockMetadata(x, y - 1, z)))// * K))
-        {
-           setNewAirBlockWithConcentration(worldObj, x, y - 1, z, mid_concentration);//  / K);
-        }
-
-        if (worldObj.isAirBlock(x, y, z + 1) && (mid_concentration > worldObj.getBlockMetadata(x, y, z + 1)))// * K))
-        {
-           setNewAirBlockWithConcentration(worldObj, x, y, z + 1, mid_concentration);// / K);
-        }
-
-        if (worldObj.isAirBlock(x, y, z - 1) && (mid_concentration > worldObj.getBlockMetadata(x, y, z - 1)))// * K))
-        {
-           setNewAirBlockWithConcentration(worldObj, x, y, z - 1, mid_concentration);// / K);
+        	int oX = x + dir.offsetX;
+        	int oY = y + dir.offsetY;
+        	int oZ = z + dir.offsetZ;
+        	if (worldObj.isAirBlock(oX,oY,oZ) && (mid_concentration > worldObj.getBlockMetadata(oX,oY,oZ)))// * K))
+            {
+               setNewAirBlockWithConcentration(worldObj,oX,oY,oZ, mid_concentration);// / K);
+            }
         }
     }
 

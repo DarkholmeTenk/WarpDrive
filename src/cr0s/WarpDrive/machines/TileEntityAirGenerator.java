@@ -1,6 +1,7 @@
 package cr0s.WarpDrive.machines;
 
 import cpw.mods.fml.common.FMLCommonHandler;
+import cr0s.WarpDrive.EntityJump;
 import cr0s.WarpDrive.Vector3;
 import cr0s.WarpDrive.WarpDriveConfig;
 
@@ -13,7 +14,7 @@ public class TileEntityAirGenerator extends WarpTE
     private int cooldownTicks = 0;
     private final float AIR_POLLUTION_INTERVAL = 4; // seconds
 
-    private final int START_CONCENTRATION_VALUE = 45;
+    private final int START_CONCENTRATION_VALUE = 35;
 
     @Override 
     public int getMaxEnergyStored()
@@ -28,7 +29,7 @@ public class TileEntityAirGenerator extends WarpTE
             return;
 
         // Air generator works only in spaces
-        if (!isASpaceDim())
+        if ((!isASpaceDim()) || EntityJump.lockedWorlds.containsKey(worldObj.provider.dimensionId))
             return;
 
         if (removeEnergy(RF_PER_AIRBLOCK,true)) //if we have enough energy

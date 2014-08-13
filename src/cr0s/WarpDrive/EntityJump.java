@@ -93,7 +93,7 @@ public class EntityJump extends Entity
 	public boolean toHyperSpace, fromHyperSpace;
 	private boolean isInHyperSpace;
 	
-	private static HashMap<World,EntityJump> lockedWorlds = new HashMap<World,EntityJump>();
+	public static HashMap<Integer,EntityJump> lockedWorlds = new HashMap<Integer,EntityJump>();
 	//private static ArrayList<World> lockedWorlds = new ArrayList<World>();
 
 	int destX, destY, destZ;
@@ -287,23 +287,23 @@ public class EntityJump extends Entity
 	public void lockWorlds()
 	{
 		WarpDrive.debugPrint("[JE@" + this + "] Locking worlds...");
-		lockedWorlds.put(targetWorld,this);
+		lockedWorlds.put(targetWorld.provider.dimensionId,this);
 
 		// When warping between dimensions is need to lock both worlds
 		if (!targetWorld.equals(worldObj))
 		{
-			lockedWorlds.put(worldObj,this);
+			lockedWorlds.put(worldObj.provider.dimensionId,this);
 		}
 	}
 
 	public void unlockWorlds()
 	{
 		WarpDrive.debugPrint("[JE@" + this + "] Unlocking worlds..");
-		lockedWorlds.remove(targetWorld);
+		lockedWorlds.remove(targetWorld.provider.dimensionId);
 
 		if (!targetWorld.equals(worldObj))
 		{
-			lockedWorlds.remove(worldObj);
+			lockedWorlds.remove(worldObj.provider.dimensionId);
 		}
 	}
 
@@ -340,7 +340,7 @@ public class EntityJump extends Entity
 			targetWorld = this.worldObj;
 		}
 
-		axisalignedbb = AxisAlignedBB.getBoundingBox(minX, minY, minZ, maxX, maxY, maxZ);
+		axisalignedbb = AxisAlignedBB.getBoundingBox(minX-0.5, minY-0.5, minZ-0.5, maxX+0.5, maxY+0.5, maxZ+0.5);
 
 		// FIXME
 		//turnOffModems();
