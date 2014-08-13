@@ -18,7 +18,7 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
 public class ItemWarpComponent extends Item
 {	
 	private Icon[] potentialIcons;
-	private String[] potentialUnlocalized = new String[7];
+	private String[] potentialUnlocalized = new String[8];
 	private ItemStack[] cachedIS;
 	
 	private int id;
@@ -39,6 +39,7 @@ public class ItemWarpComponent extends Item
 		potentialUnlocalized[4] = "ReactorCore";
 		potentialUnlocalized[5] = "InterfaceComputer";
 		potentialUnlocalized[6] = "InterfacePower";
+		potentialUnlocalized[7] = "PowerCore";
 		
 		potentialIcons = new Icon[potentialUnlocalized.length];
 		cachedIS = new ItemStack[potentialUnlocalized.length];
@@ -93,6 +94,11 @@ public class ItemWarpComponent extends Item
 				'g', Item.goldNugget,
 				'r', Item.redstone,
 				'i', Item.ingotIron));
+		
+		GameRegistry.addRecipe(new ShapedOreRecipe(getIS(7),false,"glg","ldl","glg",
+				'g', Item.goldNugget,
+				'l', "dyeBlue",
+				'd', Item.diamond));
 	}
 	
 	@Override

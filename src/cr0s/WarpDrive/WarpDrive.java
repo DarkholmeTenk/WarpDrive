@@ -417,6 +417,13 @@ public class WarpDrive implements LoadingCallback {
 				'c', componentItem.getIS(5),
 				'p', componentItem.getIS(6)));
 		
+		//Power Store
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(powerStoreBlock), false, "ipi","isi","ici",
+				'i', Item.ingotIron,
+				's', componentItem.getIS(7),
+				'c', componentItem.getIS(5),
+				'p', componentItem.getIS(6)));
+		
 		//Transport Beacon
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(transportBeaconBlock),false, " e ","ldl", " s ",
 				'e', Item.enderPearl,

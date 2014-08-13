@@ -6,6 +6,7 @@ item.warpdrive.crafting.LaserCore.name=Laser Core
 item.warpdrive.crafting.ReactorCore.name=Reactor Core
 item.warpdrive.crafting.InterfaceComputer.name=Computer Interface
 item.warpdrive.crafting.InterfacePower.name=Power Interface
+item.warpdrive.crafting.PowerCore.name=Energy Core
 
 tile.warpdrive.blocks.Air.name=Air Block
 tile.warpdrive.blocks.Gas.name=Gas Block
