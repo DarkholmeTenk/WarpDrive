@@ -7,6 +7,7 @@ import java.util.Set;
 import cofh.api.energy.IEnergyHandler;
 import cr0s.WarpDrive.WarpDrive;
 import cr0s.WarpDrive.WarpDriveConfig;
+import cr0s.WarpDriveCore.IBlockUpdateDetector;
 import dan200.computercraft.api.lua.ILuaContext;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
@@ -14,7 +15,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 
-public class TileEntityPowerReactor extends WarpTE implements IPeripheral
+public class TileEntityPowerReactor extends WarpEnergyStoreTE implements IPeripheral, IBlockUpdateDetector
 {
 	private int containedEnergy = 0;
 	private final int maxEnergy;
@@ -127,7 +128,8 @@ public class TileEntityPowerReactor extends WarpTE implements IPeripheral
 	@Override
 	public void updateEntity()
 	{
-		outputPower();
+		super.updateEntity();
+//		outputPower();
 		released = 0;
 		
 		if(++tickCount % tickTime != 0)
@@ -137,7 +139,7 @@ public class TileEntityPowerReactor extends WarpTE implements IPeripheral
 		if(!init)
 		{
 			init = true;
-			updateNeighbours();
+			updatedNeighbours();
 		}
 		
 		if(!active)
@@ -218,46 +220,10 @@ public class TileEntityPowerReactor extends WarpTE implements IPeripheral
 		return exp;
 	}
 	
-	public void updateNeighbours()
+	public void updatedNeighbours()
 	{
+		super.updatedNeighbours();
 		TileEntity te;
-		IEnergyHandler ieh;
-		te = worldObj.getBlockTileEntity(xCoord, yCoord+1, zCoord);
-		
-		boolean valid = false;
-		if(te != null)
-		{
-			if(te instanceof IEnergyHandler)
-			{
-				ieh = (IEnergyHandler)te;
-				if(ieh.canInterface(ForgeDirection.DOWN))
-				{
-					aboveConnection = ieh;
-					valid = true;
-				}
-			}
-		}
-		if(!valid)
-			aboveConnection = null;
-		
-		valid = false;
-		te = worldObj.getBlockTileEntity(xCoord, yCoord-1, zCoord);
-		if(te != null)
-		{
-			if(te instanceof IEnergyHandler)
-			{
-				ieh = (IEnergyHandler)te;
-				if(ieh.canInterface(ForgeDirection.UP))
-				{
-					WarpDrive.debugPrint("a network");
-					belowConnection = ieh;
-					valid = true;
-				}
-			}
-		}
-		if(!valid)
-			belowConnection = null;
-		
 		int[] xo = {0,0,-2,2};
 		int[] zo = {2,-2,0,0};
 		
@@ -267,23 +233,6 @@ public class TileEntityPowerReactor extends WarpTE implements IPeripheral
 			if(te instanceof TileEntityPowerLaser)
 				((TileEntityPowerLaser)te).scanForReactor();
 		}
-	}
-	
-	private void outputPower(IEnergyHandler ieh,ForgeDirection dir)
-	{
-		int amountToDump = ieh.receiveEnergy(dir,getPotentialReleaseAmount(),true);
-		int dumped = ieh.receiveEnergy(dir, amountToDump, false);
-		released += dumped;
-		containedEnergy -= dumped;
-	}
-	
-	private void outputPower()
-	{
-		if(aboveConnection != null)
-			outputPower(aboveConnection,ForgeDirection.DOWN);
-		
-		if(belowConnection != null)
-			outputPower(belowConnection,ForgeDirection.UP);
 	}
 	
 	//COMPUTER INTERFACES
@@ -499,25 +448,25 @@ public class TileEntityPowerReactor extends WarpTE implements IPeripheral
 	}
 	
 	@Override
-	public int receiveEnergy(ForgeDirection from, int amount, boolean sim)
+	public int amountToRelease(ForgeDirection d)
 	{
-		return 0;
+		if(!canInterface(d))
+			return 0;
+		
+		return getPotentialReleaseAmount();
 	}
 	
 	@Override
-	public int extractEnergy(ForgeDirection from, int maxExtract, boolean simulate)
+	public void releaseEnergy(int amount)
 	{
-		int dumped;
-		if(!canInterface(from))
-			return 0;
-		
-		dumped = Math.min(maxExtract,getPotentialReleaseAmount());
-		if(!simulate)
-		{
-			released += dumped;
-			containedEnergy -= dumped;
-		}
-		return dumped;
+		released += amount;
+		containedEnergy -= amount;
+	}
+	
+	@Override
+	public int receiveEnergy(ForgeDirection from, int amount, boolean sim)
+	{
+		return 0;
 	}
 	
 	public int getEnergyStored()

@@ -16,7 +16,7 @@ public class WarpDriveConfig
 	public static WarpDriveConfig i;
 	private static Configuration config;
 	public static int coreID, controllerID, radarID, isolationID, airID, airgenID, gasID, laserID, miningLaserID, particleBoosterID, liftID, laserCamID, camID, monitorID, shipScannerID, cloakCoreID, cloakCoilID;
-	public static int laserTreeFarmID, transporterID, transportBeaconID, powerReactorID, powerLaserID, componentID;
+	public static int laserTreeFarmID, transporterID, transportBeaconID, powerReactorID, powerLaserID, powerStoreID, componentID;
 //
 	/*
 	 * The variables which store whether or not individual mods are loaded
@@ -101,6 +101,9 @@ public class WarpDriveConfig
 	public static int		PR_MAX_ENERGY = 10000000;
 	public static int		PR_TICK_TIME  = 20;
 	public static int		PR_MAX_LASERS = 3;
+	
+	// POWER STORE
+	public static int		PS_MAX_ENERGY = 1000000;
 	
 	// REACTOR MONITOR
 	public static int		RM_MAX_ENERGY = 1000000;
@@ -243,6 +246,9 @@ public class WarpDriveConfig
 		PR_MAX_ENERGY = config.get("Reactor", "max_energy", 100000000).getInt();
 		PR_TICK_TIME  = config.get("Reactor", "ticks_per_update",20).getInt();
 		PR_MAX_LASERS = config.get("Reactor", "max_lasers", 3).getInt();
+		
+		// Store
+		PS_MAX_ENERGY = config.get("Power Store", "max_energy", 10000000).getInt();
 	}
 	
 	public static void Init2()
@@ -285,6 +291,7 @@ public class WarpDriveConfig
 		transportBeaconID = config.getBlock("transportBeacon", 521).getInt();
 		powerLaserID = config.getBlock("powerLaser", 522).getInt();
 		powerReactorID = config.getBlock("powerReactor",523).getInt();
+		powerStoreID = config.getBlock("powerStore", 524).getInt();
 		
 		componentID = config.getItem("component", 21140).getInt();
 		

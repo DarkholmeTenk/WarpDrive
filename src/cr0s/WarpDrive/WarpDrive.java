@@ -72,6 +72,7 @@ public class WarpDrive implements LoadingCallback {
 	public static Block transporterBlock;
 	public static Block powerReactorBlock;
 	public static Block powerLaserBlock;
+	public static Block powerStoreBlock;
 	
 	public static Block airBlock;
 	public static Block gasBlock;
@@ -235,6 +236,9 @@ public class WarpDrive implements LoadingCallback {
 		powerLaserBlock   = new BlockPowerLaser(WarpDriveConfig.powerLaserID);
 		GameRegistry.registerBlock(powerLaserBlock,"powerLaser");
 		GameRegistry.registerTileEntity(TileEntityPowerLaser.class,"powerLaser");
+		powerStoreBlock = new BlockPowerStore(WarpDriveConfig.powerStoreID);
+		GameRegistry.registerBlock(powerStoreBlock,"powerStore");
+		GameRegistry.registerTileEntity(TileEntityPowerStore.class, "powerStore");
 		
 		
 		transportBeaconBlock = new BlockBeacon(WarpDriveConfig.transportBeaconID);

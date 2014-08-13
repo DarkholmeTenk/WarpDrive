@@ -2,6 +2,7 @@ package cr0s.WarpDrive.machines;
 
 import cr0s.WarpDrive.Vector3;
 import cr0s.WarpDrive.WarpDrive;
+import cr0s.WarpDriveCore.IBlockUpdateDetector;
 import dan200.computercraft.api.lua.ILuaContext;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
@@ -9,7 +10,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 
-public class TileEntityPowerLaser extends TileEntityAbstractLaser implements IPeripheral
+public class TileEntityPowerLaser extends TileEntityAbstractLaser implements IPeripheral, IBlockUpdateDetector
 {
 	Vector3 myVec;
 	Vector3 reactorVec;
@@ -128,7 +129,7 @@ public class TileEntityPowerLaser extends TileEntityAbstractLaser implements IPe
 		setMetadata();
 	}
 	
-	public void updateNeighbours()
+	public void updatedNeighbours()
 	{
 		scanForBooster();
 		scanForReactor();
