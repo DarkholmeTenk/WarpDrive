@@ -14,7 +14,7 @@ public class TileEntityAirGenerator extends WarpTE
     private int cooldownTicks = 0;
     private final float AIR_POLLUTION_INTERVAL = 2; // seconds
 
-    private final int START_CONCENTRATION_VALUE = 49;
+    private final int START_CONCENTRATION_VALUE = 15;
 
     @Override 
     public int getMaxEnergyStored()
@@ -62,7 +62,7 @@ public class TileEntityAirGenerator extends WarpTE
     			int y= yCoord + offset.intY();
     			int z= zCoord + offset.intZ();
     			if(worldObj.isAirBlock(x, y, z))
-    				worldObj.setBlock(x, y, z, WarpDriveConfig.airID, START_CONCENTRATION_VALUE, 2);
+    				worldObj.setBlock(x, y, z, WarpDriveConfig.airID, 15, 2);
     		}
     	}
     }

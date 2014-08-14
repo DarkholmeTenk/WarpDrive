@@ -122,7 +122,7 @@ public class BlockAir extends Block
         }
         else
         {
-            //System.out.println("Conc: current " + concentration + " new: " + (concentration - 1) + " to spread: " + (concentration - 2));
+            WarpDrive.debugPrint("Conc: current " + concentration + " new: " + (concentration - 1) + " to spread: " + (concentration - 2));
             // Try to spread the air
             spreadAirBlock(par1World, x, y, z, concentration);
         }
