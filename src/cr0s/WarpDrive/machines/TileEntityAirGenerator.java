@@ -12,9 +12,9 @@ public class TileEntityAirGenerator extends WarpTE
     private final int MAX_ENERGY_VALUE = 36 * RF_PER_AIRBLOCK;
 
     private int cooldownTicks = 0;
-    private final float AIR_POLLUTION_INTERVAL = 4; // seconds
+    private final float AIR_POLLUTION_INTERVAL = 2; // seconds
 
-    private final int START_CONCENTRATION_VALUE = 35;
+    private final int START_CONCENTRATION_VALUE = 49;
 
     @Override 
     public int getMaxEnergyStored()
