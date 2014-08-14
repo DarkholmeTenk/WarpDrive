@@ -613,15 +613,11 @@ public class EntityJump extends Entity
 	public void moveShip()
 	{
 		LocalProfiler.start("EntityJump.moveShip");
-		int blocksToMove = Math.min(BLOCKS_PER_TICK, ship.length - currentIndexInShip);
-		WarpDrive.debugPrint("[JE] Moving ship part: " + currentIndexInShip + "/" + ship.length + " [btm: " + blocksToMove + "]");
+		//int blocksToMove = Math.min(BLOCKS_PER_TICK, ship.length - currentIndexInShip);
+		//WarpDrive.debugPrint("[JE] Moving ship part: " + currentIndexInShip + "/" + ship.length + " [btm: " + blocksToMove + "]");
 
-		for (int index = 0; index < blocksToMove; index++)
+		for (int index = 0; index < ship.length; index++)
 		{
-			if (currentIndexInShip >= ship.length)
-			{
-				break;
-			}
 
 			moveBlockSimple(currentIndexInShip);
 			currentIndexInShip++;
