@@ -6,6 +6,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import cr0s.WarpDrive.WarpDrive;
+import cr0s.WarpDrive.api.IAirCanister;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
@@ -14,7 +15,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
-public class ItemWarpComponent extends Item
+public class ItemWarpComponent extends Item implements IAirCanister
 {	
 	private Icon[] potentialIcons;
 	private String[] potentialUnlocalized = new String[9];
@@ -109,6 +110,9 @@ public class ItemWarpComponent extends Item
 	
 	public boolean doesMatch(ItemStack is, String unlocalised)
 	{
+		if(is == null)
+			return false;
+		
 		if(!(is.getItem() instanceof ItemWarpComponent))
 			return false;
 		String data = potentialUnlocalized[is.getItemDamage()];
@@ -148,4 +152,33 @@ public class ItemWarpComponent extends Item
 		for(int i=0;i<potentialUnlocalized.length;i++)
 			par3List.add(new ItemStack(par1,1,i));
     }
+	
+	//For empty air cans
+	@Override
+	public ItemStack fullDrop(ItemStack is)
+	{
+		if(doesMatch(is,"AirCanEmpty"))
+			return WarpDrive.airCanItem.fullDrop(is);
+		return null;
+	}
+	
+	@Override
+	public ItemStack emptyDrop(ItemStack is)
+	{
+		if(doesMatch(is,"AirCanEmpty"))
+			return WarpDrive.airCanItem.emptyDrop(is);
+		return null;
+	}
+	
+	@Override
+	public boolean canContainAir(ItemStack is)
+	{
+		return doesMatch(is,"AirCanEmpty");
+	}
+	
+	@Override
+	public boolean containsAir(ItemStack is)
+	{
+		return false;
+	}
 }

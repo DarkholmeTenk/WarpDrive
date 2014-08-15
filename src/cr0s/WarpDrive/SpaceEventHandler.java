@@ -108,7 +108,7 @@ public class SpaceEventHandler
 						}
 					}
 					
-					if(!hasHelmet && airValue == 0)
+					if(!hasHelmet && airValue <= 0)
 					{
 						entity.attackEntityFrom(DamageSource.drown, 1);
 						setPlayerAirValue(entity,20); // 20 tick cooldown

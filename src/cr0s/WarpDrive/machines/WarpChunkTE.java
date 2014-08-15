@@ -20,6 +20,22 @@ public abstract class WarpChunkTE extends WarpTE
 	boolean areChunksLoaded = false;
 	boolean isRefreshing = false;
 	
+	//OVERRIDES
+	@Override
+	public void updateEntity()
+	{
+		if(shouldChunkLoad() != areChunksLoaded)
+			refreshLoading();
+		
+		if(shouldChunkLoad())
+			handleLoadedTick();
+	}
+	
+	public void handleLoadedTick()
+	{
+		
+	}
+	
 	public void refreshLoading(boolean force)
 	{
 		if(isRefreshing)

@@ -291,7 +291,7 @@ public class WarpDrive implements LoadingCallback {
 	public void postInit(FMLPostInitializationEvent event) {
 		space = DimensionManager.getWorld(spaceDimID);
 		hyperSpace = DimensionManager.getWorld(hyperSpaceDimID);
-		
+		WarpDriveConfig.postInit();
 		//Init recipes
 		initRecipes();
 		

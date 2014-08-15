@@ -9,6 +9,7 @@ import net.minecraftforge.common.Configuration;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 
 public class WarpDriveConfig
@@ -16,7 +17,7 @@ public class WarpDriveConfig
 	public static WarpDriveConfig i;
 	private static Configuration config;
 	public static int coreID, controllerID, radarID, isolationID, airID, airgenID, gasID, laserID, miningLaserID, particleBoosterID, liftID, laserCamID, camID, monitorID, shipScannerID, cloakCoreID, cloakCoilID;
-	public static int laserTreeFarmID, transporterID, transportBeaconID, powerReactorID, powerLaserID, powerStoreID, componentID;
+	public static int laserTreeFarmID, transporterID, transportBeaconID, powerReactorID, powerLaserID, powerStoreID,chunkLoaderID, componentID;
 	public static int helmetID,chestID,pantsID,bootsID,aircanID;
 //
 	/*
@@ -33,10 +34,10 @@ public class WarpDriveConfig
 	private static Class<?> AEBlocks;
 	private static Class<?> AEMaterials;
 	private static Class<?> AEItems;
-	public static ArrayList<int[]> CommonWorldGenOres;
+	
 	public static Item AEExtraFDI;
 	
-	public static boolean debugMode = false;
+	public static boolean debugMode = true;
 
 	// Mod config
 	// Warp Core
@@ -121,6 +122,16 @@ public class WarpDriveConfig
 	public static int CD_ENERGY_PER_BLOCK_TIER2 = 5000; 
 	public static int CD_FIELD_REFRESH_INTERVAL_SECONDS = 10;
 	public static int CD_COIL_CAPTURE_BLOCKS = 5;
+	
+	// Laser Lift
+	public static int LL_MAX_ENERGY = 2400;
+	public static int LL_LIFT_ENERGY = 800;
+	public static int LL_TICK_RATE = 10;
+	
+	// Chunk Loader
+	public static int CL_MAX_ENERGY = 1000000;
+	public static int CL_MAX_DISTANCE = 2;
+	public static int CL_RF_PER_CHUNKTICK = 320;
 
 	public static ItemStack getAEBlock(String id)
 	{
@@ -256,18 +267,27 @@ public class WarpDriveConfig
 		
 		//Airgen
 		AG_RF_PER_CANISTER = config.get("Air Generator", "rf_per_canister", 80).getInt();
+		
+		//Laser Lift
+		LL_MAX_ENERGY = config.get("Laser Lift","max_energy", 2400).getInt();
+		LL_TICK_RATE = config.get("Laser Lift","tick_rate", 10).getInt();
+		LL_LIFT_ENERGY = config.get("Laser Lift", "lift_energy", 800).getInt();
+		
+		//Chunk Loader
+		CL_MAX_ENERGY = config.get("Chunk Loader", "max_energy", 1000000).getInt();
+		CL_MAX_DISTANCE = config.get("Chunk Loader", "max_distance", 3).getInt();
+		CL_RF_PER_CHUNKTICK = config.get("Chunk Loader", "rf_per_chunktick", 320).getInt();
 	}
 	
 	public static void Init2()
 	{
-		CommonWorldGenOres = new ArrayList<int[]>();
-		CommonWorldGenOres.add(new int[] {Block.oreIron.blockID, 0});
-		CommonWorldGenOres.add(new int[] {Block.oreGold.blockID, 0});
-		CommonWorldGenOres.add(new int[] {Block.oreCoal.blockID, 0});
-		CommonWorldGenOres.add(new int[] {Block.oreEmerald.blockID, 0});
-		CommonWorldGenOres.add(new int[] {Block.oreLapis.blockID, 0});
-		CommonWorldGenOres.add(new int[] {Block.oreRedstoneGlowing.blockID, 0});
-		CommonWorldGenOres.add(new int[] {Block.oreRedstone.blockID, 0});
+		SpaceOreProvider.addOre(Block.oreIron, 0, 10);
+		SpaceOreProvider.addOre(Block.oreGold, 0, 6);
+		SpaceOreProvider.addOre(Block.oreCoal, 0, 7);
+		SpaceOreProvider.addOre(Block.oreEmerald, 0, 3);
+		SpaceOreProvider.addOre(Block.oreDiamond, 0, 3);
+		SpaceOreProvider.addOre(Block.oreLapis, 0, 5);
+		SpaceOreProvider.addOre(Block.oreRedstone, 0, 6);
 //
 		SpaceHelmets = new HashSet<Integer>();
 		Jetpacks = new HashSet<Integer>();
@@ -299,6 +319,7 @@ public class WarpDriveConfig
 		powerLaserID = config.getBlock("powerLaser", 522).getInt();
 		powerReactorID = config.getBlock("powerReactor",523).getInt();
 		powerStoreID = config.getBlock("powerStore", 524).getInt();
+		chunkLoaderID = config.getBlock("chunkLoader", 525).getInt();
 		
 		componentID = config.getItem("component", 21140).getInt();
 		aircanID = config.getItem("aircanFull", 21145).getInt();
@@ -331,18 +352,21 @@ public class WarpDriveConfig
 		MinerOres.add(Block.obsidian.blockID);
 		MinerOres.add(Block.web.blockID);
 		MinerOres.add(Block.fence.blockID);
-		//MinerOres.add(Block.torchWood.blockID);
-		LoadOreDict();
 		// Ignore WarpDrive blocks (which potentially will be duplicated by cheaters using ship scan/deploy)
 		scannerIgnoreBlocks.add(coreID);
 		scannerIgnoreBlocks.add(controllerID);
 
 		// Do not scan ores and valuables
-		for (int[] t : CommonWorldGenOres) // each element of this set is pair [id, meta]
+		for (Integer[] t : SpaceOreProvider.oreList()) // each element of this set is pair [id, meta]
 			scannerIgnoreBlocks.add(t[0]); // we adding ID only
 		
 		loadWarpDriveConfig();
 		config.save();
+	}
+	
+	public static void postInit()
+	{
+		LoadOreDict();
 	}
 	
 	private static void LoadOreDict()
@@ -357,6 +381,9 @@ public class WarpDriveConfig
 				for(ItemStack i: item)
 				{
 					MinerOres.add(i.itemID);
+					Item it = i.getItem();
+					if(it instanceof ItemBlock)
+						SpaceOreProvider.addOre(((ItemBlock)it).getBlockID(), i.getItemDamage(), 4);
 					WarpDrive.debugPrint("WD: Added ore ID: "+i.itemID);
 				}
 			}
@@ -438,7 +465,7 @@ public class WarpDriveConfig
 		try
 		{
 			Class<?> z = Class.forName("atomicscience.AtomicScience");
-			CommonWorldGenOres.add(new int[] {((Block)z.getField("bHeOre").get(null)).blockID, 0});
+			SpaceOreProvider.addOre((Block)z.getField("bHeOre").get(null),0,2);
 			AS_Turbine = ((Block)z.getField("bWoLun").get(null)).blockID;
 		}
 		catch (Exception e)
@@ -453,7 +480,7 @@ public class WarpDriveConfig
 		try
 		{
 			Class<?> z = Class.forName("icbm.core.ICBMCore");
-			CommonWorldGenOres.add(new int[] {((Block)z.getField("blockSulfurOre").get(null)).blockID, 0});
+			SpaceOreProvider.addOre(((Block)z.getField("blockSulfurOre").get(null)), 0, 2);
 			z = Class.forName("icbm.explosion.ICBMExplosion");
 			ICBM_Machine = ((Block)z.getField("blockMachine").get(null)).blockID;
 			ICBM_Missile = ((Item)z.getField("itemMissile").get(null)).itemID;
@@ -516,7 +543,7 @@ public class WarpDriveConfig
 	public static int[] getRandomOverworldBlock(Random random, int blockID, int blockMeta)
 	{
 		if (random.nextInt(25) == 5)
-			return CommonWorldGenOres.get(random.nextInt(CommonWorldGenOres.size()));
+			return SpaceOreProvider.getOreOF(random);
 		else if (isAELoaded && random.nextInt(750) == 1)
 			return new int[] {getAEBlock("blkQuartzOre").itemID, getAEBlock("blkQuartzOre").getItemDamage()};
 		else if (random.nextInt(250) == 1)
@@ -529,14 +556,14 @@ public class WarpDriveConfig
 		if (random.nextInt(25) == 1)
 			return new int[] {Block.oreNetherQuartz.blockID, 0};
 		else if (random.nextInt(100) == 13)
-			return CommonWorldGenOres.get(random.nextInt(CommonWorldGenOres.size()));
+			return SpaceOreProvider.getOreOF(random);
 		return new int[] {blockID, blockMeta};
 	}
 
 	public static int[] getRandomEndBlock(Random random, int blockID, int blockMeta)
 	{
 		if (random.nextInt(200) == 13)
-			return CommonWorldGenOres.get(random.nextInt(CommonWorldGenOres.size()));
+			return SpaceOreProvider.getOreOF(random);
 		return new int[] {blockID, blockMeta};
 	}
 }

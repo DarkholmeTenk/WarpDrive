@@ -462,15 +462,6 @@ public abstract class TileEntityAbstractMiner extends TileEntityAbstractLaser im
 		return isMEReady;
 	}
 	
-	//OVERRIDES
-	@Override
-	public void updateEntity()
-	{
-		if(shouldChunkLoad() != areChunksLoaded)
-			refreshLoading();
-		
-	}
-	
 	@Override
 	public float getPowerDrainPerTick()
 	{

@@ -57,7 +57,7 @@ System.out.println("ZLO EntitySphereGen THE FUCK create");
 		this.state = STATE_SAVING;
 		blocks = new ArrayList<JumpBlock>();
 		if (surfaceSphere)
-			defaultBlock = WarpDriveConfig.i.getDefaultSurfaceBlock(world.rand, world.rand.nextInt(10) > 8, true);
+			defaultBlock = WarpDriveConfig.getDefaultSurfaceBlock(world.rand, world.rand.nextInt(10) > 8, true);
 		else
 			this.block = new int[] {blockID, blockMeta};
 	}
@@ -139,29 +139,29 @@ System.out.println("ZLO EntitySphereGen THE FUCK create");
 					if ((hollow) && ((dSq < radius1Sq) || ((lengthSq(x + 1, y, z) <= radiusSq) && (lengthSq(x, y + 1, z) <= radiusSq) && (lengthSq(x, y, z + 1) <= radiusSq))))
 						continue;
 					if (surfaceSphere)
-						block = WarpDriveConfig.i.getRandomSurfaceBlock(worldObj.rand, defaultBlock[0], defaultBlock[1], true);
+						block = WarpDriveConfig.getRandomSurfaceBlock(worldObj.rand, defaultBlock[0], defaultBlock[1], true);
 					// Add blocks to memory
 					addBlock(new JumpBlock(block[0], block[1], xCoord + x, yCoord + y, zCoord + z));
 					if (surfaceSphere)
-						block = WarpDriveConfig.i.getRandomSurfaceBlock(worldObj.rand, defaultBlock[0], defaultBlock[1], true);
+						block = WarpDriveConfig.getRandomSurfaceBlock(worldObj.rand, defaultBlock[0], defaultBlock[1], true);
 					addBlock(new JumpBlock(block[0], block[1], xCoord - x, yCoord + y, zCoord + z));
 					if (surfaceSphere)
-						block = WarpDriveConfig.i.getRandomSurfaceBlock(worldObj.rand, defaultBlock[0], defaultBlock[1], true);
+						block = WarpDriveConfig.getRandomSurfaceBlock(worldObj.rand, defaultBlock[0], defaultBlock[1], true);
 					addBlock(new JumpBlock(block[0], block[1], xCoord + x, yCoord - y, zCoord + z));
 					if (surfaceSphere)
-						block = WarpDriveConfig.i.getRandomSurfaceBlock(worldObj.rand, defaultBlock[0], defaultBlock[1], true);
+						block = WarpDriveConfig.getRandomSurfaceBlock(worldObj.rand, defaultBlock[0], defaultBlock[1], true);
 					addBlock(new JumpBlock(block[0], block[1], xCoord + x, yCoord + y, zCoord - z));
 					if (surfaceSphere)
-						block = WarpDriveConfig.i.getRandomSurfaceBlock(worldObj.rand, defaultBlock[0], defaultBlock[1], true);
+						block = WarpDriveConfig.getRandomSurfaceBlock(worldObj.rand, defaultBlock[0], defaultBlock[1], true);
 					addBlock(new JumpBlock(block[0], block[1], xCoord - x, yCoord - y, zCoord + z));
 					if (surfaceSphere)
-						block = WarpDriveConfig.i.getRandomSurfaceBlock(worldObj.rand, defaultBlock[0], defaultBlock[1], true);
+						block = WarpDriveConfig.getRandomSurfaceBlock(worldObj.rand, defaultBlock[0], defaultBlock[1], true);
 					addBlock(new JumpBlock(block[0], block[1], xCoord + x, yCoord - y, zCoord - z));
 					if (surfaceSphere)
-						block = WarpDriveConfig.i.getRandomSurfaceBlock(worldObj.rand, defaultBlock[0], defaultBlock[1], true);
+						block = WarpDriveConfig.getRandomSurfaceBlock(worldObj.rand, defaultBlock[0], defaultBlock[1], true);
 					addBlock(new JumpBlock(block[0], block[1], xCoord - x, yCoord + y, zCoord - z));
 					if (surfaceSphere)
-						block = WarpDriveConfig.i.getRandomSurfaceBlock(worldObj.rand, defaultBlock[0], defaultBlock[1], true);
+						block = WarpDriveConfig.getRandomSurfaceBlock(worldObj.rand, defaultBlock[0], defaultBlock[1], true);
 					addBlock(new JumpBlock(block[0], block[1], xCoord - x, yCoord - y, zCoord - z));
 				}
 			}

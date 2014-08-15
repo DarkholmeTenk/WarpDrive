@@ -23,7 +23,7 @@ public class WorldGenSmallShip extends WorldGenerator
 	@Override
 	public boolean generate(World world, Random rand, int i, int j, int k)
 	{
-
+		WarpDrive.debugPrint("generating ship");
 		world.setBlock(i + 0, j + 1, k + 4, WorldGenStructure.getStoneBlock(corrupted, rand));
 		world.setBlock(i + 0, j + 1, k + 10, WorldGenStructure.getStoneBlock(corrupted, rand));
 		world.setBlock(i + 1, j + 1, k + 4, WorldGenStructure.getStoneBlock(corrupted, rand));
@@ -547,6 +547,7 @@ public class WorldGenSmallShip extends WorldGenerator
 
 	public void fillChestWithBonuses(World worldObj, Random rand, int x, int y, int z)
 	{
+		WarpDrive.debugPrint("generating bonuses in chest!");
 		TileEntity te = worldObj.getBlockTileEntity(x, y, z);
 
 		if (te != null)
@@ -578,6 +579,7 @@ public class WorldGenSmallShip extends WorldGenerator
 				default:
 					res = null;
 			}
+			isDone = true;
 		}
 
 		return res;

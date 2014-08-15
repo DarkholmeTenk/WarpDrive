@@ -75,18 +75,22 @@ public class ItemWarpArmor extends ItemArmor implements IBreathingHelmet
 				ItemStack is = plInv[i];
 				if(is != null && is.getItem() instanceof IAirCanister)
 				{
-					is.setItemDamage(is.getItemDamage()+1);
-					if(is.getItemDamage() >= is.getMaxDamage())
+					IAirCanister can = ((IAirCanister)is.getItem());
+					if(can.containsAir(is))
 					{
-						plInv[i] = null;
-						ItemStack toAdd = ((IAirCanister)is.getItem()).emptyDrop();
-						if(!pl.inventory.addItemStackToInventory(toAdd))
+						is.setItemDamage(is.getItemDamage()+1);
+						if(is.getItemDamage() >= is.getMaxDamage())
 						{
-							EntityItem ie = new EntityItem(pl.worldObj, pl.posX, pl.posY, pl.posZ, toAdd);
-							pl.worldObj.spawnEntityInWorld(ie);
+							plInv[i] = null;
+							ItemStack toAdd = can.emptyDrop(is);
+							if(!pl.inventory.addItemStackToInventory(toAdd))
+							{
+								EntityItem ie = new EntityItem(pl.worldObj, pl.posX, pl.posY, pl.posZ, toAdd);
+								pl.worldObj.spawnEntityInWorld(ie);
+							}
 						}
+						return true;
 					}
-					return true;
 				}
 			}
 		}

@@ -36,9 +36,29 @@ public class ItemWarpAircan extends Item implements IAirCanister
 	}
 
 	@Override
-	public ItemStack emptyDrop()
+	public ItemStack emptyDrop(ItemStack is)
 	{
 		return WarpDrive.componentItem.getISNoCache(1, 8);
+	}
+
+	@Override
+	public ItemStack fullDrop(ItemStack can)
+	{
+		return new ItemStack(WarpDrive.airCanItem,1);
+	}
+	
+	@Override
+	public boolean canContainAir(ItemStack can)
+	{
+		if(can != null && can.getItem() instanceof ItemWarpAircan)
+			return can.getItemDamage() > 0;
+		return false;
+	}
+
+	@Override
+	public boolean containsAir(ItemStack can)
+	{
+		return true;
 	}
 
 }
