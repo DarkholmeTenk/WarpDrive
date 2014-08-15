@@ -628,7 +628,7 @@ public class EntityJump extends Entity
 	
 	private void rerenderShip()
 	{
-		int blocksToMove = Math.min(BLOCKS_PER_TICK, ship.length - currentIndexInShip);
+		int blocksToMove = ship.length;
 		WarpDrive.debugPrint("[JE] Moving ship part: " + currentIndexInShip + "/" + ship.length + " [btm: " + blocksToMove + "]");
 
 		for (int index = 0; index < blocksToMove; index++)

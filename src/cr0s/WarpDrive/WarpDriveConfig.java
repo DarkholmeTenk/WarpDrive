@@ -17,6 +17,7 @@ public class WarpDriveConfig
 	private static Configuration config;
 	public static int coreID, controllerID, radarID, isolationID, airID, airgenID, gasID, laserID, miningLaserID, particleBoosterID, liftID, laserCamID, camID, monitorID, shipScannerID, cloakCoreID, cloakCoilID;
 	public static int laserTreeFarmID, transporterID, transportBeaconID, powerReactorID, powerLaserID, powerStoreID, componentID;
+	public static int helmetID,chestID,pantsID,bootsID,aircanID;
 //
 	/*
 	 * The variables which store whether or not individual mods are loaded
@@ -75,6 +76,9 @@ public class WarpDriveConfig
 	
 	//Tree farm
 	public static int TF_MAX_SIZE=32;
+	
+	//Air generator
+	public static int AG_RF_PER_CANISTER = 80;
 	
 	//Transporter
 	public static int     TR_MAX_ENERGY=25000000;
@@ -249,6 +253,9 @@ public class WarpDriveConfig
 		
 		// Store
 		PS_MAX_ENERGY = config.get("Power Store", "max_energy", 10000000).getInt();
+		
+		//Airgen
+		AG_RF_PER_CANISTER = config.get("Air Generator", "rf_per_canister", 80).getInt();
 	}
 	
 	public static void Init2()
@@ -294,6 +301,11 @@ public class WarpDriveConfig
 		powerStoreID = config.getBlock("powerStore", 524).getInt();
 		
 		componentID = config.getItem("component", 21140).getInt();
+		aircanID = config.getItem("aircanFull", 21145).getInt();
+		helmetID = config.getItem("helmet", 21141).getInt();
+		chestID = config.getItem("chest",21142).getInt();
+		pantsID = config.getItem("pants",21143).getInt();
+		bootsID = config.getItem("boots", 21144).getInt();
 		
 		isCCLoaded = Loader.isModLoaded("ComputerCraft");
 		if (isCCLoaded)

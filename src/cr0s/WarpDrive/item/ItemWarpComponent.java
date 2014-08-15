@@ -1,6 +1,5 @@
 package cr0s.WarpDrive.item;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -18,15 +17,12 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
 public class ItemWarpComponent extends Item
 {	
 	private Icon[] potentialIcons;
-	private String[] potentialUnlocalized = new String[8];
+	private String[] potentialUnlocalized = new String[9];
 	private ItemStack[] cachedIS;
-	
-	private int id;
 
 	public ItemWarpComponent(int par1)
 	{
 		super(par1);
-		id = par1;
 		setHasSubtypes(true);
 		//this.setMaxDamage(potentialUnlocalized.length);
 		setUnlocalizedName("warpdrive.crafting.Malformed");
@@ -40,6 +36,7 @@ public class ItemWarpComponent extends Item
 		potentialUnlocalized[5] = "InterfaceComputer";
 		potentialUnlocalized[6] = "InterfacePower";
 		potentialUnlocalized[7] = "PowerCore";
+		potentialUnlocalized[8] = "AirCanEmpty";
 		
 		potentialIcons = new Icon[potentialUnlocalized.length];
 		cachedIS = new ItemStack[potentialUnlocalized.length];
@@ -54,6 +51,11 @@ public class ItemWarpComponent extends Item
 			return cachedIS[damage];
 		}
 		return null;
+	}
+	
+	public ItemStack getISNoCache(int amount,int damage)
+	{
+		return new ItemStack(WarpDrive.componentItem,amount,damage);
 	}
 	
 	public void registerRecipes()
@@ -99,6 +101,19 @@ public class ItemWarpComponent extends Item
 				'g', Item.goldNugget,
 				'l', "dyeBlue",
 				'd', Item.diamond));
+		
+		GameRegistry.addRecipe(new ShapedOreRecipe(getIS(8),false,"gcg","g g","gcg",
+				'g', Block.glass,
+				'c', getIS(0)));
+	}
+	
+	public boolean doesMatch(ItemStack is, String unlocalised)
+	{
+		if(!(is.getItem() instanceof ItemWarpComponent))
+			return false;
+		String data = potentialUnlocalized[is.getItemDamage()];
+		WarpDrive.debugPrint(data);
+		return data.equals(unlocalised);
 	}
 	
 	@Override

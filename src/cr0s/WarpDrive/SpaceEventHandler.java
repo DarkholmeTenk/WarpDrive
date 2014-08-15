@@ -69,9 +69,17 @@ public class SpaceEventHandler
 			// Damage entity if in vacuum without protection
 			if (inVacuum)
 			{
-				if (entity instanceof EntityPlayerMP)
+				if (entity instanceof EntityPlayerMP && !((EntityPlayerMP)entity).capabilities.isCreativeMode)
 				{
 					boolean hasHelmet = false;
+					Integer airValue = vacuumPlayers.get(((EntityPlayerMP)entity).username);
+					if (airValue == null)
+					{
+						vacuumPlayers.put(((EntityPlayerMP)entity).username, 20);
+						airValue = 20;
+					}
+					else
+						setPlayerAirValue(entity,airValue - 1);
 					if (((EntityPlayerMP)entity).getCurrentArmor(3) != null)
 					{
 						ItemStack helmetStack = ((EntityPlayerMP)entity).getCurrentArmor(3);
@@ -79,40 +87,31 @@ public class SpaceEventHandler
 						if(helmet instanceof IBreathingHelmet)
 						{
 							IBreathingHelmet breathHelmet = (IBreathingHelmet)helmet;
-							Integer airValue = vacuumPlayers.get(((EntityPlayerMP)entity).username);
+							int airTicks = breathHelmet.ticksPerCanDamage();
 							if(breathHelmet.canBreath(entity))
 							{
 								hasHelmet = true;
-								if (airValue == null)
-								{
-									vacuumPlayers.put(((EntityPlayerMP)entity).username, 300);
-									airValue = 300;
-								}
+								
 		
 								if (airValue <= 0)
 								{
 									if (breathHelmet.removeAir(entity))
 									{
-										setPlayerAirValue(entity, 300);
+										setPlayerAirValue(entity, airTicks);
 									}
 									else
 									{
 										hasHelmet = false;
 									}
 								}
-								else
-								{
-									setPlayerAirValue(entity, airValue - 1);
-								}
 							}
 						}
 					}
 					
-					if(!hasHelmet)
+					if(!hasHelmet && airValue == 0)
 					{
 						entity.attackEntityFrom(DamageSource.drown, 1);
-						if(vacuumPlayers.containsKey(((EntityPlayerMP)entity).username))
-							vacuumPlayers.remove(((EntityPlayerMP)entity).username);
+						setPlayerAirValue(entity,20); // 20 tick cooldown
 					}
 
 					// If player falling down, teleport on earth

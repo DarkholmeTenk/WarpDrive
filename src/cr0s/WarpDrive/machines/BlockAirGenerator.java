@@ -4,6 +4,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import cr0s.WarpDrive.WarpDrive;
+import cr0s.WarpDrive.WarpDriveConfig;
 
 import java.util.Random;
 
@@ -11,7 +12,9 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
 import net.minecraft.world.World;
@@ -97,7 +100,7 @@ public class BlockAirGenerator extends BlockContainer
     }
 
     @Override
-    public boolean onBlockActivated(World par1World, int par2, int par3, int par4, EntityPlayer par5EntityPlayer, int par6, float par7, float par8, float par9)
+    public boolean onBlockActivated(World par1World, int par2, int par3, int par4, EntityPlayer player, int par6, float par7, float par8, float par9)
     {
         if (FMLCommonHandler.instance().getEffectiveSide().isClient())
             return false;
@@ -106,7 +109,22 @@ public class BlockAirGenerator extends BlockContainer
 
         if (gen != null)
         {
-            par5EntityPlayer.addChatMessage("[AirGen] Energy level: " + gen.getEnergyStored() + " RF");
+            if(gen.removeEnergy(WarpDriveConfig.AG_RF_PER_CANISTER, true))
+            {
+            	ItemStack inUse = player.inventory.getCurrentItem();
+            	if(inUse != null && WarpDrive.componentItem.doesMatch(inUse, "AirCanEmpty"))
+            	{
+            		player.inventory.decrStackSize(player.inventory.currentItem, 1);
+            		ItemStack toAdd = new ItemStack(WarpDrive.airCanItem,1);
+            		if(!player.inventory.addItemStackToInventory(toAdd))
+            		{
+            			EntityItem ie = new EntityItem(player.worldObj, player.posX, player.posY, player.posZ, toAdd);
+            			player.worldObj.spawnEntityInWorld(ie);
+            		}
+            		gen.removeEnergy(WarpDriveConfig.AG_RF_PER_CANISTER, false);
+            	}
+            }
+            player.addChatMessage("[AirGen] Energy level: " + gen.getEnergyStored() + " RF");
         }
 
         return true;

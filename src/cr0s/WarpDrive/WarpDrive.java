@@ -14,6 +14,8 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cr0s.WarpDrive.block.BlockAir;
 import cr0s.WarpDrive.block.BlockBeacon;
 import cr0s.WarpDrive.block.BlockGas;
+import cr0s.WarpDrive.item.ItemWarpAircan;
+import cr0s.WarpDrive.item.ItemWarpArmor;
 import cr0s.WarpDrive.item.ItemWarpComponent;
 import cr0s.WarpDrive.machines.*;
 
@@ -26,12 +28,14 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.EnumArmorMaterial;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.EnumHelper;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.ForgeChunkManager.LoadingCallback;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
@@ -40,7 +44,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
-@Mod(modid = "WarpDrive", name = "WarpDrive", version = "1.3.1", dependencies = "required-after:ComputerCraft; after:CCTurtle; required-after:AppliedEnergistics; after:AtomicScience; after:ICBM|Explosion; after:MFFS")
+@Mod(modid = "WarpDrive", name = "WarpDrive", version = "1.3.2", dependencies = "required-after:ComputerCraft; after:CCTurtle; required-after:AppliedEnergistics; after:AtomicScience; after:ICBM|Explosion; after:MFFS")
 @NetworkMod(clientSideRequired = true, serverSideRequired = true, channels = {
 		"WarpDriveBeam", 
 		"WarpDriveFreq", 
@@ -80,6 +84,10 @@ public class WarpDrive implements LoadingCallback {
 	public static Block transportBeaconBlock;
 	
 	public static ItemWarpComponent componentItem;
+	
+	public static EnumArmorMaterial armorMaterial = EnumHelper.addArmorMaterial("WARP",5, new int[]{1, 3, 2, 1}, 15);
+	public static ItemWarpArmor helmetItem;
+	public static ItemWarpAircan airCanItem;
 
 	public static BiomeGenBase spaceBiome;
 	public World space;
@@ -255,6 +263,12 @@ public class WarpDrive implements LoadingCallback {
 		
 		componentItem = new ItemWarpComponent(WarpDriveConfig.componentID);
 		GameRegistry.registerItem(componentItem, "component");
+		
+		helmetItem = new ItemWarpArmor(WarpDriveConfig.helmetID,0);
+		GameRegistry.registerItem(helmetItem,"helmet");
+		
+		airCanItem = new ItemWarpAircan(WarpDriveConfig.aircanID);
+		GameRegistry.registerItem(airCanItem, "aircanFull");
         
 		proxy.registerEntities();
 		ForgeChunkManager.setForcedChunkLoadingCallback(instance, instance);
@@ -430,6 +444,13 @@ public class WarpDrive implements LoadingCallback {
 				'l', "dyeBlue",
 				'd', Item.diamond,
 				's', Item.stick));
+		
+		//Helmet
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(helmetItem),false, "iii","iwi","gcg",
+				'i', Item.ingotIron,
+				'w', Block.cloth,
+				'g', Block.glass,
+				'c', componentItem.getIS(8)));
 	}
 	
 	/*private void initIC2Recipes()
