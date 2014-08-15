@@ -494,7 +494,7 @@ public class EntityJump extends Entity
 	public void removeShip()
 	{
 		LocalProfiler.start("EntityJump.removeShip");
-		int blocksToMove = Math.min(BLOCKS_PER_TICK, ship.length - currentIndexInShip);
+		int blocksToMove = ship.length;
 		WarpDrive.debugPrint("[JE] Removing ship part: " + currentIndexInShip + "/" + ship.length + " [btm: " + blocksToMove + "]");
 		TileEntity te;
 		Class<?> c;
