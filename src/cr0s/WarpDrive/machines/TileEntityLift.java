@@ -137,7 +137,7 @@ public class TileEntityLift extends TileEntityAbstractLaser implements IPeripher
                 {
                     if (o != null && o instanceof EntityLivingBase && removeEnergy(WarpDriveConfig.LL_LIFT_ENERGY,false))
                     {
-                    	((EntityLivingBase)o).setVelocity(0, 0, 0);
+                    	//((EntityLivingBase)o).setVelocity(0, 0, 0);
                         ((EntityLivingBase)o).setPositionAndUpdate(xCoord + 0.5f, yCoord + 1, zCoord + 0.5f);
                         sendLaser(1f,1f,0f,40,0,100);
                         //sendLaserPacket(new Vector3(this).add(0.5), new Vector3(xCoord, firstUncoveredY, zCoord).add(0.5), 1, 1, 0, 40, 0, 100);
@@ -157,7 +157,7 @@ public class TileEntityLift extends TileEntityAbstractLaser implements IPeripher
                 {
                     if (o != null && o instanceof EntityLivingBase && removeEnergy(WarpDriveConfig.LL_LIFT_ENERGY,false))
                     {
-                    	((EntityLivingBase)o).setVelocity(0, 0, 0);
+                    	//((EntityLivingBase)o).setVelocity(0, 0, 0);
                         ((EntityLivingBase)o).setPositionAndUpdate(xCoord + 0.5f, firstUncoveredY + 1, zCoord + 0.5f);
                         //sendLaserPacket(new Vector3(this).translate(0.5), new Vector3(xCoord, firstUncoveredY + 1, zCoord).translate(0.5), 1, 1, 0, 40, 0, 100);
                         sendLaser(1f,1f,0f,40,0,100);
