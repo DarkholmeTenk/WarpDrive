@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableSet;
 
 import cr0s.WarpDrive.WarpDrive;
 
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
@@ -104,6 +105,11 @@ public abstract class WarpChunkTE extends WarpTE
 	
 	public void giveTicket(Ticket t)
 	{
+		NBTTagCompound nbt = t.getModData();
+		nbt.setInteger("ticketWorldObj", worldObj.provider.dimensionId);
+		nbt.setInteger("ticketX", xCoord);
+		nbt.setInteger("ticketY", yCoord);
+		nbt.setInteger("ticketZ", zCoord);
 		ticketList.add(t);
 	}
 	
@@ -178,6 +184,36 @@ public abstract class WarpChunkTE extends WarpTE
 		}
 		
 		return chunkList;
+	}
+	
+	@Override
+	public void writeToNBT(NBTTagCompound t)
+	{
+		super.writeToNBT(t);
+		if(minChunk == null)
+			minChunk = worldObj.getChunkFromBlockCoords(xCoord, zCoord).getChunkCoordIntPair();
+		
+		if(maxChunk == null)
+			maxChunk = worldObj.getChunkFromBlockCoords(xCoord, zCoord).getChunkCoordIntPair();
+		t.setInteger("minChunkX", minChunk.chunkXPos);
+		t.setInteger("minChunkZ", minChunk.chunkZPos);
+		t.setInteger("maxChunkX", maxChunk.chunkXPos);
+		t.setInteger("maxChunkZ", maxChunk.chunkZPos);
+	}
+	
+	@Override
+	public void readFromNBT(NBTTagCompound t)
+	{
+		super.readFromNBT(t);
+		if(t.hasKey("minChunkX"))
+		{
+			int mx = t.getInteger("minChunkX");
+			int mz = t.getInteger("minChunkZ");
+			minChunk = new ChunkCoordIntPair(mx,mz);
+			mx = t.getInteger("maxChunkX");
+			mz = t.getInteger("maxChunkZ");
+			maxChunk = new ChunkCoordIntPair(mx,mz);
+		}
 	}
 	
 	public ArrayList<ChunkCoordIntPair> getChunksToLoad()

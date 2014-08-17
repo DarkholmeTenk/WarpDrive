@@ -62,7 +62,7 @@ public class TileEntityAirGenerator extends WarpTE
     			int y= yCoord + offset.intY();
     			int z= zCoord + offset.intZ();
     			if(worldObj.isAirBlock(x, y, z))
-    				worldObj.setBlock(x, y, z, WarpDriveConfig.airID, 15, 2);
+    				worldObj.setBlock(x, y, z, WarpDriveConfig.airID, START_CONCENTRATION_VALUE, 2);
     		}
     	}
     }

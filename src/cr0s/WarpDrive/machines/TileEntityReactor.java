@@ -14,7 +14,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cr0s.WarpDrive.EntityJump;
@@ -914,7 +913,6 @@ public class TileEntityReactor extends WarpTE
                 if (entity instanceof EntityPlayerMP)
                 {
                     ((EntityPlayerMP) entity).mcServer.getConfigurationManager().transferPlayerToDimension(((EntityPlayerMP) entity), destDimensionID, new SpaceTeleporter(DimensionManager.getWorld(destDimensionID), 0, x, 256, z));
-                    WorldServer space = DimensionManager.getWorld(0);
 
                     ((EntityPlayerMP) entity).setPositionAndUpdate(x, newY + 2, z);
                 }

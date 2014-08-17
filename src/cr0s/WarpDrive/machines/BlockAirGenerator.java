@@ -114,9 +114,10 @@ public class BlockAirGenerator extends BlockContainer
             if(gen.removeEnergy(WarpDriveConfig.AG_RF_PER_CANISTER, true))
             {
             	ItemStack inUse = player.inventory.getCurrentItem();
-            	Item inUseItem = inUse.getItem();
-            	if(inUse != null && (inUseItem instanceof IAirCanister))
+   
+            	if(inUse != null && (inUse.getItem() instanceof IAirCanister))
             	{
+            		Item inUseItem = inUse.getItem();
             		IAirCanister can = (IAirCanister)inUseItem;
             		if(can.canContainAir(inUse))
             		{

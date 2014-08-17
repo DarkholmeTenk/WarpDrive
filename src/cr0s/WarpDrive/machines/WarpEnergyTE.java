@@ -1,14 +1,30 @@
 package cr0s.WarpDrive.machines;
 
+import java.util.HashMap;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import cofh.api.energy.IEnergyHandler;
+import cr0s.WarpDrive.EnumUpgradeTypes;
 
 public abstract class WarpEnergyTE extends TileEntity implements IEnergyHandler
 {
 	protected int energyStoredAmount=0;
+	protected HashMap<EnumUpgradeTypes,Integer> upgrades = new HashMap<EnumUpgradeTypes,Integer>();
 	
+	public Object[] getUpgrades()
+	{
+		Object[] retVal = new Object[EnumUpgradeTypes.values().length];
+		for(EnumUpgradeTypes type : EnumUpgradeTypes.values())
+		{
+			int am = 0;
+			if(upgrades.containsKey(type))
+				am = upgrades.get(type);
+			retVal[type.ordinal()] = type.toString() + ":" + am;
+		}
+		return retVal;
+	}
 	
 	public int getEnergyStored()
 	{
@@ -22,6 +38,24 @@ public abstract class WarpEnergyTE extends TileEntity implements IEnergyHandler
 	
 	protected boolean removeEnergy(int amount,boolean simulate)
 	{
+		if(upgrades.containsKey(EnumUpgradeTypes.Power))
+		{
+			double valueMul = Math.pow(0.8,upgrades.get(EnumUpgradeTypes.Power));
+			amount = (int) Math.ceil(valueMul * amount);
+		}
+		
+		if(upgrades.containsKey(EnumUpgradeTypes.Range))
+		{
+			double valueMul = Math.pow(1.2,upgrades.get(EnumUpgradeTypes.Range));
+			amount = (int) Math.ceil(valueMul * amount);
+		}
+		
+		if(upgrades.containsKey(EnumUpgradeTypes.Speed))
+		{
+			double valueMul = Math.pow(1.2,upgrades.get(EnumUpgradeTypes.Speed));
+			amount = (int) Math.ceil(valueMul * amount);
+		}
+		
 		if(getEnergyStored() >= amount)
 		{
 			if(!simulate)
@@ -87,6 +121,15 @@ public abstract class WarpEnergyTE extends TileEntity implements IEnergyHandler
     {
         super.readFromNBT(tag);
         this.energyStoredAmount = tag.getInteger("energy");
+        if(tag.hasKey("upgrades"))
+        {
+        	NBTTagCompound upgradeTag = tag.getCompoundTag("upgrades");
+        	for(EnumUpgradeTypes type : EnumUpgradeTypes.values())
+        	{
+        		if(upgradeTag.hasKey(type.toString()) && upgradeTag.getInteger(type.toString())!= 0)
+        			upgrades.put(type, upgradeTag.getInteger(type.toString()));
+        	}
+        }
     }
 
     @Override
@@ -94,5 +137,17 @@ public abstract class WarpEnergyTE extends TileEntity implements IEnergyHandler
     {
         super.writeToNBT(tag);
         tag.setInteger("energy", this.energyStoredAmount);
+        if(upgrades.size() > 0)
+        {
+        	NBTTagCompound upgradeTag = new NBTTagCompound();
+        	for(EnumUpgradeTypes type : EnumUpgradeTypes.values())
+        	{
+        		if(upgrades.containsKey(type))
+        		{
+        			upgradeTag.setInteger(type.toString(), upgrades.get(type));
+        		}
+        	}
+        	tag.setCompoundTag("upgrades", upgradeTag);
+        }
     }
 }

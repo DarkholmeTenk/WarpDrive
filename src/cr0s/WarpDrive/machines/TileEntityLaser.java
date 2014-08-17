@@ -153,7 +153,7 @@ public class TileEntityLaser extends TileEntityAbstractLaser implements IPeriphe
 		float directionz = yawz * pitchhorizontal;
 		Vector3 lookVector = new Vector3((double) directionx, (double) pitchvertical, (double) directionz);
 		Vector3.translate(beamVector, lookVector);
-		Vector3 reachPoint = beamVector.clone().translate(beamVector.clone(), beamVector.clone().scale(lookVector.clone(), beamLengthBlocks));
+		Vector3 reachPoint = Vector3.translate(beamVector.clone(), Vector3.scale(lookVector.clone(), beamLengthBlocks));
 		WarpDrive.debugPrint("Look vector: " + lookVector);
 		WarpDrive.debugPrint("reachPoint: " + reachPoint);
 		WarpDrive.debugPrint("translatedBeamVector: " + beamVector);

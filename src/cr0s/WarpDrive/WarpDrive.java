@@ -13,10 +13,13 @@ import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cr0s.WarpDrive.block.BlockAir;
 import cr0s.WarpDrive.block.BlockBeacon;
+import cr0s.WarpDrive.block.BlockDecorative;
 import cr0s.WarpDrive.block.BlockGas;
+import cr0s.WarpDrive.block.ItemBlockDecorative;
 import cr0s.WarpDrive.item.ItemWarpAircan;
 import cr0s.WarpDrive.item.ItemWarpArmor;
 import cr0s.WarpDrive.item.ItemWarpComponent;
+import cr0s.WarpDrive.item.ItemWarpUpgrade;
 import cr0s.WarpDrive.machines.*;
 
 import java.util.ArrayList;
@@ -31,7 +34,10 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.EnumArmorMaterial;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.DimensionManager;
@@ -44,7 +50,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
-@Mod(modid = "WarpDrive", name = "WarpDrive", version = "1.3.2", dependencies = "required-after:ComputerCraft; after:CCTurtle; required-after:AppliedEnergistics; after:AtomicScience; after:ICBM|Explosion; after:MFFS")
+@Mod(modid = "WarpDrive", name = "WarpDrive", version = "1.4.0", dependencies = "required-after:ComputerCraft; after:CCTurtle; required-after:AppliedEnergistics; after:AtomicScience; after:ICBM|Explosion; after:MFFS")
 @NetworkMod(clientSideRequired = true, serverSideRequired = true, channels = {
 		"WarpDriveBeam", 
 		"WarpDriveFreq", 
@@ -82,8 +88,11 @@ public class WarpDrive implements LoadingCallback {
 	public static Block gasBlock;
 	
 	public static Block transportBeaconBlock;
+	public static Block chunkLoaderBlock;
+	public static BlockDecorative decorativeBlock;
 	
 	public static ItemWarpComponent componentItem;
+	public static ItemWarpUpgrade upgradeItem;
 	
 	public static EnumArmorMaterial armorMaterial = EnumHelper.addArmorMaterial("WARP",5, new int[]{1, 3, 2, 1}, 15);
 	public static ItemWarpArmor helmetItem;
@@ -120,6 +129,7 @@ public class WarpDrive implements LoadingCallback {
 	
 	public static String defHelpStr = "help(\"functionName\"): returns help for the function specified";
 	public static String defEnergyStr = "energy(): returns currently contained energy, max contained energy";
+	public static String defUpgradeStr = "upgrades(): returns a list of currently installed upgrades";
 	
 	private ArrayList<Ticket> warpTickets = new ArrayList<Ticket>();
 
@@ -248,18 +258,16 @@ public class WarpDrive implements LoadingCallback {
 		GameRegistry.registerBlock(powerStoreBlock,"powerStore");
 		GameRegistry.registerTileEntity(TileEntityPowerStore.class, "powerStore");
 		
+		chunkLoaderBlock = new BlockChunkLoader(WarpDriveConfig.chunkLoaderID);
+		GameRegistry.registerBlock(chunkLoaderBlock,"chunkLoader");
+		GameRegistry.registerTileEntity(TileEntityChunkLoader.class,"chunkLoader");
+		
+		decorativeBlock = new BlockDecorative(WarpDriveConfig.decorativeID);
+		GameRegistry.registerBlock(decorativeBlock,ItemBlockDecorative.class,"decorative");
+		
 		
 		transportBeaconBlock = new BlockBeacon(WarpDriveConfig.transportBeaconID);
 		GameRegistry.registerBlock(transportBeaconBlock,"transportBeacon");
-		// TRANSPORT BEACON
-		/*transportBeaconBlock = new BlockTransportBeacon(WarpDriveConfig.transportBeaconID)
-			.setHardness(0.5F)
-			.setStepSound(Block.soundMetalFootstep)
-			.setCreativeTab(CreativeTabs.tabRedstone)
-			.setUnlocalizedName("transporterBeacon");
-		
-		LanguageRegistry.addName(transportBeaconBlock, "Test");
-		GameRegistry.registerBlock(transportBeaconBlock, "transportBeacon");*/
 		
 		componentItem = new ItemWarpComponent(WarpDriveConfig.componentID);
 		GameRegistry.registerItem(componentItem, "component");
@@ -269,6 +277,9 @@ public class WarpDrive implements LoadingCallback {
 		
 		airCanItem = new ItemWarpAircan(WarpDriveConfig.aircanID);
 		GameRegistry.registerItem(airCanItem, "aircanFull");
+		
+		upgradeItem = new ItemWarpUpgrade(WarpDriveConfig.upgradeID);
+		GameRegistry.registerItem(upgradeItem, "upgrade");
         
 		proxy.registerEntities();
 		ForgeChunkManager.setForcedChunkLoadingCallback(instance, instance);
@@ -306,6 +317,8 @@ public class WarpDrive implements LoadingCallback {
 	private void initRecipes()
 	{
 		componentItem.registerRecipes();
+		decorativeBlock.initRecipes();
+		upgradeItem.initRecipes();
 		//WarpCore
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(warpCore), false, "ipi","ici","idi",
 				'i', Item.ingotIron,
@@ -445,6 +458,13 @@ public class WarpDrive implements LoadingCallback {
 				'd', Item.diamond,
 				's', Item.stick));
 		
+		//Chunk Loader
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(chunkLoaderBlock),false, "ipi","ici","ifi",
+				'i', Item.ingotIron,
+				'p', componentItem.getIS(6),
+				'c', componentItem.getIS(0),
+				'f', componentItem.getIS(5)));
+		
 		//Helmet
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(helmetItem),false, "iii","iwi","gcg",
 				'i', Item.ingotIron,
@@ -452,108 +472,6 @@ public class WarpDrive implements LoadingCallback {
 				'g', Block.glass,
 				'c', componentItem.getIS(8)));
 	}
-	
-	/*private void initIC2Recipes()
-	{
-		GameRegistry.addRecipe(new ItemStack(warpCore), "ici", "cmc", "ici",
-				'i', WarpDriveConfig.getIC2Item("iridiumPlate"),
-				'm', WarpDriveConfig.getIC2Item("advancedMachine"),
-				'c', WarpDriveConfig.getIC2Item("advancedCircuit"));
-			
-		GameRegistry.addRecipe(new ItemStack(protocolBlock), "iic", "imi", "cii",
-			'i', WarpDriveConfig.getIC2Item("iridiumPlate"),
-			'm', WarpDriveConfig.getIC2Item("advancedMachine"),
-			'c', WarpDriveConfig.getIC2Item("advancedCircuit"));
-		
-		GameRegistry.addRecipe(new ItemStack(radarBlock), "ifi", "imi", "imi",
-			'i', WarpDriveConfig.getIC2Item("iridiumPlate"),
-			'm', WarpDriveConfig.getIC2Item("advancedMachine"),
-			'f', WarpDriveConfig.getIC2Item("frequencyTransmitter"));
-		
-		GameRegistry.addRecipe(new ItemStack(isolationBlock), "iii", "idi", "iii",
-			'i', WarpDriveConfig.getIC2Item("iridiumPlate"),
-			'm', WarpDriveConfig.getIC2Item("advancedMachine"),
-			'd', Block.blockDiamond);
-		
-		GameRegistry.addRecipe(new ItemStack(airgenBlock), "lcl", "lml", "lll",
-			'l', Block.leaves,
-			'm', WarpDriveConfig.getIC2Item("advancedMachine"),
-			'c', WarpDriveConfig.getIC2Item("advancedCircuit"));
-		
-		GameRegistry.addRecipe(new ItemStack(laserBlock), "sss", "ama", "aaa",
-			'm', WarpDriveConfig.getIC2Item("advancedMachine"),
-			'a', WarpDriveConfig.getIC2Item("advancedAlloy"),
-			's', WarpDriveConfig.getIC2Item("advancedCircuit"));
-		
-		GameRegistry.addRecipe(new ItemStack(miningLaserBlock), "aaa", "ama", "ccc",
-			'c', WarpDriveConfig.getIC2Item("advancedCircuit"),
-			'a', WarpDriveConfig.getIC2Item("advancedAlloy"),
-			'm', WarpDriveConfig.getIC2Item("miner"));
-		
-		GameRegistry.addRecipe(new ItemStack(boosterBlock), "afc", "ama", "cfa",
-			'c', WarpDriveConfig.getIC2Item("advancedCircuit"),
-			'a', WarpDriveConfig.getIC2Item("advancedAlloy"),
-			'f', WarpDriveConfig.getIC2Item("glassFiberCableItem"),
-			'm', WarpDriveConfig.getIC2Item("mfeUnit"));
-		
-		GameRegistry.addRecipe(new ItemStack(liftBlock), "aca", "ama", "a#a",
-			'c', WarpDriveConfig.getIC2Item("advancedCircuit"),
-			'a', WarpDriveConfig.getIC2Item("advancedAlloy"),
-			'm', WarpDriveConfig.getIC2Item("magnetizer"));
-
-		GameRegistry.addRecipe(new ItemStack(iridiumBlock), "iii", "iii", "iii",
-			'i', WarpDriveConfig.getIC2Item("iridiumPlate"));
-		
-		GameRegistry.addShapelessRecipe(
-			new ItemStack(WarpDriveConfig.getIC2Item("iridiumPlate").getItem(), 9),
-			new ItemStack(iridiumBlock));
-		
-		GameRegistry.addRecipe(new ItemStack(laserCamBlock), "imi", "cec", "#k#",
-			'i', WarpDriveConfig.getIC2Item("iridiumPlate"),
-			'm', WarpDriveConfig.getIC2Item("advancedMachine"),
-			'c', WarpDriveConfig.getIC2Item("advancedCircuit"), 
-			'e', laserBlock,
-			'k', cameraBlock);
-		
-		GameRegistry.addRecipe(new ItemStack(cameraBlock), "cgc", "gmg", "cgc",
-			'm', WarpDriveConfig.getIC2Item("advancedMachine"),
-			'c', WarpDriveConfig.getIC2Item("advancedCircuit"),
-			'g', Block.glass);
-		
-		GameRegistry.addRecipe(new ItemStack(monitorBlock), "gcg", "gmg", "ggg", 
-			'm', WarpDriveConfig.getIC2Item("advancedMachine"),
-			'c', WarpDriveConfig.getIC2Item("advancedCircuit"),
-			'g', Block.glass);
-		
-		GameRegistry.addRecipe(new ItemStack(scannerBlock), "sgs", "mma", "amm",
-			'm', WarpDriveConfig.getIC2Item("advancedMachine"),
-			'a', WarpDriveConfig.getIC2Item("advancedAlloy"),
-			's', WarpDriveConfig.getIC2Item("advancedCircuit"),
-			'g', Block.glass);	
-	
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(laserTreeFarmBlock),false,new Object[] {
-			"cwc", "wmw", "cwc",
-			'c', WarpDriveConfig.getIC2Item("electronicCircuit"),
-			'w', "logWood",
-			'm', miningLaserBlock }));
-		
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(transporterBlock), false, new Object[] {
-			"ece", "imi", "iei",
-			'e', Item.enderPearl,
-			'c', WarpDriveConfig.getIC2Item("electronicCircuit"),
-			'i', WarpDriveConfig.getIC2Item("plateiron"),
-			'm', WarpDriveConfig.getIC2Item("machine") }));
-		
-		GameRegistry.addRecipe(new ItemStack(cloakBlock), "imi", "mcm", "imi", 
-			'i', iridiumBlock,
-			'c', cloakCoilBlock,
-			'm', WarpDriveConfig.getIC2Item("advancedMachine"));
-		
-		GameRegistry.addRecipe(new ItemStack(cloakCoilBlock), "iai", "aca", "iai", 
-			'i', WarpDriveConfig.getIC2Item("iridiumPlate"),
-			'c', WarpDriveConfig.getIC2Item("advancedCircuit"),
-			'a', WarpDriveConfig.getIC2Item("advancedAlloy"));
-	}*/
 
 	private void registerSpaceDimension() {
 		spaceBiome = (new BiomeSpace(23))
@@ -655,6 +573,34 @@ public class WarpDrive implements LoadingCallback {
 	public void ticketsLoaded(List<Ticket> tickets, World world)
 	{
 		for (Ticket ticket : tickets)
+		{
+			NBTTagCompound data = ticket.getModData();
+			if(data != null)
+			{
+				int w = data.getInteger("ticketWorldObj");
+				int x = data.getInteger("ticketX");
+				int y = data.getInteger("ticketY");
+				int z = data.getInteger("ticketZ");
+				if(w != 0 || x != 0 || y != 0 || z != 0)
+				{
+					WorldServer ws = DimensionManager.getWorld(w);
+					if(ws != null)
+					{
+						TileEntity te = ws.getBlockTileEntity(x, y, z);
+						if(te != null && te instanceof WarpChunkTE)
+						{
+							if(((WarpChunkTE)te).shouldChunkLoad())
+							{
+								WarpDrive.debugPrint("[TicketCallback] Regiving Ticket!");
+								((WarpChunkTE)te).giveTicket(ticket);
+								((WarpChunkTE)te).refreshLoading(true);
+								return;
+							}
+						}
+					}
+				}
+			}
 			ForgeChunkManager.releaseTicket(ticket);
+		}
 	}
 }

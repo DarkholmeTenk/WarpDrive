@@ -2,11 +2,14 @@ package cr0s.WarpDrive.machines;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
+import cr0s.WarpDrive.EnumUpgradeTypes;
 import cr0s.WarpDrive.Vector3;
 import cr0s.WarpDrive.WarpDrive;
 import cr0s.WarpDrive.WarpDriveConfig;
+import cr0s.WarpDrive.api.IUpgradable;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -19,7 +22,7 @@ import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.lua.ILuaContext;
 import dan200.computercraft.api.peripheral.IPeripheral;
 
-public class TileEntityTransporter extends WarpTE implements IPeripheral
+public class TileEntityTransporter extends WarpTE implements IPeripheral, IUpgradable
 {
 	private double scanRange=2;
 	
@@ -47,12 +50,16 @@ public class TileEntityTransporter extends WarpTE implements IPeripheral
 			"energy",
 			"powerBoost",
 			"energyCost",
+			"upgrades",
 			"help" };
 	
 	@Override
 	public int getMaxEnergyStored()
 	{
-		return WarpDriveConfig.TR_MAX_ENERGY;
+		int max = WarpDriveConfig.TR_MAX_ENERGY;
+		if(upgrades.containsKey(EnumUpgradeTypes.Energy))
+			max = (int) Math.floor(max * Math.pow(1.2, upgrades.get(EnumUpgradeTypes.Energy)));
+		return max;
 	}
 	
 	@Override
@@ -106,6 +113,8 @@ public class TileEntityTransporter extends WarpTE implements IPeripheral
 				return "powerBoost(boostAmount): sets the level of power to use (1 being default), returns the level of power\npowerBoost(): returns the level of power";
 			else if(fun.equals("energycost"))
 				return "energyCost(): returns the amount of energy it will take for a single entity to transport with the current settings";
+			else if(fun.equals("upgrades"))
+				return WarpDrive.defUpgradeStr;
 			else if(fun.equals("energy"))
 				return WarpDrive.defEnergyStr;
 		}
@@ -169,31 +178,31 @@ public class TileEntityTransporter extends WarpTE implements IPeripheral
 	public Object[] callMethod(IComputerAccess computer, ILuaContext context, int method, Object[] arguments) throws Exception
 	{
 		String str = methodArray[method];
-		if(str == "energy")
+		if(str.equals("energy"))
 			return new Object[] {getEnergyStored(),getMaxEnergyStored()};
 		
-		if(str == "source")
+		if(str.equals("source"))
 			return setVec3(true,arguments);
 		
-		if(str == "dest")
+		if(str.equals("dest"))
 			return setVec3(false,arguments);
 		
-		if(str == "lock")
+		if(str.equals("lock"))
 			return new Object[] { lock(sourceVec,destVec) };
 		
-		if(str == "release")
+		if(str.equals("release"))
 		{
 			unlock();
 			return null;
 		}
 		
-		if(str == "lockStrength")
+		if(str.equals("lockStrength"))
 			return new Object[] { getLockStrength() };
 		
-		if(str == "energize")
+		if(str.equals("energize"))
 			return new Object[] { energize () };
 		
-		if(str == "powerBoost")
+		if(str.equals("powerBoost"))
 		{
 			try
 			{
@@ -207,10 +216,13 @@ public class TileEntityTransporter extends WarpTE implements IPeripheral
 			return new Object[] { powerBoost };
 		}
 		
-		if(str == "energyCost")
+		if(str.equals("upgrades"))
+			return getUpgrades();
+		
+		if(str.equals("energyCost"))
 			return new Object[] { energyCost() };
 		
-		if(str == "help")
+		if(str.equals("help"))
 			return new Object[] { helpStr(arguments) };
 		
 		return null;
@@ -287,7 +299,7 @@ public class TileEntityTransporter extends WarpTE implements IPeripheral
 		if(value < 0.5)
 			ent.attackEntityFrom(teleDam, 1);
 	}
-	
+
 	private double beaconScan(int xV, int yV, int zV)
 	{
 		WarpDrive.debugPrint("BeaconScan:" + xV + ","+yV + "," + zV);
@@ -367,7 +379,10 @@ public class TileEntityTransporter extends WarpTE implements IPeripheral
 	{
 		if(isLocked)
 		{
-			return clamp(baseLockStrength * lockStrengthMul * Math.pow(2, powerBoost-1) * (1+beaconEffect),0,1);
+			double upgradeBoost = 1;
+			if(upgrades.containsKey(EnumUpgradeTypes.Range))
+				upgradeBoost = Math.pow(1.2, upgrades.get(EnumUpgradeTypes.Range));
+			return clamp(baseLockStrength * lockStrengthMul * Math.pow(2, powerBoost-1) * upgradeBoost * (1+beaconEffect),0,1);
 		}
 		return -1;
 	}
@@ -486,5 +501,39 @@ public class TileEntityTransporter extends WarpTE implements IPeripheral
 	public boolean equals(IPeripheral other)
 	{
 		return false;
+	}
+
+	@Override
+	public boolean takeUpgrade(EnumUpgradeTypes upgradeType, boolean simulate)
+	{
+		int max = 0;
+		if(upgradeType == EnumUpgradeTypes.Energy)
+			max = 2;
+		else if(upgradeType == EnumUpgradeTypes.Power)
+			max = 4;
+		else if(upgradeType == EnumUpgradeTypes.Range)
+			max = 4;
+		
+		if(max == 0)
+			return false;
+		
+		if(upgrades.containsKey(upgradeType))
+			if(upgrades.get(upgradeType) >= max)
+				return false;
+		
+		if(!simulate)
+		{
+			int c = 0;
+			if(upgrades.containsKey(upgradeType))
+				c = upgrades.get(upgradeType);
+			upgrades.put(upgradeType, c+1);
+		}
+		return true;
+	}
+
+	@Override
+	public Map<EnumUpgradeTypes,Integer> getInstalledUpgrades()
+	{
+		return upgrades;
 	}
 }

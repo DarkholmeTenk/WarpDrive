@@ -1,6 +1,7 @@
 package cr0s.WarpDrive.machines;
 
 import cpw.mods.fml.common.FMLCommonHandler;
+import cr0s.WarpDrive.WarpDrive;
 import cr0s.WarpDrive.WarpDriveConfig;
 
 public class TileEntityParticleBooster extends WarpTE
@@ -16,10 +17,10 @@ public class TileEntityParticleBooster extends WarpTE
             return;
         }
 
-        if (++ticks > 40)
+        if (++ticks > 20)
         {
             ticks = 0;
-            worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, 10* (getEnergyStored() / WarpDriveConfig.PB_MAX_ENERGY_VALUE), 3);
+            worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, (10* getEnergyStored()) / getMaxEnergyStored(), 3);
         }
     }
 

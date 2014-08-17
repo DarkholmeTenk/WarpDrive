@@ -17,7 +17,7 @@ public class WarpDriveConfig
 	public static WarpDriveConfig i;
 	private static Configuration config;
 	public static int coreID, controllerID, radarID, isolationID, airID, airgenID, gasID, laserID, miningLaserID, particleBoosterID, liftID, laserCamID, camID, monitorID, shipScannerID, cloakCoreID, cloakCoilID;
-	public static int laserTreeFarmID, transporterID, transportBeaconID, powerReactorID, powerLaserID, powerStoreID,chunkLoaderID, componentID;
+	public static int laserTreeFarmID, transporterID, transportBeaconID, powerReactorID, powerLaserID, powerStoreID,chunkLoaderID, decorativeID, componentID, upgradeID;
 	public static int helmetID,chestID,pantsID,bootsID,aircanID;
 //
 	/*
@@ -320,8 +320,10 @@ public class WarpDriveConfig
 		powerReactorID = config.getBlock("powerReactor",523).getInt();
 		powerStoreID = config.getBlock("powerStore", 524).getInt();
 		chunkLoaderID = config.getBlock("chunkLoader", 525).getInt();
+		decorativeID = config.getBlock("decorative",526).getInt();
 		
 		componentID = config.getItem("component", 21140).getInt();
+		upgradeID = config.getItem("upgrade",21146).getInt();
 		aircanID = config.getItem("aircanFull", 21145).getInt();
 		helmetID = config.getItem("helmet", 21141).getInt();
 		chestID = config.getItem("chest",21142).getInt();

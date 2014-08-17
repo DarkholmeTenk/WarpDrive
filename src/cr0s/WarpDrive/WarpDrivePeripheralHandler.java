@@ -11,7 +11,7 @@ public class WarpDrivePeripheralHandler implements IPeripheralProvider
 	@Override
 	public IPeripheral getPeripheral(World world, int x, int y, int z, int side)
 	{
-		WarpDrive.debugPrint("Checking " + x + "," + y +"," + z);
+		//WarpDrive.debugPrint("Checking " + x + "," + y +"," + z);
 		TileEntity te = world.getBlockTileEntity(x, y, z);
 		if(te instanceof IPeripheral)
 			return (IPeripheral)te;

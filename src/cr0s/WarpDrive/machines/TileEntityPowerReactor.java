@@ -7,7 +7,7 @@ import java.util.Set;
 import cofh.api.energy.IEnergyHandler;
 import cr0s.WarpDrive.WarpDrive;
 import cr0s.WarpDrive.WarpDriveConfig;
-import cr0s.WarpDriveCore.IBlockUpdateDetector;
+import cr0s.WarpDrive.api.IBlockUpdateDetector;
 import dan200.computercraft.api.lua.ILuaContext;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;

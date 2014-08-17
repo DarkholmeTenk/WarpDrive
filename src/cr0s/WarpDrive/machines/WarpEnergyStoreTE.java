@@ -3,14 +3,13 @@ package cr0s.WarpDrive.machines;
 import java.util.HashMap;
 
 import cofh.api.energy.IEnergyHandler;
-import cr0s.WarpDriveCore.IBlockUpdateDetector;
+import cr0s.WarpDrive.api.IBlockUpdateDetector;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 
 public abstract class WarpEnergyStoreTE extends WarpTE implements IBlockUpdateDetector //Ironically doesn't actually store energy, leaves that to the implementer
 {
 	private int energyStoreTickCount = -1;
-	private boolean firstRun = false;
 	private HashMap<ForgeDirection,IEnergyHandler> energyHandlers = new HashMap<ForgeDirection,IEnergyHandler>(6);
 	
 	public abstract int amountToRelease(ForgeDirection d); // how much energy can I release this time?
