@@ -23,6 +23,9 @@ public class BlockDecorative extends Block
 	public BlockDecorative(int par1)
 	{
 		super(par1, Material.iron);
+		setHardness(0.5f);
+		setStepSound(Block.soundMetalFootstep);
+		setCreativeTab(WarpDrive.warpdriveTab);
 	}
 	
 	public boolean isValidDamage(int damage)
