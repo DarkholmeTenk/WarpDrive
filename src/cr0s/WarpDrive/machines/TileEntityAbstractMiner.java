@@ -3,6 +3,8 @@ package cr0s.WarpDrive.machines;
 import java.util.ArrayList;
 import java.util.List;
 
+import cofh.api.transport.IItemConduit;
+
 import appeng.api.IAEItemStack;
 import appeng.api.Util;
 import appeng.api.WorldCoord;
@@ -14,17 +16,20 @@ import appeng.api.me.util.IGridInterface;
 import appeng.api.me.util.IMEInventoryHandler;
 
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.common.MinecraftForge;
 import cr0s.WarpDrive.Vector3;
+import cr0s.WarpDrive.WarpDrive;
 import cr0s.WarpDrive.WarpDriveConfig;
 
-public abstract class TileEntityAbstractMiner extends TileEntityAbstractLaser implements IGridMachine, ITileCable
+public abstract class TileEntityAbstractMiner extends TileEntityAbstractLaser implements IGridMachine, ITileCable, IInventory
 {
 	
 	//FOR STORAGE
@@ -46,6 +51,8 @@ public abstract class TileEntityAbstractMiner extends TileEntityAbstractLaser im
 	abstract float		getColorR();
 	abstract float		getColorG();
 	abstract float		getColorB();
+	
+	private List<ItemStack> extraStuff = new ArrayList<ItemStack>(4);
 	
 	public TileEntityAbstractMiner()
 	{
@@ -111,8 +118,25 @@ public abstract class TileEntityAbstractMiner extends TileEntityAbstractLaser im
 		return null;
 	}
 	
-	//GETTERSETTERS
+	private int dumpToPipe(ItemStack item)
+	{
+		for(ForgeDirection d:ForgeDirection.VALID_DIRECTIONS)
+		{
+			TileEntity te = worldObj.getBlockTileEntity(xCoord+d.offsetX, yCoord+d.offsetY, zCoord+d.offsetZ);
+			if(te != null && te instanceof IItemConduit)
+			{
+				WarpDrive.debugPrint("dumping to pipe");
+				int size = item.stackSize;
+				ItemStack returned = ((IItemConduit)te).insertItem(d.getOpposite(), item);
+				if(returned == null)
+					return size;
+				return size - returned.stackSize;
+			}
+		}
+		return 0;
+	}
 	
+	//GETTERSETTERS
 	protected int fortune()
 	{
 		return fortuneLevel;
@@ -189,6 +213,7 @@ public abstract class TileEntityAbstractMiner extends TileEntityAbstractLaser im
 	
 	protected boolean isRoomForHarvest()
 	{
+		dumpInternalInventory();
 		if(isMEReady && grid != null)
 			return true;
 		
@@ -200,6 +225,9 @@ public abstract class TileEntityAbstractMiner extends TileEntityAbstractLaser im
 				if(inv.getStackInSlot(i) == null)
 					return true;
 		}
+		
+		if(extraStuff.size() < getSizeInventory())
+			return true;
 		return false;
 	}
 	
@@ -230,8 +258,22 @@ public abstract class TileEntityAbstractMiner extends TileEntityAbstractLaser im
 		worldObj.setBlockToAir(valuable.intX(), valuable.intY(), valuable.intZ());
 	}
 	
+	private boolean dumpInternalInventory()
+	{
+		while(extraStuff.size() > 0)
+		{
+			ItemStack is = extraStuff.get(0);
+			extraStuff.remove(0);
+			int dumped = dumpToInv(is);
+			if(dumped != is.stackSize)
+				return false;
+		}
+		return true;
+	}
+	
 	protected boolean harvestBlock(Vector3 valuable)
 	{
+		dumpInternalInventory();
 		int blockID = worldObj.getBlockId(valuable.intX(), valuable.intY(), valuable.intZ());
 		int blockMeta = worldObj.getBlockMetadata(valuable.intX(), valuable.intY(), valuable.intZ());
 		if (blockID != Block.waterMoving.blockID && blockID != Block.waterStill.blockID && blockID != Block.lavaMoving.blockID && blockID != Block.lavaStill.blockID)
@@ -242,7 +284,8 @@ public abstract class TileEntityAbstractMiner extends TileEntityAbstractLaser im
 			{
 				for (ItemStack stack : stacks)
 				{
-					didPlace = didPlace && dumpToInv(stack) == stack.stackSize;
+					int moved = dumpToInv(stack);
+					didPlace = didPlace && extraStuff.size() < getSizeInventory();
 				}
 			}
 			mineBlock(valuable,blockID,blockMeta);
@@ -257,10 +300,28 @@ public abstract class TileEntityAbstractMiner extends TileEntityAbstractLaser im
 	
 	protected int dumpToInv(ItemStack item)
 	{
+		int itemsTransferred = 0;
 		if (grid != null)
-			return putInGrid(item);
+			itemsTransferred = putInGrid(item);
 		else
-			return putInChest(findChest(), item);
+		{
+			IInventory chest = findChest();
+			if(chest != null)
+				itemsTransferred = putInChest(chest, item);
+			else
+				itemsTransferred = dumpToPipe(item);
+		}
+			
+		
+		if(itemsTransferred < item.stackSize)
+		{
+			ItemStack tempStack = ItemStack.copyItemStack(item);
+			WarpDrive.debugPrint("[WarpDrive ALM]" + tempStack.itemID + "," + tempStack.getItemDamage());
+			tempStack.stackSize -= itemsTransferred;
+			extraStuff.add(tempStack);
+		}
+		
+		return itemsTransferred;
 	}
 	
 	private int putInGrid(ItemStack itemStackSource)
@@ -438,6 +499,20 @@ public abstract class TileEntityAbstractMiner extends TileEntityAbstractLaser im
 		silkTouch = tag.getBoolean("silkTouch");
 		fortuneLevel = tag.getInteger("fortuneLevel");
 		
+		if(tag.hasKey("inventory"))
+		{
+			NBTTagCompound invBase = tag.getCompoundTag("inventory");
+			int count = invBase.getTags().size();
+			for(int i = 0;i<count;i++)
+			{
+				if(invBase.hasKey("slot"+i))
+				{
+					ItemStack is = ItemStack.loadItemStackFromNBT(invBase.getCompoundTag("slot"+i));
+					extraStuff.add(is);
+				}
+			}
+		}
+		
 		minerVector.x = xCoord;
 		minerVector.y = yCoord - (laserBelow());
 		minerVector.z = zCoord;
@@ -449,6 +524,20 @@ public abstract class TileEntityAbstractMiner extends TileEntityAbstractLaser im
 		super.writeToNBT(tag);
 		tag.setBoolean("silkTouch", silkTouch);
 		tag.setInteger("fortuneLevel", fortuneLevel);
+		
+		if(extraStuff.size() > 0)
+		{
+			NBTTagCompound inventory = new NBTTagCompound();
+			for(int i =0; i < extraStuff.size(); i++)
+			{
+				ItemStack is = extraStuff.get(i);
+				NBTTagCompound invTag = new NBTTagCompound();
+				is.writeToNBT(invTag);
+				inventory.setTag("slot" + i, invTag);
+			}
+			tag.setCompoundTag("inventory", inventory);
+		}
+		
 	}
 	
 	//AE INTERFACE
@@ -529,5 +618,82 @@ public abstract class TileEntityAbstractMiner extends TileEntityAbstractLaser im
 	{
 		return worldObj;
 	}
+	
+	//IINVENTORY FUNCTIONS
+	@Override
+	public int getSizeInventory()
+	{
+		return 8;
+	}
+	
+	@Override
+	public ItemStack getStackInSlot(int i)
+	{
+		if(extraStuff.size() > i)
+			return extraStuff.get(i);
+		
+		return null;
+	}
+	
+	@Override
+	public ItemStack decrStackSize(int i, int j)
+	{
+		if(extraStuff.size() > i)
+		{
+			ItemStack oIS   = extraStuff.get(i);
+			ItemStack retIS = ItemStack.copyItemStack(oIS);
+			retIS.stackSize = Math.max(j, retIS.stackSize);
+			if(retIS.stackSize == oIS.stackSize)
+				extraStuff.remove(i);
+			else
+				oIS.stackSize = (oIS.stackSize - retIS.stackSize);
+			return retIS;
+		}
+		return null;
+	}
+	
+	@Override
+	public ItemStack getStackInSlotOnClosing(int i)
+	{
+		return null;
+	}
+	
+	@Override
+	public void setInventorySlotContents(int i, ItemStack itemstack)
+	{
+		if(i > extraStuff.size())
+			i = extraStuff.size();
+		extraStuff.set(i, itemstack);
+	}
+	
+	@Override
+	public String getInvName()
+	{
+		return this.blockType.getUnlocalizedName();
+	}
+	
+	@Override
+	public boolean isInvNameLocalized()
+	{
+		return false;
+	}
+	
+	public int getInventoryStackLimit()
+	{
+		return 64;
+	}
+	
+	public void onInventoryChanged()
+	{
+		
+	}
+	
+	public boolean isUseableByPlayer(EntityPlayer entityplayer) { return false; }
+
+    public void openChest() {}
+
+    public void closeChest() {}
+    
+    public boolean isItemValidForSlot(int i, ItemStack itemstack) { return false; }
 	
 }
