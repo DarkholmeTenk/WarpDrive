@@ -12,8 +12,8 @@ import dan200.computercraft.api.peripheral.IPeripheral;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.util.ArrayList;
 import java.util.List;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
@@ -33,10 +33,14 @@ public class TileEntityLaser extends TileEntityAbstractLaser implements IPeriphe
 {
 	private int dx, dz, dy;
 	public float yaw, pitch; // laser direction
+	
+	private static final int scanFreq = 1420;
 
 	private int frequency = -1;	// beam frequency
 	public int camFreq = -1;	   // camera frequency
 	private float r, g, b;	  // beam color (corresponds to frequency)
+	
+	private ArrayList<IComputerAccess> comps = new ArrayList<IComputerAccess>();
 
 	public boolean isEmitting = false;
 
@@ -82,12 +86,13 @@ public class TileEntityLaser extends TileEntityAbstractLaser implements IPeriphe
 			}
 		}
 
-		if (isEmitting && (frequency != 1420 && ++delayTicks > WarpDriveConfig.LE_EMIT_DELAY_TICKS) || ((frequency == 1420) && ++delayTicks > WarpDriveConfig.LE_EMIT_SCAN_DELAY_TICKS))
+		if (isEmitting && (frequency != scanFreq && ++delayTicks > WarpDriveConfig.LE_EMIT_DELAY_TICKS) || ((frequency == scanFreq) && ++delayTicks > WarpDriveConfig.LE_EMIT_SCAN_DELAY_TICKS))
 		{
 			delayTicks = 0;
 			isEmitting = false;
 			emitBeam(Math.min(this.collectEnergyFromBoosters() + MathHelper.floor_double(energyFromOtherBeams * WarpDriveConfig.LE_COLLECT_ENERGY_MULTIPLIER), WarpDriveConfig.LE_MAX_LASER_ENERGY));
 			energyFromOtherBeams = 0;
+			sendEvent("laserSend",null);
 		}
 	}
 
@@ -161,7 +166,7 @@ public class TileEntityLaser extends TileEntityAbstractLaser implements IPeriphe
 		playSoundCorrespondsEnergy(energy);
 
 		// This is scanning beam, do not deal damage to blocks
-		if (frequency == 1420)
+		if (frequency == scanFreq)
 		{
 			firstHit = worldObj.rayTraceBlocks_do_do(beamVector.toVec3(), reachPoint.toVec3(), false, false);
 
@@ -633,6 +638,15 @@ public class TileEntityLaser extends TileEntityAbstractLaser implements IPeriphe
 		}
 	}
 	
+	private void sendEvent(String eventName,Object[] arguments)
+	{
+		for(IComputerAccess comp : comps)
+		{
+			if(comp != null)
+				comp.queueEvent(eventName, arguments);
+		}
+	}
+	
 	@Override
 	public boolean shouldChunkLoad()
 	{
@@ -642,11 +656,13 @@ public class TileEntityLaser extends TileEntityAbstractLaser implements IPeriphe
 	@Override
 	public void attach(IComputerAccess computer)
 	{
+		comps.add(computer);
 	}
 
 	@Override
 	public void detach(IComputerAccess computer)
 	{
+		comps.remove(computer);
 	}
 
 	@Override
