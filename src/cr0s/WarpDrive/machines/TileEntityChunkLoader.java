@@ -80,6 +80,8 @@ public class TileEntityChunkLoader extends WarpChunkTE implements IPeripheral, I
 	
 	private void changedDistance()
 	{
+		if(myChunk == null)
+			myChunk = worldObj.getChunkFromBlockCoords(xCoord, zCoord).getChunkCoordIntPair();
 		negDX = -clampDistance(negDX);
 		posDX =  clampDistance(posDX);
 		negDZ = -clampDistance(negDZ);

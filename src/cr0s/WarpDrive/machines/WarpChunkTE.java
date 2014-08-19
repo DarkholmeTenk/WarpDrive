@@ -216,6 +216,13 @@ public abstract class WarpChunkTE extends WarpTE
 		}
 	}
 	
+	@Override
+	public void invalidate()
+	{
+		for(Ticket t : ticketList)
+			ForgeChunkManager.releaseTicket(t);
+	}
+	
 	public ArrayList<ChunkCoordIntPair> getChunksToLoad()
 	{
 		if(minChunk == null || maxChunk == null)
