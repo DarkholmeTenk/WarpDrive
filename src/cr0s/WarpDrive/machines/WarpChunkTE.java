@@ -85,7 +85,6 @@ public abstract class WarpChunkTE extends WarpTE
 						ForgeChunkManager.unforceChunk(ticket, chunk);
 					
 					ForgeChunkManager.releaseTicket(ticket);
-					WarpDrive.instance.removeTicket(ticket);
 				}
 				ticketList.clear();
 				areChunksLoaded = false;

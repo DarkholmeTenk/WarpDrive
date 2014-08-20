@@ -28,6 +28,6 @@ public class JumpgateCommand extends CommandBase
 	public void processCommand(ICommandSender icommandsender, String[] astring)
 	{
 		EntityPlayerMP player = (EntityPlayerMP)icommandsender;
-		player.addChatMessage(WarpDrive.instance.jumpGates.commaList());
+		player.addChatMessage(WarpDrive.jumpGates.commaList());
 	}
 }

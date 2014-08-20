@@ -82,7 +82,7 @@ public class TileEntityReactor extends WarpTE
         if (++registryUpdateTicks > WarpDriveConfig.WC_CORES_REGISTRY_UPDATE_INTERVAL_SECONDS * 20)
         {
             registryUpdateTicks = 0;
-            WarpDrive.instance.registry.updateInRegistry(this);
+            WarpDrive.registry.updateInRegistry(this);
         }
 
         if (FMLCommonHandler.instance().getEffectiveSide().isClient())
@@ -197,7 +197,7 @@ public class TileEntityReactor extends WarpTE
                         return;
                     }
 
-                    if (WarpDrive.instance.registry.isWarpCoreIntersectsWithOthers(this))
+                    if (WarpDrive.registry.isWarpCoreIntersectsWithOthers(this))
                     {
                     	System.out.println("[WD] Intersect");
                         this.controller.setJumpFlag(false);
@@ -502,30 +502,13 @@ public class TileEntityReactor extends WarpTE
         String freq = controller.getBeaconFrequency();
         int beaconX = 0, beaconZ = 0;
         boolean isBeaconFound = false;
-        EntityPlayerMP player;
-
-        for (int i = 0; i < MinecraftServer.getServer().getConfigurationManager().playerEntityList.size(); i++)
+        
+        TileEntityReactor destBeacon = WarpDrive.registry.findBeacon(worldObj, freq);
+        if(destBeacon != null)
         {
-            player = (EntityPlayerMP)MinecraftServer.getServer().getConfigurationManager().playerEntityList.get(i);
-
-            // Skip players from other dimensions
-            if (player.dimension != worldObj.provider.dimensionId)
-            {
-                continue;
-            }
-
-            TileEntity te = worldObj.getBlockTileEntity(MathHelper.floor_double(player.posX), MathHelper.floor_double(player.posY) - 1, MathHelper.floor_double(player.posZ));
-
-            if (te != null && (te instanceof TileEntityProtocol))
-            {
-                if (((TileEntityProtocol)te).getBeaconFrequency().equals(freq))
-                {
-                    beaconX = te.xCoord;
-                    beaconZ = te.zCoord;
-                    isBeaconFound = true;
-                    break;
-                }
-            }
+        	beaconX = destBeacon.xCoord;
+        	beaconZ = destBeacon.zCoord;
+        	isBeaconFound = true;
         }
 
         // Now make jump to a beacon
@@ -651,7 +634,7 @@ public class TileEntityReactor extends WarpTE
 
         // Search beacon coordinates
         String gateName = controller.getTargetJumpgateName();
-        JumpGate jg = WarpDrive.instance.jumpGates.findGateByName(gateName);
+        JumpGate jg = WarpDrive.jumpGates.findGateByName(gateName);
         int gateX, gateY, gateZ;
         int destX = 0, destY = 0, destZ = 0;
         boolean isGateFound = (jg != null);
@@ -665,7 +648,7 @@ public class TileEntityReactor extends WarpTE
             destX = gateX;
             destY = gateY;
             destZ = gateZ;
-            JumpGate nearestGate = WarpDrive.instance.jumpGates.findNearestGate(xCoord, yCoord, zCoord);
+            JumpGate nearestGate = WarpDrive.jumpGates.findNearestGate(xCoord, yCoord, zCoord);
 
             if (!isShipInJumpgate(nearestGate))
             {
@@ -775,13 +758,13 @@ public class TileEntityReactor extends WarpTE
                 return;
             }
 
-            JumpGate t = WarpDrive.instance.jumpGates.findNearestGate(xCoord, yCoord, zCoord);
+            JumpGate t = WarpDrive.jumpGates.findNearestGate(xCoord, yCoord, zCoord);
 
             
-            if (WarpDrive.instance.jumpGates == null) 
+            if (WarpDrive.jumpGates == null) 
             	System.out.println("[JumpGates] WarpDrive.instance.jumpGates is NULL!");
             
-            if (WarpDrive.instance.jumpGates != null && t != null && !isShipInJumpgate(t))
+            if (WarpDrive.jumpGates != null && t != null && !isShipInJumpgate(t))
             {
                 if (shipVolume < WarpDriveConfig.WC_MIN_SHIP_VOLUME_FOR_HYPERSPACE)
                 {
@@ -1097,7 +1080,7 @@ public class TileEntityReactor extends WarpTE
         super.readFromNBT(tag);
         coreFrequency = tag.getString("corefrequency");
         isolationBlocksCount = tag.getInteger("isolation");
-        WarpDrive.instance.registry.updateInRegistry(this);
+        WarpDrive.registry.updateInRegistry(this);
     }
 
     @Override
@@ -1118,14 +1101,14 @@ public class TileEntityReactor extends WarpTE
     public void onChunkUnload()
     {
     	super.onChunkUnload();
-        WarpDrive.instance.registry.removeFromRegistry(this);
+        WarpDrive.registry.removeFromRegistry(this);
     }
 
     @Override
     public void validate()
     {
         super.validate();
-        WarpDrive.instance.registry.updateInRegistry(this);
+        WarpDrive.registry.updateInRegistry(this);
     }
 
     @Override

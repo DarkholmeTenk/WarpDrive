@@ -2,11 +2,12 @@ package cr0s.WarpDrive;
 
 import java.util.ArrayList;
 
+import cr0s.WarpDrive.machines.TileEntityProtocol;
 import cr0s.WarpDrive.machines.TileEntityReactor;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
+import net.minecraft.world.World;
 
 /** Registry of active Warp Cores in world
  * @author Cr0s
@@ -85,6 +86,25 @@ public class WarpCoresRegistry
 		}
 
 		return res;
+	}
+	
+	public TileEntityReactor findBeacon(World w, String beaconName)
+	{
+		for(TileEntityReactor r : registry)
+		{
+			if(r.worldObj != null && r.worldObj.equals(w))
+			{
+				TileEntityProtocol p = r.controller;
+				if(p != null)
+				{
+					if(p.getBeaconFrequency() != null && p.getBeaconFrequency().equals(beaconName))
+					{
+						return r;
+					}
+				}
+			}
+		}
+		return null;
 	}
 
 	public void printRegistry()

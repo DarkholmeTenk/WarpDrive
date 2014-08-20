@@ -1,10 +1,8 @@
 package cr0s.WarpDrive.api;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import cr0s.WarpDrive.EnumUpgradeTypes;
-import net.minecraft.item.ItemStack;
 
 public interface IUpgradable
 {

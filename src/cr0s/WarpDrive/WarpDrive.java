@@ -22,7 +22,6 @@ import cr0s.WarpDrive.item.ItemWarpComponent;
 import cr0s.WarpDrive.item.ItemWarpUpgrade;
 import cr0s.WarpDrive.machines.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import dan200.computercraft.api.ComputerCraftAPI;
@@ -116,8 +115,8 @@ public class WarpDrive implements LoadingCallback {
 	@SidedProxy(clientSide = "cr0s.WarpDrive.client.ClientProxy", serverSide = "cr0s.WarpDrive.CommonProxy")
 	public static CommonProxy proxy;
 
-	public WarpCoresRegistry registry;
-	public JumpGatesRegistry jumpGates;
+	public static WarpCoresRegistry registry;
+	public static JumpGatesRegistry jumpGates;
 	
 	public CloakManager cloaks;
 
@@ -130,8 +129,6 @@ public class WarpDrive implements LoadingCallback {
 	public static String defHelpStr = "help(\"functionName\"): returns help for the function specified";
 	public static String defEnergyStr = "energy(): returns currently contained energy, max contained energy";
 	public static String defUpgradeStr = "upgrades(): returns a list of currently installed upgrades";
-	
-	private ArrayList<Ticket> warpTickets = new ArrayList<Ticket>();
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event)
@@ -502,39 +499,10 @@ public class WarpDrive implements LoadingCallback {
 		event.registerServerCommand(new JumpgateCommand());
 	}
 	
-	private ArrayList<Ticket> worldTickets(World worldObj)
-	{
-		ArrayList<Ticket> ticks = new ArrayList<Ticket>();
-		for(Ticket t: warpTickets)
-			if(t.world.equals(worldObj))
-				ticks.add(t);
-		return ticks;
-	}
-	
 	public Ticket registerChunkLoadTE(WarpChunkTE te,boolean refreshLoading)
 	{
 		World worldObj = te.worldObj;
-		ArrayList<Ticket> worldTicks = worldTickets(worldObj);
-		boolean isWorldTicketed = worldTicks.size() != 0;
-		if(isWorldTicketed)
-		{
-			if(ForgeChunkManager.ticketCountAvailableFor(this, worldObj) > 0)
-			{
-				Ticket t = ForgeChunkManager.requestTicket(this, worldObj, Type.NORMAL);
-				if(t != null)
-				{
-					te.giveTicket(t);
-					if(refreshLoading)
-						te.refreshLoading();
-					return t;
-				}
-				else
-					WarpDrive.debugPrint("Ticket not granted");
-			}
-			else
-				WarpDrive.debugPrint("No tickets left!");
-		}
-		else
+		if(ForgeChunkManager.ticketCountAvailableFor(this, worldObj) > 0)
 		{
 			Ticket t = ForgeChunkManager.requestTicket(this, worldObj, Type.NORMAL);
 			if(t != null)
@@ -545,10 +513,10 @@ public class WarpDrive implements LoadingCallback {
 				return t;
 			}
 			else
-			{
 				WarpDrive.debugPrint("Ticket not granted");
-			}
 		}
+		else
+			WarpDrive.debugPrint("No tickets left!");
 		return null;
 	}
 	
@@ -560,13 +528,6 @@ public class WarpDrive implements LoadingCallback {
 	public Ticket getTicket(WarpChunkTE te)
 	{
 		return registerChunkLoadTE(te,false);
-	}
-	
-	public void removeTicket(Ticket t)
-	{
-		for(Ticket ticket:warpTickets)
-			if(t.equals(ticket))
-				warpTickets.remove(ticket);
 	}
 
 	@Override

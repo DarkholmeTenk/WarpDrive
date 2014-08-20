@@ -284,7 +284,7 @@ public abstract class TileEntityAbstractMiner extends TileEntityAbstractLaser im
 			{
 				for (ItemStack stack : stacks)
 				{
-					int moved = dumpToInv(stack);
+					dumpToInv(stack);
 					didPlace = didPlace && extraStuff.size() < getSizeInventory();
 				}
 			}

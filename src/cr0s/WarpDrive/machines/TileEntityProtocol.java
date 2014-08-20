@@ -496,7 +496,7 @@ public class TileEntityProtocol extends TileEntity implements IPeripheral
                 setFront(toInt(arguments[0]));
                 setRight(toInt(arguments[1]));
                 setUp(toInt(arguments[2]));
-                WarpDrive.instance.registry.removeDeadCores();
+                WarpDrive.registry.removeDeadCores();
                 break;
 
             case 2: // dim_getn ()
@@ -511,7 +511,7 @@ public class TileEntityProtocol extends TileEntity implements IPeripheral
                 setBack(toInt(arguments[0]));
                 setLeft(toInt(arguments[1]));
                 setDown(toInt(arguments[2]));
-                WarpDrive.instance.registry.removeDeadCores();
+                WarpDrive.registry.removeDeadCores();
                 break;
 
             case 4: // set_mode (mode)

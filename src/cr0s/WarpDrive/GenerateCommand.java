@@ -89,7 +89,7 @@ public class GenerateCommand extends CommandBase
 		            {
 		                notifyAdmins(icommandsender, "/generate: creating jumpgate at " + x + ", " + y + ", " + z, new Object[0]);
 		
-		                if (WarpDrive.instance.jumpGates.addGate(params[1], x, y, z))
+		                if (WarpDrive.jumpGates.addGate(params[1], x, y, z))
 		                {
 		                    JumpGateGenerator.generate(player.worldObj, x, Math.min(y,255-JumpGateGenerator.GATE_SIZE_HALF - 1), z);
 		                }
