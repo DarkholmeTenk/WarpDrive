@@ -672,7 +672,7 @@ public abstract class TileEntityAbstractMiner extends TileEntityAbstractLaser im
 	@Override
 	public void setInventorySlotContents(int i, ItemStack itemstack)
 	{
-		if(i > extraStuff.size())
+		if(i >= extraStuff.size())
 			extraStuff.add(itemstack);
 		else
 			extraStuff.set(i, itemstack);
