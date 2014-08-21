@@ -273,10 +273,13 @@ public abstract class TileEntityAbstractMiner extends TileEntityAbstractLaser im
 		while(extraStuff.size() > 0)
 		{
 			ItemStack is = extraStuff.remove(0);
-			int sz = is.stackSize;
-			int dumped = dumpToInv(is);
-			if(dumped != sz)
-				return false;
+			if(is != null)
+			{
+				int sz = is.stackSize;
+				int dumped = dumpToInv(is);
+				if(dumped != sz)
+					return false;
+			}
 		}
 		return true;
 	}
