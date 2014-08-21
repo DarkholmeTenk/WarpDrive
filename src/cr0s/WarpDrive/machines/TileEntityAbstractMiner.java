@@ -52,7 +52,7 @@ public abstract class TileEntityAbstractMiner extends TileEntityAbstractLaser im
 	abstract float		getColorG();
 	abstract float		getColorB();
 	
-	private List<ItemStack> extraStuff = new ArrayList<ItemStack>(4);
+	private List<ItemStack> extraStuff = new ArrayList<ItemStack>(8);
 	
 	public TileEntityAbstractMiner()
 	{
@@ -116,24 +116,6 @@ public abstract class TileEntityAbstractMiner extends TileEntityAbstractLaser im
 			}
 		}
 		return null;
-	}
-	
-	private int dumpToPipe(ItemStack item)
-	{
-		for(ForgeDirection d:ForgeDirection.VALID_DIRECTIONS)
-		{
-			TileEntity te = worldObj.getBlockTileEntity(xCoord+d.offsetX, yCoord+d.offsetY, zCoord+d.offsetZ);
-			if(te != null && te instanceof IItemConduit)
-			{
-				WarpDrive.debugPrint("dumping to pipe");
-				int size = item.stackSize;
-				ItemStack returned = ((IItemConduit)te).insertItem(d.getOpposite(), item);
-				if(returned == null)
-					return size;
-				return size - returned.stackSize;
-			}
-		}
-		return 0;
 	}
 	
 	//GETTERSETTERS
@@ -258,22 +240,10 @@ public abstract class TileEntityAbstractMiner extends TileEntityAbstractLaser im
 		worldObj.setBlockToAir(valuable.intX(), valuable.intY(), valuable.intZ());
 	}
 	
-	private boolean dumpInternalInventory()
-	{
-		while(extraStuff.size() > 0)
-		{
-			ItemStack is = extraStuff.get(0);
-			extraStuff.remove(0);
-			int dumped = dumpToInv(is);
-			if(dumped != is.stackSize)
-				return false;
-		}
-		return true;
-	}
-	
 	protected boolean harvestBlock(Vector3 valuable)
 	{
-		dumpInternalInventory();
+		boolean dumped = dumpInternalInventory();
+		WarpDrive.debugPrint("[AML]dump:" + dumped);
 		int blockID = worldObj.getBlockId(valuable.intX(), valuable.intY(), valuable.intZ());
 		int blockMeta = worldObj.getBlockMetadata(valuable.intX(), valuable.intY(), valuable.intZ());
 		if (blockID != Block.waterMoving.blockID && blockID != Block.waterStill.blockID && blockID != Block.lavaMoving.blockID && blockID != Block.lavaStill.blockID)
@@ -289,6 +259,7 @@ public abstract class TileEntityAbstractMiner extends TileEntityAbstractLaser im
 				}
 			}
 			mineBlock(valuable,blockID,blockMeta);
+			WarpDrive.debugPrint("[AML]didPlace:" + didPlace);
 			return didPlace;
 		}
 		else if (blockID == Block.waterMoving.blockID || blockID == Block.waterStill.blockID)
@@ -298,22 +269,41 @@ public abstract class TileEntityAbstractMiner extends TileEntityAbstractLaser im
 		return true;
 	}
 	
+	private boolean dumpInternalInventory()
+	{
+		while(extraStuff.size() > 0)
+		{
+			ItemStack is = extraStuff.remove(0);
+			int sz = is.stackSize;
+			int dumped = dumpToInv(is);
+			if(dumped != sz)
+				return false;
+		}
+		return true;
+	}
 	protected int dumpToInv(ItemStack item)
 	{
 		int itemsTransferred = 0;
+		int itemsToTransfer = item.stackSize;
 		if (grid != null)
 			itemsTransferred = putInGrid(item);
-		else
+		
+		if(itemsTransferred < itemsToTransfer)
 		{
+			item.stackSize = (itemsToTransfer - itemsTransferred);
 			IInventory chest = findChest();
 			if(chest != null)
-				itemsTransferred = putInChest(chest, item);
-			else
-				itemsTransferred = dumpToPipe(item);
+				itemsTransferred += putInChest(chest, item);
+		}
+		
+		if(itemsTransferred < itemsToTransfer)
+		{
+			item.stackSize = (itemsToTransfer - itemsTransferred);
+			itemsTransferred += dumpToPipe(item);
 		}
 			
 		
-		if(itemsTransferred < item.stackSize)
+		if(itemsTransferred < itemsToTransfer)
 		{
 			ItemStack tempStack = ItemStack.copyItemStack(item);
 			WarpDrive.debugPrint("[WarpDrive ALM]" + tempStack.itemID + "," + tempStack.getItemDamage());
@@ -327,6 +317,7 @@ public abstract class TileEntityAbstractMiner extends TileEntityAbstractLaser im
 	private int putInGrid(ItemStack itemStackSource)
 	{
 		int transferred = 0;
+		int toTransfer = itemStackSource.stackSize;
 		if(isMEReady && grid != null)
 		{
 			IMEInventoryHandler cellArray = grid.getCellArray();
@@ -335,11 +326,30 @@ public abstract class TileEntityAbstractMiner extends TileEntityAbstractLaser im
 				IAEItemStack ret = cellArray.addItems(Util.createItemStack(itemStackSource));
 				if (ret != null)
 					transferred = (int) ret.getStackSize();
+				else
+					transferred = toTransfer;
 			}
 		}
 		return transferred;
 	}
 
+	private int dumpToPipe(ItemStack item)
+	{
+		for(ForgeDirection d:ForgeDirection.VALID_DIRECTIONS)
+		{
+			TileEntity te = worldObj.getBlockTileEntity(xCoord+d.offsetX, yCoord+d.offsetY, zCoord+d.offsetZ);
+			if(te != null && te instanceof IItemConduit)
+			{
+				WarpDrive.debugPrint("dumping to pipe");
+				int size = item.stackSize;
+				ItemStack returned = ((IItemConduit)te).insertItem(d.getOpposite(), item);
+				if(returned == null)
+					return size;
+				return size - returned.stackSize;
+			}
+		}
+		return 0;
+	}
 	private int putInChest(IInventory inventory, ItemStack itemStackSource)
 	{
 		if (inventory == null || itemStackSource == null)
