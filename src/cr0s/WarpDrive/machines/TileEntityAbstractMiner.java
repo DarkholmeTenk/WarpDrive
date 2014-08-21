@@ -271,6 +271,7 @@ public abstract class TileEntityAbstractMiner extends TileEntityAbstractLaser im
 	
 	private boolean dumpInternalInventory()
 	{
+		WarpDrive.debugPrint("[Warpdrive ALM]dumping internal inv");
 		while(extraStuff.size() > 0)
 		{
 			ItemStack is = extraStuff.remove(0);
@@ -283,6 +284,7 @@ public abstract class TileEntityAbstractMiner extends TileEntityAbstractLaser im
 	}
 	protected int dumpToInv(ItemStack item)
 	{
+		WarpDrive.debugPrint("[WarpDrive ALM][" + xCoord + "," + yCoord + "," + zCoord + "]dumping" + item.itemID + ":" + item.getItemDamage() + "," + item.stackSize);
 		int itemsTransferred = 0;
 		int itemsToTransfer = item.stackSize;
 		if (grid != null)
@@ -302,11 +304,10 @@ public abstract class TileEntityAbstractMiner extends TileEntityAbstractLaser im
 			itemsTransferred += dumpToPipe(item);
 		}
 			
-		
+		WarpDrive.debugPrint("[WarpDrive ALM]dumped" + itemsTransferred + " attempting to store "  + (itemsToTransfer - itemsTransferred));
 		if(itemsTransferred < itemsToTransfer)
 		{
 			ItemStack tempStack = ItemStack.copyItemStack(item);
-			WarpDrive.debugPrint("[WarpDrive ALM]" + tempStack.itemID + "," + tempStack.getItemDamage());
 			tempStack.stackSize -= itemsTransferred;
 			extraStuff.add(tempStack);
 		}
