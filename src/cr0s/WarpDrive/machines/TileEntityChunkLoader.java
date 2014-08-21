@@ -247,13 +247,6 @@ public class TileEntityChunkLoader extends WarpChunkTE implements IPeripheral, I
 		}
 		return true;
 	}
-	
-	@Override
-	public void validate()
-	{
-		super.validate();
-		changedDistance();
-	}
 
 	@Override
 	public Map<EnumUpgradeTypes, Integer> getInstalledUpgrades()
