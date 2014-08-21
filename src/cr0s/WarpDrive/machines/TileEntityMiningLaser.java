@@ -90,7 +90,6 @@ public class TileEntityMiningLaser extends TileEntityAbstractMiner implements IP
 					valuableIndex = 0;
 					if (!collectEnergyPacketFromBooster(calculateLayerCost(), true))
 					{
-						WarpDrive.debugPrint("[WarpDrive ML]OOE");
 						return;
 					}
 					
@@ -123,13 +122,11 @@ public class TileEntityMiningLaser extends TileEntityAbstractMiner implements IP
 					int energyReq = calculateBlockCost();
 					if (collectEnergyPacketFromBooster(energyReq,true) && valuableIndex < valuablesInLayer.size())
 					{
-						//WarpDrive.debugPrint("[ML] Mining: " + (valuableIndex + 1) + "/" + valuablesInLayer.size());
 						Vector3 valuable = valuablesInLayer.get(valuableIndex);
 						// Mine valuable ore
 						int blockID = worldObj.getBlockId(valuable.intX(), valuable.intY(), valuable.intZ());
 						if (!canDig(blockID))
 						{
-							WarpDrive.debugPrint("Cannot mine: " + blockID);
 							valuableIndex++;
 							return;
 						}
@@ -168,7 +165,6 @@ public class TileEntityMiningLaser extends TileEntityAbstractMiner implements IP
 
 	private void scanLayer()
 	{
-		//WarpDrive.debugPrint("Scanning layer");
 		valuablesInLayer.clear();
 		int xmax, zmax, x1, x2, z1, z2;
 		int xmin, zmin;
@@ -218,7 +214,6 @@ public class TileEntityMiningLaser extends TileEntityAbstractMiner implements IP
 			}
 
 		valuableIndex = 0;
-		//WarpDrive.debugPrint("[ML] Found " + valuablesInLayer.size() + " valuables");
 	}
 
 	@Override

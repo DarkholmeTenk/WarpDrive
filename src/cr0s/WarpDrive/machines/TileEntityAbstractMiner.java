@@ -90,6 +90,7 @@ public abstract class TileEntityAbstractMiner extends TileEntityAbstractLaser im
 	@Override
 	public Object[] getEnergyObject()
 	{
+		findFirstBooster();
 		if(booster == null)
 			return new Object[] { 0, 0};
 		
@@ -243,7 +244,6 @@ public abstract class TileEntityAbstractMiner extends TileEntityAbstractLaser im
 	protected boolean harvestBlock(Vector3 valuable)
 	{
 		boolean dumped = dumpInternalInventory();
-		WarpDrive.debugPrint("[AML]dump:" + dumped);
 		int blockID = worldObj.getBlockId(valuable.intX(), valuable.intY(), valuable.intZ());
 		int blockMeta = worldObj.getBlockMetadata(valuable.intX(), valuable.intY(), valuable.intZ());
 		if (blockID != Block.waterMoving.blockID && blockID != Block.waterStill.blockID && blockID != Block.lavaMoving.blockID && blockID != Block.lavaStill.blockID)
@@ -259,7 +259,6 @@ public abstract class TileEntityAbstractMiner extends TileEntityAbstractLaser im
 				}
 			}
 			mineBlock(valuable,blockID,blockMeta);
-			WarpDrive.debugPrint("[AML]didPlace:" + didPlace);
 			return didPlace;
 		}
 		else if (blockID == Block.waterMoving.blockID || blockID == Block.waterStill.blockID)
@@ -271,7 +270,6 @@ public abstract class TileEntityAbstractMiner extends TileEntityAbstractLaser im
 	
 	private boolean dumpInternalInventory()
 	{
-		WarpDrive.debugPrint("[Warpdrive ALM]dumping internal inv");
 		while(extraStuff.size() > 0)
 		{
 			ItemStack is = extraStuff.remove(0);
@@ -284,7 +282,6 @@ public abstract class TileEntityAbstractMiner extends TileEntityAbstractLaser im
 	}
 	protected int dumpToInv(ItemStack item)
 	{
-		WarpDrive.debugPrint("[WarpDrive ALM][" + xCoord + "," + yCoord + "," + zCoord + "]dumping" + item.itemID + ":" + item.getItemDamage() + "," + item.stackSize);
 		int itemsTransferred = 0;
 		int itemsToTransfer = item.stackSize;
 		if (grid != null)
@@ -293,18 +290,17 @@ public abstract class TileEntityAbstractMiner extends TileEntityAbstractLaser im
 		if(itemsTransferred < itemsToTransfer)
 		{
 			item.stackSize = (itemsToTransfer - itemsTransferred);
-			IInventory chest = findChest();
-			if(chest != null)
-				itemsTransferred += putInChest(chest, item);
+			itemsTransferred += dumpToPipe(item);
 		}
 		
 		if(itemsTransferred < itemsToTransfer)
 		{
 			item.stackSize = (itemsToTransfer - itemsTransferred);
-			itemsTransferred += dumpToPipe(item);
+			IInventory chest = findChest();
+			if(chest != null)
+				itemsTransferred += putInChest(chest, item);
 		}
 			
-		WarpDrive.debugPrint("[WarpDrive ALM]dumped" + itemsTransferred + " attempting to store "  + (itemsToTransfer - itemsTransferred));
 		if(itemsTransferred < itemsToTransfer)
 		{
 			ItemStack tempStack = ItemStack.copyItemStack(item);
@@ -341,7 +337,6 @@ public abstract class TileEntityAbstractMiner extends TileEntityAbstractLaser im
 			TileEntity te = worldObj.getBlockTileEntity(xCoord+d.offsetX, yCoord+d.offsetY, zCoord+d.offsetZ);
 			if(te != null && te instanceof IItemConduit)
 			{
-				WarpDrive.debugPrint("dumping to pipe");
 				int size = item.stackSize;
 				ItemStack returned = ((IItemConduit)te).insertItem(d.getOpposite(), item);
 				if(returned == null)
@@ -434,7 +429,6 @@ public abstract class TileEntityAbstractMiner extends TileEntityAbstractLaser im
 				return (TileEntityParticleBooster) result;
 			}
 		}
-		WarpDrive.debugPrint("[WarpDrive ALM]nobooster");
 		booster = null;
 		return null;
 	}
@@ -697,10 +691,10 @@ public abstract class TileEntityAbstractMiner extends TileEntityAbstractLaser im
 	
 	public boolean isUseableByPlayer(EntityPlayer entityplayer) { return false; }
 
-    public void openChest() {}
+	public void openChest() {}
 
-    public void closeChest() {}
-    
-    public boolean isItemValidForSlot(int i, ItemStack itemstack) { return false; }
+	public void closeChest() {}
+	
+	public boolean isItemValidForSlot(int i, ItemStack itemstack) { return false; }
 	
 }

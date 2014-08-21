@@ -218,6 +218,7 @@ public abstract class WarpChunkTE extends WarpTE
 	@Override
 	public void invalidate()
 	{
+		super.invalidate();
 		for(Ticket t : ticketList)
 			ForgeChunkManager.releaseTicket(t);
 	}
