@@ -202,7 +202,7 @@ public class TileEntityPowerReactor extends WarpEnergyStoreTE implements IPeriph
 		int maxEn = (int) Math.floor( (3 * containedEnergy) / maxEnergy);
 		
 		int output = (4 * inVal) + maxEn;
-		WarpDrive.debugPrint("" +output);
+		//WarpDrive.debugPrint("" +output);
 		return output;
 	}
 	
@@ -355,7 +355,7 @@ public class TileEntityPowerReactor extends WarpEnergyStoreTE implements IPeriph
 			else
 			{
 				releaseAbove = (int)Math.ceil(Math.pow(rate,1.0/0.6));
-				WarpDrive.debugPrint(""+releaseAbove);
+				//WarpDrive.debugPrint(""+releaseAbove);
 				releaseMode = 2;
 			}
 			return new Object[] { (rate > 0) , rate };
