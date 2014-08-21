@@ -4,6 +4,7 @@ import java.util.Map;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.ChunkCoordIntPair;
+import net.minecraft.world.chunk.Chunk;
 import cr0s.WarpDrive.EnumUpgradeTypes;
 import cr0s.WarpDrive.WarpDrive;
 import cr0s.WarpDrive.WarpDriveConfig;
@@ -80,8 +81,17 @@ public class TileEntityChunkLoader extends WarpChunkTE implements IPeripheral, I
 	
 	private void changedDistance()
 	{
+		if(worldObj == null)
+			return;
 		if(myChunk == null)
-			myChunk = worldObj.getChunkFromBlockCoords(xCoord, zCoord).getChunkCoordIntPair();
+		{
+			Chunk t = worldObj.getChunkFromBlockCoords(xCoord, zCoord);
+			if(t != null)
+				myChunk = t.getChunkCoordIntPair();
+			else
+				return;
+				
+		}
 		negDX = -clampDistance(negDX);
 		posDX =  clampDistance(posDX);
 		negDZ = -clampDistance(negDZ);

@@ -416,23 +416,17 @@ public abstract class TileEntityAbstractMiner extends TileEntityAbstractLaser im
 	{
 		TileEntityParticleBooster b = booster();
 		if (b != null)
-			if (test)
-				return packet <= b.getEnergyStored();
-			else
-				return b.removeEnergy(packet,false);
+			return b.removeEnergy(packet,test);
 		return false;
 	}
 	
 	private TileEntityParticleBooster findFirstBooster()
 	{
 		TileEntity result;
-		int[] xPos = {1,-1,0,0,0,0};
-		int[] yPos = {0,0,-1,1,0,0};
-		int[] zPos = {0,0,0,0,-1,1};
 		
-		for(int i=0;i<6;i++)
+		for(ForgeDirection f:ForgeDirection.VALID_DIRECTIONS)
 		{
-			result = worldObj.getBlockTileEntity(xCoord + xPos[i], yCoord + yPos[i], zCoord + zPos[i]);
+			result = worldObj.getBlockTileEntity(xCoord + f.offsetX, yCoord + f.offsetY, zCoord + f.offsetZ);
 	
 			if (result != null && result instanceof TileEntityParticleBooster)
 			{
@@ -440,6 +434,7 @@ public abstract class TileEntityAbstractMiner extends TileEntityAbstractLaser im
 				return (TileEntityParticleBooster) result;
 			}
 		}
+		WarpDrive.debugPrint("[WarpDrive ALM]nobooster");
 		booster = null;
 		return null;
 	}

@@ -66,8 +66,7 @@ public class TileEntityMiningLaser extends TileEntityAbstractMiner implements IP
 	private int valuableIndex = 0;
 
 	private int layerOffset = 1;
-	//private long uid = 0;
-	//int t = 20;
+	
 	@Override
 	public void updateEntity()
 	{
@@ -86,11 +85,15 @@ public class TileEntityMiningLaser extends TileEntityAbstractMiner implements IP
 			{
 				if (++delayTicksScan > (WarpDriveConfig.ML_SCAN_DELAY / speedMul))
 				{
-					delayTicksScan = 0;
+					delayTicksScan = 0;	
 					valuablesInLayer.clear();
 					valuableIndex = 0;
 					if (!collectEnergyPacketFromBooster(calculateLayerCost(), true))
+					{
+						WarpDrive.debugPrint("[WarpDrive ML]OOE");
 						return;
+					}
+					
 					while (currentLayer > (minLayer - 1))
 					{
 						scanLayer();
