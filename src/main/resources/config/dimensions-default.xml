@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<worldGeneration version="2"
+    xmlns="WarpDrive"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="WarpDrive warpDrive.xsd">
+
+    <celestialBody group="milkyWay" name="sun" isVirtual="true">
+        <dimension type="space" id="" centerX="" centerZ="" radiusX="" radiusZ="" />
+        <coordinates />
+        <celestialBody group="star" name="sun" isVirtual="false">
+            <shape type="sphere/metasphere/belt/etc." radius="4500" />
+                <!-- sphere = just radius in km -->
+                <!-- metasphere (some kind of cloud) = radius in km + list of cores coordinates (with weighting?) -->
+                <!-- belt (or disk) = radius min/max in km + thickness in km + density? + coverage angulation min/max + inclination? -->
+            <orbit type="?" elements="a b c d e f" mass="1.5" />
+                <!-- what's the proper/standard name for those elements? -->
+                <!-- should we compute surface gravity from radius+mass or have it defined here? -->
+            
+            <atmosphere scaleHeight="0.5" albedo="1.5">
+                <molecule id="O2" ratio="*" /> <!-- * ratio means it'll cover (1 - all others) for the sake of rounding errors -->
+                <molecule id="N" ratio="0.15" />
+                <molecule id="H" ratio="0.05" />
+            </atmosphere>
+            
+            <!-- sequence of celestialBodies orbiting it -->
+            <celestialBody group="planet" name="earth">
+                <shape ... />
+                <orbit ... />
+                <atmosphere ... />
+                <celestialBody group="asteroid" name="moon">
+                    <shape ... />
+                    <orbit ... />
+                    <atmosphere ... />
+                </celestialBody>
+            </celestialBody>
+            ...
+            <celestialBody group="asteroid" name="innerBelt">
+                <shape ... />
+                <orbit ... />
+                <atmosphere ... />
+            </celestialBody>
+            ...
+            <celestialBody group="comet" name="halley">
+                <shape ... />
+                <orbit ... />
+                <atmosphere ... />
+            </celestialBody>
+        </celestialBody>
+    </celestialBody>
+
+</worldGeneration>

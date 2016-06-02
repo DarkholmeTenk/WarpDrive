@@ -1,0 +1,237 @@
+death.attack.warpdrive.asphyxia=%s умер от удушья
+death.attack.warpdrive.asphyxia.player=%2$s убил %1$s с помощью удушья
+death.attack.warpdrive.cold=%s died from cold
+death.attack.warpdrive.cold.player=%1$s was frozen to death by %2$s 
+death.attack.warpdrive.laser=%s died from crossing the beam
+death.attack.warpdrive.laser.player=%1$s was laserified by %2$s
+death.attack.warpdrive.shock=%s was electrocuted
+death.attack.warpdrive.shock.player=%1$s was electrocuted by %2$s
+death.attack.warpdrive.teleportation=%s не пережил рематериализацию
+death.attack.warpdrive.teleportation.player=%2$s убил %1$s телепортацией
+death.attack.warpdrive.warm=%s died from excessive temperature
+death.attack.warpdrive.warm.player=%1$s was cooked by %2$s
+
+item.warpdrive.crafting.Malformed.name=Поврежденный предмет
+item.warpdrive.crafting.EmeraldCrystal.name=Изумрудный настраиваемый кристалл
+item.warpdrive.crafting.EnderCrystal.name=Настраиваемый кристалл Края
+item.warpdrive.crafting.DiamondCrystal.name=Алмазный настраиваемый кристалл
+item.warpdrive.crafting.DiffractionGrating.name=Дифракционная решетка
+item.warpdrive.crafting.ReactorCore.name=Ядро реактора
+item.warpdrive.crafting.ComputerInterface.name=Компьютерный интерфейс
+item.warpdrive.crafting.PowerInterface.name=Интерфейс питания
+item.warpdrive.crafting.CapacitiveCrystal.name=Емкостный кристалл
+item.warpdrive.crafting.AirCanisterEmpty.name=Пустой баллон для воздуха
+item.warpdrive.crafting.AirCanisterEmpty.tooltip=Используйте на генераторе воздуха, чтобы наполнить
+item.warpdrive.crafting.Lens.name=Линза
+item.warpdrive.crafting.Zoom.name=Оптика
+item.warpdrive.crafting.GlassTank.name=Стеклянный бак
+item.warpdrive.crafting.FlatScreen.name=Плоский экран
+item.warpdrive.crafting.MemoryCrystal.name=Кристалл памяти
+item.warpdrive.crafting.Motor.name=Мотор
+item.warpdrive.crafting.BoneCharcoal.name=Костяной уголь
+item.warpdrive.crafting.ActivatedCarbon.name=Активированный уголь
+item.warpdrive.crafting.LaserMediumEmpty.name=Лазерный излучатель (Пустой)
+
+item.warpdrive.energy.IC2reactorLaserFocus.name=Фокусировщик лазера реактора IC2
+item.warpdrive.armor.AirCanisterFull.name=Баллон с воздухом
+item.warpdrive.armor.Helmet.name=Космический шлем
+
+item.warpdrive.upgrade.Power.name=Улучшение - Питание
+item.warpdrive.upgrade.Speed.name=Улучшение - Скорость
+item.warpdrive.upgrade.Range.name=Улучшение - Радиус
+item.warpdrive.upgrade.Energy.name=Улучшение - Хранилище энергии
+
+item.warpdrive.tool.TuningFork.name=Камертон
+item.warpdrive.tool.TuningFork.white.name=Белый камертон
+item.warpdrive.tool.TuningFork.orange.name=Оранжевый камертон
+item.warpdrive.tool.TuningFork.magenta.name=Пурпурный камертон
+item.warpdrive.tool.TuningFork.lightBlue.name=Голубой камертон
+item.warpdrive.tool.TuningFork.yellow.name=Желтый камертон
+item.warpdrive.tool.TuningFork.lime.name=Лаймовый камертон
+item.warpdrive.tool.TuningFork.pink.name=Розовый камертон
+item.warpdrive.tool.TuningFork.gray.name=Серый камертон
+item.warpdrive.tool.TuningFork.silver.name=Светло-серый камертон
+item.warpdrive.tool.TuningFork.cyan.name=Бирюзовый камертон
+item.warpdrive.tool.TuningFork.purple.name=Фиолетоый камертон
+item.warpdrive.tool.TuningFork.blue.name=Синий камертон
+item.warpdrive.tool.TuningFork.brown.name=Коричневый камертон
+item.warpdrive.tool.TuningFork.green.name=Зеленый камертон
+item.warpdrive.tool.TuningFork.red.name=Красный камертон
+item.warpdrive.tool.TuningFork.black.name=Черный камертон
+item.warpdrive.tool.TuningFork.tooltip.videoChannel=Видеоканал установлен на %1$d
+item.warpdrive.tool.TuningFork.tooltip.beamFrequency=Частота луча установлена на %1$d
+item.warpdrive.tool.TuningFork.tooltip.usage=\n\n§bИспользуйте на блоке§7, чтобы настроить его кристаллы\n§bПрисядьте§7, чтобы настроить вторичные кристаллы
+item.warpdrive.tool.TuningFork.use.setVideoChannel=%1$s настроен на видеоканал %2$d
+item.warpdrive.tool.TuningFork.use.setBeamFrequency=%1$s настроен на частоту луча %2$d
+
+
+tile.warpdrive.passive.Air.name=Воздух
+tile.warpdrive.passive.Energized.name=Энергизированный блок
+tile.warpdrive.passive.Gas.name=Газ
+tile.warpdrive.passive.IridiumBlock.name=Блок иридия
+tile.warpdrive.passive.HighlyAdvancedMachine.name=Высокотехнологичный корпус механизма
+tile.warpdrive.passive.Network.name=Сетевой блок
+tile.warpdrive.passive.Plain.name=Простой блок
+tile.warpdrive.passive.TransportBeacon.name=Маяк для транспортера
+
+tile.warpdrive.machines.AirGenerator.name=Генератор воздуха
+tile.warpdrive.machines.ChunkLoader.name=Загрузчик чанков
+tile.warpdrive.machines.Laser.name=Лазер
+tile.warpdrive.machines.LaserMedium.name=Лазерный излучатель (Ускоритель частиц)
+
+tile.warpdrive.building.ShipScanner.name=Сканер кораблей
+
+tile.warpdrive.collection.LaserTreeFarm.name=Лазерная ферма деревьев
+tile.warpdrive.collection.MiningLaser.name=Лазерная буровая установка
+
+tile.warpdrive.detection.Camera.name=Камера видеонаблюдения
+tile.warpdrive.detection.CloakingCoil.name=Маскировочная катушка
+tile.warpdrive.detection.CloakingCore.name=Маскировщик
+tile.warpdrive.detection.Monitor.name=Монитор
+tile.warpdrive.detection.Radar.name=Варп-радар
+tile.warpdrive.detection.WarpIsolation.name=Блок изоляции варп-поля
+
+tile.warpdrive.energy.EnanReactorCore.name=Ядро энантиоморфного реактора
+tile.warpdrive.energy.EnanReactorLaser.name=Лазер стабилизации энантиоморфного реактора
+tile.warpdrive.energy.EnergyBank.name=Хранилище энергии Ану
+tile.warpdrive.energy.IC2ReactorLaserMonitor.name=Лазерный монитор реактора IC2
+
+tile.warpdrive.movement.Lift.name=Лифт
+tile.warpdrive.movement.ShipController.name=Контроллер корабля
+tile.warpdrive.movement.ShipCore.name=Ядро корабля
+tile.warpdrive.movement.Transporter.name=Транспортер
+
+tile.warpdrive.weapon.LaserCamera.name=Камера с прикрепленным лазером
+tile.warpdrive.weapon.WeaponController.name=Контроллер оружия
+
+
+
+tile.warpdrive.hull1.plain.white.name=Белый базовый корабельный корпус
+tile.warpdrive.hull1.plain.orange.name=Оранжевый базовый корабельный корпус
+tile.warpdrive.hull1.plain.magenta.name=Пурпурный базовый корабельный корпус
+tile.warpdrive.hull1.plain.lightBlue.name=Голубой базовый корабельный корпус
+tile.warpdrive.hull1.plain.yellow.name=Желтый базовый корабельный корпус
+tile.warpdrive.hull1.plain.lime.name=Лаймовый базовый корабельный корпус
+tile.warpdrive.hull1.plain.pink.name=Розовый базовый корабельный корпус
+tile.warpdrive.hull1.plain.gray.name=Серый базовый корабельный корпус
+tile.warpdrive.hull1.plain.silver.name=Светло-серый базовый корабельный корпус
+tile.warpdrive.hull1.plain.cyan.name=Бирюзовый базовый корабельный корпус
+tile.warpdrive.hull1.plain.purple.name=Фиолетовый базовый корабельный корпус
+tile.warpdrive.hull1.plain.blue.name=Синий базовый корабельный корпус
+tile.warpdrive.hull1.plain.brown.name=Коричневый базовый корабельный корпус
+tile.warpdrive.hull1.plain.green.name=Зеленый базовый корабельный корпус
+tile.warpdrive.hull1.plain.red.name=Красный базовый корабельный корпус
+tile.warpdrive.hull1.plain.black.name=Черный базовый корабельный корпус
+
+tile.warpdrive.hull1.glass.white.name=Белое базовое корабельное стекло
+tile.warpdrive.hull1.glass.orange.name=Оранжевое базовое корабельное стекло
+tile.warpdrive.hull1.glass.magenta.name=Пурпурное базовое корабельное стекло
+tile.warpdrive.hull1.glass.lightBlue.name=Голубое базовое корабельное стекло
+tile.warpdrive.hull1.glass.yellow.name=Желтое базовое корабельное стекло
+tile.warpdrive.hull1.glass.lime.name=Лаймовое базовое корабельное стекло
+tile.warpdrive.hull1.glass.pink.name=Розовое базовое корабельное стекло
+tile.warpdrive.hull1.glass.gray.name=Серое базовое корабельное стекло
+tile.warpdrive.hull1.glass.silver.name=Светло-серое базовое корабельное стекло
+tile.warpdrive.hull1.glass.cyan.name=Бирюзовое базовое корабельное стекло
+tile.warpdrive.hull1.glass.purple.name=Фиолетовое базовое корабельное стекло
+tile.warpdrive.hull1.glass.blue.name=Синее базовое корабельное стекло
+tile.warpdrive.hull1.glass.brown.name=Коричневое базовое корабельное стекло
+tile.warpdrive.hull1.glass.green.name=Зеленое базовое корабельное стекло
+tile.warpdrive.hull1.glass.red.name=Красное базовое корабельное стекло
+tile.warpdrive.hull1.glass.black.name=Черное базовое корабельное стекло
+
+tile.warpdrive.hull2.plain.white.name=Белый улучшенный корабельный корпус
+tile.warpdrive.hull2.plain.orange.name=Оранжевый улучшенный корабельный корпус
+tile.warpdrive.hull2.plain.magenta.name=Пурпурный улучшенный корабельный корпус
+tile.warpdrive.hull2.plain.lightBlue.name=Голубой улучшенный корабельный корпус
+tile.warpdrive.hull2.plain.yellow.name=Желтый улучшенный корабельный корпус
+tile.warpdrive.hull2.plain.lime.name=Лаймовый улучшенный корабельный корпус
+tile.warpdrive.hull2.plain.pink.name=Розовый улучшенный корабельный корпус
+tile.warpdrive.hull2.plain.gray.name=Серый улучшенный корабельный корпус
+tile.warpdrive.hull2.plain.silver.name=Светло-серый улучшенный корабельный корпус
+tile.warpdrive.hull2.plain.cyan.name=Бирюзовый улучшенный корабельный корпус
+tile.warpdrive.hull2.plain.purple.name=Фиолетовый улучшенный корабельный корпус
+tile.warpdrive.hull2.plain.blue.name=Синий улучшенный корабельный корпус
+tile.warpdrive.hull2.plain.brown.name=Коричневый улучшенный корабельный корпус
+tile.warpdrive.hull2.plain.green.name=Зеленый улучшенный корабельный корпус
+tile.warpdrive.hull2.plain.red.name=Красный улучшенный корабельный корпус
+tile.warpdrive.hull2.plain.black.name=Черный улучшенный корабельный корпус
+
+tile.warpdrive.hull2.glass.white.name=Белое улучшенное корабельное стекло
+tile.warpdrive.hull2.glass.orange.name=Оранжевое улучшенное корабельное стекло
+tile.warpdrive.hull2.glass.magenta.name=Пурпурное улучшенное корабельное стекло
+tile.warpdrive.hull2.glass.lightBlue.name=Голубое улучшенное корабельное стекло
+tile.warpdrive.hull2.glass.yellow.name=Желтое улучшенное корабельное стекло
+tile.warpdrive.hull2.glass.lime.name=Лаймовое улучшенное корабельное стекло
+tile.warpdrive.hull2.glass.pink.name=Розовое улучшенное корабельное стекло
+tile.warpdrive.hull2.glass.gray.name=Серое улучшенное корабельное стекло
+tile.warpdrive.hull2.glass.silver.name=Светло-серое улучшенное корабельное стекло
+tile.warpdrive.hull2.glass.cyan.name=Бирюзовое улучшенное корабельное стекло
+tile.warpdrive.hull2.glass.purple.name=Фиолетовое улучшенное корабельное стекло
+tile.warpdrive.hull2.glass.blue.name=Синее улучшенное корабельное стекло
+tile.warpdrive.hull2.glass.brown.name=Коричневое улучшенное корабельное стекло
+tile.warpdrive.hull2.glass.green.name=Зеленое улучшенное корабельное стекло
+tile.warpdrive.hull2.glass.red.name=Красное улучшенное корабельное стекло
+tile.warpdrive.hull2.glass.black.name=Черное улучшенное корабельное стекло
+
+tile.warpdrive.hull3.plain.white.name=Белый высококачественный корабельный корпус
+tile.warpdrive.hull3.plain.orange.name=Оранжевый высококачественный корабельный корпус
+tile.warpdrive.hull3.plain.magenta.name=Пурпурный высококачественный корабельный корпус
+tile.warpdrive.hull3.plain.lightBlue.name=Голубой высококачественный корабельный корпус
+tile.warpdrive.hull3.plain.yellow.name=Желтый высококачественный корабельный корпус
+tile.warpdrive.hull3.plain.lime.name=Лаймовый высококачественный корабельный корпус
+tile.warpdrive.hull3.plain.pink.name=Розовый высококачественный корабельный корпус
+tile.warpdrive.hull3.plain.gray.name=Серый высококачественный корабельный корпус
+tile.warpdrive.hull3.plain.silver.name=Светло-серый высококачественный корабельный корпус
+tile.warpdrive.hull3.plain.cyan.name=Бирюзовый высококачественный корабельный корпус
+tile.warpdrive.hull3.plain.purple.name=Фиолетовый высококачественный корабельный корпус
+tile.warpdrive.hull3.plain.blue.name=Синий высококачественный корабельный корпус
+tile.warpdrive.hull3.plain.brown.name=Коричневый высококачественный корабельный корпус
+tile.warpdrive.hull3.plain.green.name=Зеленый высококачественный корабельный корпус
+tile.warpdrive.hull3.plain.red.name=Красный высококачественный корабельный корпус
+tile.warpdrive.hull3.plain.black.name=Черный высококачественный корабельный корпус
+
+tile.warpdrive.hull3.glass.white.name=Белое высококачественное корабельное стекло
+tile.warpdrive.hull3.glass.orange.name=Оранжевое высококачественное корабельное стекло
+tile.warpdrive.hull3.glass.magenta.name=Пурпурное высококачественное корабельное стекло
+tile.warpdrive.hull3.glass.lightBlue.name=Голубое высококачественное корабельное стекло
+tile.warpdrive.hull3.glass.yellow.name=Желтое высококачественное корабельное стекло
+tile.warpdrive.hull3.glass.lime.name=Лаймовое высококачественное корабельное стекло
+tile.warpdrive.hull3.glass.pink.name=Розовое высококачественное корабельное стекло
+tile.warpdrive.hull3.glass.gray.name=Серое высококачественное корабельное стекло
+tile.warpdrive.hull3.glass.silver.name=Светло-серое высококачественное корабельное стекло
+tile.warpdrive.hull3.glass.cyan.name=Бирюзовое высококачественное корабельное стекло
+tile.warpdrive.hull3.glass.purple.name=Фиолетовое высококачественное корабельное стекло
+tile.warpdrive.hull3.glass.blue.name=Синее высококачественное корабельное стекло
+tile.warpdrive.hull3.glass.brown.name=Коричневое высококачественное корабельное стекло
+tile.warpdrive.hull3.glass.green.name=Зеленое высококачественное корабельное стекло
+tile.warpdrive.hull3.glass.red.name=Красное высококачественное корабельное стекло
+tile.warpdrive.hull3.glass.black.name=Черное высококачественное корабельное стекло
+
+
+warpdrive.guide.prefix=%1$s: 
+warpdrive.error.badTileEntity=§cэтот блок нужно сломать и поставить заново. 
+warpdrive.monitor.viewingCamera=Просмотр камеры на %2$d, %3$d, %4$d через канал %1$d
+warpdrive.ship.attachedPlayers=Прирепленные игроки: %1$s
+warpdrive.ship.playerAttached=Вы были прикреплены к кораблю %1$s.\nПрикрепленные игроки: %2$s
+warpdrive.ship.playerDetached=Вы были откреплены от корабля %1$s.\nПрикрепленные игроки: %2$s
+warpdrive.ship.statusLine.cooling=Осталось %1$d с до остывания.
+warpdrive.ship.statusLine.isolation=%1$d активных блоков изоляции предоставляют %2$2.1f%% поглощения.
+warpdrive.energy.statusLine=Содержит энергии: %1$s/%2$s EU.
+warpdrive.beamFrequency.statusLine.valid=Частота луча %1$d действительна. 
+warpdrive.beamFrequency.statusLine.invalid=§cЧастота луча %1$d недействительна.
+warpdrive.videoChannel.statusLine.valid=Видеоканал %1$d действителен. 
+warpdrive.videoChannel.statusLine.validCamera=Видеоканал %1$d действителен для камеры на %2$d, %3$d, %4$d. 
+warpdrive.videoChannel.statusLine.invalid=§cВидеоканал %1$d недействителен.
+warpdrive.videoChannel.statusLine.invalidOrNotLoaded=§cВидеоканал %1$d недействителен или камера слишком далеко.
+warpdrive.cloakingCore.invalidAssembly=§cНеверная структура.
+warpdrive.cloakingCore.disabled=Маскировка выключена
+warpdrive.cloakingCore.lowPower=§cМаскировка выключилась, нужно больше энергии, капитан!
+warpdrive.cloakingCore.cloaking=Маскировка %1$d уровня покрывает %2$d блоков.
+warpdrive.IC2reactorLaserMonitor.noReactor=Реактор не найден!
+warpdrive.IC2reactorLaserMonitor.multipleReactors=%1$d реактор(ов) подключено.
+warpdrive.transporter.status=Из %1$.0f %2$.0f %3$.0f в %4$.0f %5$.0f %6$.0f
+
+
+
+

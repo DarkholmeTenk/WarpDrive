@@ -1,0 +1,49 @@
+if not term.isColor() then
+  print("Advanced computer required")
+  exit()
+end
+
+sides = peripheral.getNames()
+treefarms = {}
+for key,side in pairs(sides) do
+  if peripheral.getType(side) == "warpdriveLaserTreeFarm" then
+    print("Wrapping " .. side)
+    table.insert(treefarms, peripheral.wrap(side))
+  end
+end
+
+label = os.getComputerLabel()
+if label then
+else
+  label = "" .. os.getComputerID()
+end
+term.setBackgroundColor(colors.black)
+term.clear()
+term.setBackgroundColor(colors.lime)
+term.setCursorPos(1, 1)
+term.write(label)
+
+if #treefarms == 0 then
+  term.setBackgroundColor(colors.red)
+  term.setTextColor(colors.white)
+  term.write("No laser tree farm detected")
+else
+  for key,treefarm in pairs(treefarms) do
+    term.setCursorPos(1, 2 + key)
+    statusString, isActive = treefarm.state()
+    if not isActive then
+      term.setBackgroundColor(colors.red)
+      term.setTextColor(colors.white)
+      term.write("Laser tree farm " .. key .. " of " .. #treefarms .. " is already stopped")
+    else
+      treefarm.stop()
+      term.setBackgroundColor(colors.lime)
+      term.setTextColor(colors.blue)
+      term.write("Laser tree farm " .. key .. " of " .. #treefarms .. " has been stopped")
+  end
+  end
+end
+
+term.setBackgroundColor(colors.black)
+term.setTextColor(colors.white)
+print()

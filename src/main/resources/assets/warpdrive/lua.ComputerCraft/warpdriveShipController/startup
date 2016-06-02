@@ -1,0 +1,981 @@
+if not term.isColor() then
+  print("Advanced computer required")
+  exit()
+end
+print("loading...")
+
+monitor_textScale = 0.5
+
+Style = {
+  CDefault = colors.white,
+  BGDefault = colors.blue,
+
+  CTitle = colors.black,
+  BGTitle = colors.cyan,
+
+  CWarning = colors.white,
+  BGWarning = colors.red,
+
+  CSuccess = colors.white,
+  BGSuccess = colors.lime,
+
+  CDisabled = colors.gray,
+  BGDisabled = colors.blue
+}
+
+----------- Monitor support
+
+function SetMonitorColorFrontBack(frontColor, backgroundColor)
+  term.setBackgroundColor(backgroundColor)
+  term.setTextColor(frontColor)
+  if monitors ~= nil then
+    for key,monitor in pairs(monitors) do
+      monitor.setTextColor(frontColor)
+      monitor.setBackgroundColor(backgroundColor)
+    end
+  end
+end
+
+function Write(text)
+  term.write(text)
+  if monitors ~= nil then
+    for key,monitor in pairs(monitors) do
+      if key ~= data.radar_monitorIndex then
+        monitor.write(text)
+      end
+    end
+  end
+end
+
+function SetCursorPos(x, y)
+  term.setCursorPos(x, y)
+  if monitors ~= nil then
+    for key,monitor in pairs(monitors) do
+      if key ~= data.radar_monitorIndex then
+        monitor.setCursorPos(x, y)
+      end
+    end
+  end
+end
+
+function SetColorDefault()
+  SetMonitorColorFrontBack(Style.CDefault, Style.BGDefault)
+end
+
+function SetColorTitle()
+  SetMonitorColorFrontBack(Style.CTitle, Style.BGTitle)
+end
+
+function SetColorWarning()
+  SetMonitorColorFrontBack(Style.CWarning, Style.BGWarning)
+end
+
+function SetColorSuccess()
+  SetMonitorColorFrontBack(Style.CSuccess, Style.BGSuccess)
+end
+
+function SetColorDisabled()
+  SetMonitorColorFrontBack(Style.CDisabled, Style.BGDisabled)
+end
+
+function Clear()
+  clearWarningTick = -1
+  SetColorDefault()
+  term.clear()
+  if monitors ~= nil then
+    for key,monitor in pairs(monitors) do
+      if key ~= data.radar_monitorIndex then
+        monitor.clear()
+      end
+    end
+  end
+  SetCursorPos(1, 1)
+end
+
+function ClearLine()
+  SetColorDefault()
+  term.clearLine()
+  if monitors ~= nil then
+    for key,monitor in pairs(monitors) do
+      if key ~= data.radar_monitorIndex then
+        monitor.clearLine()
+      end
+    end
+  end
+  SetCursorPos(1, 1)
+end
+
+function WriteLn(text)
+  Write(text)
+  local x, y = term.getCursorPos()
+  local width, height = term.getSize()
+  if y > height - 1 then
+    y = 1
+  end
+  SetCursorPos(1, y + 1)
+end
+
+function WriteCentered(y, text)
+  SetCursorPos((51 - text:len()) / 2, y)
+  term.write(text)
+  if monitors ~= nil then
+    for key,monitor in pairs(monitors) do
+      if key ~= data.radar_monitorIndex then
+        local sizeX, sizeY = monitor.getSize()
+        monitor.setCursorPos((sizeX - text:len()) / 2, y)
+        monitor.write(text)
+      end
+    end
+  end
+  local xt, yt = term.getCursorPos()
+  SetCursorPos(1, yt + 1)
+end
+
+function ShowTitle(text)
+  Clear()
+  SetColorTitle()
+  WriteCentered(1, text)
+  SetColorDefault()
+end
+
+function ShowMenu(text)
+  Write(text)
+  local sizeX, sizeY = term.getSize()
+  local xt, yt = term.getCursorPos()
+  for i = xt, sizeX do
+    Write(" ")
+  end
+  SetCursorPos(1, yt + 1)
+end
+
+local clearWarningTick = -1
+function ShowWarning(text)
+  local sizeX, sizeY = term.getSize()
+  SetCursorPos(1, sizeY)
+  ClearLine()
+  SetColorWarning()
+  SetCursorPos((sizeX - text:len() - 2) / 2, sizeY)
+  Write(" " .. text .. " ")
+  SetColorDefault()
+  clearWarningTick = 5
+end
+function ClearWarning()
+  if clearWarningTick > 0 then
+    clearWarningTick = clearWarningTick - 1
+  elseif clearWarningTick == 0 then
+    SetColorDefault()
+    local sizeX, sizeY = term.getSize()
+    SetCursorPos(1, sizeY)
+    ClearLine()
+    clearWarningTick = -1
+  end
+end
+
+----------- Formatting & popups
+
+function FormatFloat(value, nbchar)
+  local str = "?"
+  if value ~= nil then
+    str = string.format("%g", value)
+  end
+  if nbchar ~= nil then
+    str = string.sub("               " .. str, -nbchar)
+  end
+  return str
+end
+function FormatInteger(value, nbchar)
+  local str = "?"
+  if value ~= nil then
+    str = string.format("%d", value)
+  end
+  if nbchar ~= nil then
+    str = string.sub("               " .. str, -nbchar)
+  end
+  return str
+end
+
+function boolToYesNo(bool)
+  if bool then
+    return "YES"
+  else
+    return "no"
+  end
+end
+
+function readInputNumber(currentValue)
+  local inputAbort = false
+  local input = string.format(currentValue)
+  if input == "0" then
+    input = ""
+  end
+  local x, y = term.getCursorPos()
+  repeat
+    ClearWarning()
+    SetColorDefault()
+    SetCursorPos(x, y)
+    Write(input .. "            ")
+    input = string.sub(input, -9)
+    
+    local params = { os.pullEventRaw() }
+    local eventName = params[1]
+    local address = params[2]
+    if address == nil then address = "none" end
+    if eventName == "key" then
+      local keycode = params[2]
+      if keycode >= 2 and keycode <= 10 then -- 1 to 9
+        input = input .. string.format(keycode - 1)
+      elseif keycode == 11 or keycode == 82 then -- 0 & keypad 0
+        input = input .. "0"
+      elseif keycode >= 79 and keycode <= 81 then -- keypad 1 to 3
+        input = input .. string.format(keycode - 78)
+      elseif keycode >= 75 and keycode <= 77 then -- keypad 4 to 6
+        input = input .. string.format(keycode - 71)
+      elseif keycode >= 71 and keycode <= 73 then -- keypad 7 to 9
+        input = input .. string.format(keycode - 64)
+      elseif keycode == 14 then -- Backspace
+        input = string.sub(input, 1, string.len(input) - 1)
+      elseif keycode == 211 then -- Delete
+        input = ""
+      elseif keycode == 28 then -- Enter
+        inputAbort = true
+      elseif keycode == 74 or keycode == 12 or keycode == 49 then -- - on numeric keypad or - on US top or n letter
+        if string.sub(input, 1, 1) == "-" then
+          input = string.sub(input, 2)
+        else
+          input = "-" .. input
+        end
+      elseif keycode == 78 then -- +
+        if string.sub(input, 1, 1) == "-" then
+          input = string.sub(input, 2)
+        end
+      else
+        ShowWarning("Key " .. keycode .. " is invalid")
+      end
+    elseif eventName == "terminate" then
+      inputAbort = true
+    elseif not common_event(eventName, params[2]) then
+      ShowWarning("Event '" .. eventName .. "', " .. address .. " is unsupported")
+    end
+  until inputAbort
+  SetCursorPos(1, y + 1)
+  if input == "" or input == "-" then
+    return currentValue
+  else
+    return tonumber(input)
+  end
+end
+
+function readInputText(currentValue)
+  local inputAbort = false
+  local input = string.format(currentValue)
+  local x, y = term.getCursorPos()
+  os.pullEventRaw() -- skip first char event
+  repeat
+    ClearWarning()
+    SetColorDefault()
+    SetCursorPos(x, y)
+    Write(input .. "                              ")
+    input = string.sub(input, -30)
+    
+    local params = { os.pullEventRaw() }
+    local eventName = params[1]
+    local address = params[2]
+    if address == nil then address = "none" end
+    if eventName == "key" then
+      local keycode = params[2]
+      if keycode == 14 then -- Backspace
+        input = string.sub(input, 1, string.len(input) - 1)
+      elseif keycode == 211 then -- Delete
+        input = ""
+      elseif keycode == 28 then -- Enter
+        inputAbort = true
+      else
+        ShowWarning("Key " .. keycode .. " is invalid")
+      end
+    elseif eventName == "char" then
+      local char = params[2]
+      if char >= ' ' and char <= '~' then -- 1 to 9
+        input = input .. char
+      else
+        ShowWarning("Char #" .. string.byte(char) .. " is invalid")
+      end
+    elseif eventName == "terminate" then
+      inputAbort = true
+    elseif not common_event(eventName, params[2]) then
+      ShowWarning("Event '" .. eventName .. "', " .. address .. " is unsupported")
+    end
+  until inputAbort
+  SetCursorPos(1, y + 1)
+  if input == "" then
+    return currentValue
+  else
+    return input
+  end
+end
+
+function readConfirmation(msg)
+  if msg == nil then
+    ShowWarning("Are you sure? (y/n)")
+  else
+    ShowWarning(msg)
+  end
+  repeat
+    local params = { os.pullEventRaw() }
+    local eventName = params[1]
+    local address = params[2]
+    if address == nil then address = "none" end
+    if eventName == "key" then
+      local keycode = params[2]
+      if keycode == 21 then -- Y
+        return true
+      else
+        return false
+      end
+    elseif eventName == "terminate" then
+      return false
+    elseif not common_event(eventName, params[2]) then
+      ShowWarning("Event '" .. eventName .. "', " .. address .. " is unsupported")
+    end
+  until false
+end
+
+----------- commons: menu, event handlers, etc.
+
+function common_event(eventName, param)
+  if eventName == "redstone" then
+    redstone_event(param)
+  elseif eventName == "timer" then
+  elseif eventName == "shipCoreCooldownDone" then
+    ShowWarning("Ship core cooldown done")
+  elseif eventName == "char" then
+  elseif eventName == "key_up" then
+  elseif eventName == "mouse_click" then
+  elseif eventName == "mouse_up" then
+  elseif eventName == "mouse_drag" then
+  elseif eventName == "monitor_touch" then
+  elseif eventName == "monitor_resize" then
+  elseif eventName == "peripheral" then
+  elseif eventName == "peripheral_detach" then
+  else
+    return false
+  end
+  return true
+end
+
+function menu_common()
+  SetCursorPos(1, 18)
+  SetColorTitle()
+  ShowMenu("0 Connections, 1 Ship core, X Exit")
+end
+
+----------- Redstone support
+
+local tblRedstoneState = {-- Remember redstone state on each side
+  ["top"] = rs.getInput("top"),
+  ["front"] = rs.getInput("front"),
+  ["left"] = rs.getInput("left"),
+  ["right"] = rs.getInput("right"),
+  ["back"] = rs.getInput("back"),
+  ["bottom"] = rs.getInput("bottom"),
+}
+local tblSides = {-- list all sides and offset coordinates
+  ["top"   ] = { 3, 1},
+  ["front" ] = { 1, 3},
+  ["left"  ] = { 3, 3},
+  ["right" ] = { 5, 3},
+  ["back"  ] = { 5, 5},
+  ["bottom"] = { 3, 5},
+}
+
+function redstone_event()
+  -- Event only returns nil so we need to check sides manually
+  local message = ""
+  for side, state in pairs(tblRedstoneState) do
+    if rs.getInput(side) ~= state then
+      -- print(side .. " is now " .. tostring(rs.getInput(side)))
+      message = message .. side .. " "
+      tblRedstoneState[side] = rs.getInput(side)
+    end
+  end
+  if message ~= "" then
+    message = "Redstone changed on " .. message
+    showWarning(message)
+  end
+end
+
+----------- Configuration
+
+function data_save()
+  local file = fs.open("shipdata.txt", "w")
+  if file ~= nil then
+    file.writeLine(textutils.serialize(data))
+    file.close()
+  else
+    ShowWarning("No file system")
+    os.sleep(3)
+  end
+end
+
+function data_read()
+  data = { }
+  if fs.exists("shipdata.txt") then
+    local file = fs.open("shipdata.txt", "r")
+    data = textutils.unserialize(file.readAll())
+    file.close()
+  end
+  if data.core_summon == nil then data.core_summon = false; end
+end
+
+function data_setName()
+  if ship ~= nil then
+    ShowTitle("<==== Set ship name ====>")
+  else
+    ShowTitle("<==== Set name ====>")
+  end
+  
+  SetCursorPos(1, 2)
+  Write("Enter ship name: ")
+  label = readInputText(label)
+  os.setComputerLabel(label)
+  if ship ~= nil then
+    ship.coreFrequency(label)
+  end
+  os.reboot()
+end
+
+function string_split(source, sep)
+  local sep = sep or ":"
+  local fields = {}
+  local pattern = string.format("([^%s]+)", sep)
+  source:gsub(pattern, function(c) fields[#fields + 1] = c end)
+  return fields
+end
+
+----------- Ship support
+
+core_front = 0
+core_right = 0
+core_up = 0
+core_back = 0
+core_left = 0
+core_down = 0
+core_isInHyper = false
+core_jumpCost = 0
+core_shipSize = 0
+core_movement = { 0, 0, 0 }
+core_rotationSteps = 0
+
+function core_boot()
+  if ship == nil then
+    return
+  end
+  
+  Write("Booting Ship Core")
+  
+  if data.core_summon then
+    ship.summon_all()
+  end
+  
+  WriteLn("...")
+  core_front, core_right, core_up = ship.dim_positive()
+  core_back, core_left, core_down = ship.dim_negative()
+  core_isInHyper = ship.isInHyperspace()
+  core_rotationSteps = ship.rotationSteps()
+  core_movement = { ship.movement() }
+  if ship.direction ~= nil then
+    ship.direction(666)
+    ship.distance(0)
+  end
+  WriteLn("Ship core detected...")
+  
+  repeat
+    pos = ship.position()
+    os.sleep(0.3)
+  until pos ~= nil
+  X, Y, Z = ship.position()
+  WriteLn("Ship position triangulated...")
+  
+  repeat
+    isAttached = ship.isAttached()
+    os.sleep(0.3)
+  until isAttached ~= false
+  WriteLn("Ship core linked...")
+  
+  repeat
+    core_shipSize = ship.getShipSize()
+    os.sleep(0.3)
+  until core_shipSize ~= nil
+  WriteLn("Ship size updated...")
+  
+  ship.mode(1)
+end
+
+function core_writeMovement()
+  local message = " Movement         = "
+  local count = 0
+  if core_movement[1] > 0 then
+    message = message .. core_movement[1] .. " front"
+    count = count + 1
+  elseif core_movement[1] < 0 then
+    message = message .. (- core_movement[1]) .. " back"
+    count = count + 1
+  end
+  if core_movement[2] > 0 then
+    if count > 0 then message = message .. ", "; end
+    message = message .. core_movement[2] .. " up"
+    count = count + 1
+  elseif core_movement[2] < 0 then
+    if count > 0 then message = message .. ", "; end
+    message = message .. (- core_movement[2]) .. " down"
+    count = count + 1
+  end
+  if core_movement[3] > 0 then
+    if count > 0 then message = message .. ", "; end
+    message = message .. core_movement[3] .. " right"
+    count = count + 1
+  elseif core_movement[3] < 0 then
+    if count > 0 then message = message .. ", "; end
+    message = message .. (- core_movement[3]) .. " left"
+    count = count + 1
+  end
+  
+  if core_rotationSteps == 1 then
+    if count > 0 then message = message .. ", "; end
+    message = message .. "Turn right"
+    count = count + 1
+  elseif core_rotationSteps == 2 then
+    if count > 0 then message = message .. ", "; end
+    message = message .. "Turn back"
+    count = count + 1
+  elseif core_rotationSteps == 3 then
+    if count > 0 then message = message .. ", "; end
+    message = message .. "Turn left"
+    count = count + 1
+  end
+  
+  if count == 0 then
+    message = message .. "(none)"
+  end
+  WriteLn(message)
+end
+
+function core_writeRotation()
+  if core_rotationSteps == 0 then
+    WriteLn(" Rotation         = Front")
+  elseif core_rotationSteps == 1 then
+    WriteLn(" Rotation         = Right +90")
+  elseif core_rotationSteps == 2 then
+    WriteLn(" Rotation         = Back 180")
+  elseif core_rotationSteps == 3 then
+    WriteLn(" Rotation         = Left -90")
+  end
+end
+
+function core_computeNewCoordinates(cx, cy, cz)
+  local res = { x = cx, y = cy, z = cz }
+  local dx, dy, dz = ship.getOrientation()
+  local worldMovement = { x = 0, y = 0, z = 0 }
+  worldMovement.x = dx * core_movement[1] - dz * core_movement[3]
+  worldMovement.y = core_movement[2]
+  worldMovement.z = dz * core_movement[1] + dx * core_movement[3]
+  core_actualDistance = math.ceil(math.sqrt(worldMovement.x * worldMovement.x + worldMovement.y * worldMovement.y + worldMovement.z * worldMovement.z))
+  core_jumpCost = ship.getEnergyRequired(core_actualDistance)
+  res.x = res.x + worldMovement.x
+  res.y = res.y + worldMovement.y
+  res.z = res.z + worldMovement.z
+  return res
+end
+
+function core_warp()
+  -- rs.setOutput(alarm_side, true)
+  if readConfirmation() then
+    -- rs.setOutput(alarm_side, false)
+    ship.movement(core_movement[1], core_movement[2], core_movement[3])
+    ship.rotationSteps(core_rotationSteps)
+    ship.mode(1)
+    ship.jump()
+    -- ship = nil
+  end
+  -- rs.setOutput(alarm_side, false)
+end
+
+function core_page_setMovement()
+  ShowTitle("<==== Set movement ====>")
+  SetCursorPos(1, 15)
+  SetColorTitle()
+  ShowMenu("Enter 0 to keep position on that axis")
+  ShowMenu("Use - or n keys to move in opposite direction")
+  ShowMenu("Press Enter to confirm")
+  SetColorDefault()
+  SetCursorPos(1, 3)
+  
+  core_movement[1] = core_page_setDistanceAxis(2, "Front", core_movement[1], math.abs(core_front + core_back + 1))
+  core_movement[2] = core_page_setDistanceAxis(3, "Up"   , core_movement[2], math.abs(core_up + core_down + 1))
+  core_movement[3] = core_page_setDistanceAxis(4, "Right", core_movement[3], math.abs(core_left + core_right + 1))
+  core_movement = { ship.movement(core_movement[1], core_movement[2], core_movement[3]) }
+end
+
+function core_page_setDistanceAxis(line, axis, userEntry, shipLength)
+  local maximumDistance = shipLength + 127
+  if core_isInHyper and line ~= 3 then
+    maximumDistance = shipLength + 127 * 100
+  end
+  repeat
+    SetCursorPos(1, line)
+    Write(axis .. " (min " .. (shipLength + 1) .. ", max " .. maximumDistance .. "): ")
+    userEntry = readInputNumber(userEntry)
+    if userEntry == 0 then
+      return userEntry
+    end
+    if math.abs(userEntry) <= shipLength or math.abs(userEntry) > maximumDistance then
+      ShowWarning("Wrong distance. Try again.")
+    end
+  until math.abs(userEntry) > shipLength and math.abs(userEntry) <= maximumDistance
+  
+  return userEntry
+end
+
+function core_page_setRotation()
+  local inputAbort = false
+  local drun = true
+  repeat
+    ShowTitle("<==== Set rotation ====>")
+    core_writeRotation()
+    SetCursorPos(1, 16)
+    SetColorTitle()
+    ShowMenu("Use directional keys")
+    ShowMenu("Press Enter to confirm")
+    SetColorDefault()
+    local params = { os.pullEventRaw() }
+    local eventName = params[1]
+    local address = params[2]
+    if address == nil then address = "none" end
+    if eventName == "key" then
+      local keycode = params[2]
+      if keycode == 200 then
+        core_rotationSteps = 0
+      elseif keycode == 203 then
+        core_rotationSteps = 3
+      elseif keycode == 205 then
+        core_rotationSteps = 1
+      elseif keycode == 208 then
+        core_rotationSteps = 2
+      elseif keycode == 28 then
+        inputAbort = true
+      else
+        ShowWarning("Key " .. keycode .. " is invalid")
+      end
+    elseif eventName == "terminate" then
+      inputAbort = true
+    elseif not common_event(eventName, params[2]) then
+      ShowWarning("Event '" .. eventName .. "', " .. address .. " is unsupported")
+    end
+  until inputAbort
+  core_rotationSteps = ship.rotationSteps(core_rotationSteps)
+end
+
+function core_page_setDimensions()
+  ShowTitle("<==== Set dimensions ====>")
+  Write(" Front (".. core_front ..") : ")
+  core_front = readInputNumber(core_front)
+  Write(" Right (".. core_right ..") : ")
+  core_right = readInputNumber(core_right)
+  Write(" Up    (".. core_up ..") : ")
+  core_up = readInputNumber(core_up)
+  Write(" Back  (".. core_back ..") : ")
+  core_back = readInputNumber(core_back)
+  Write(" Left  (".. core_left ..") : ")
+  core_left = readInputNumber(core_left)
+  Write(" Down  (".. core_down ..") : ")
+  core_down = readInputNumber(core_down)
+  Write("Setting dimensions...")
+  core_front, core_right, core_up = ship.dim_positive(core_front, core_right, core_up)
+  core_back, core_left, core_down = ship.dim_negative(core_back, core_left, core_down)
+  core_shipSize = ship.getShipSize()
+  if core_shipSize == nil then core_shipSize = 0 end
+end
+
+function core_page_summon()
+  ShowTitle("<==== Summon players ====>")
+  local playersString = ship.getAttachedPlayers()
+  if playersString == "" then
+    WriteLn("~ no players registered ~")
+    WriteLn("")
+    SetColorTitle()
+    ShowMenu("Press enter to exit")
+    SetColorDefault()
+    readInputNumber("")
+    return
+  end
+  local playersArray = string_split(playersString, ",")
+  for i = 1, #playersArray do
+    WriteLn(i .. ". " .. playersArray[i])
+  end
+  SetColorTitle()
+  ShowMenu("Enter player number")
+  ShowMenu("or press enter to summon everyone")
+  SetColorDefault()
+  
+  Write(":")
+  local input = readInputNumber("")
+  if input == "" then
+    ship.summon_all()
+  else
+    input = tonumber(input)
+    ship.summon(input - 1)
+  end
+end
+
+function core_page_jumpToBeacon()
+  ShowTitle("<==== Jump to beacon ====>")
+  
+  Write("Enter beacon frequency: ")
+  local freq = readInputText("")
+  -- rs.setOutput(alarm_side, true)
+  if readConfirmation() then
+    -- rs.setOutput(alarm_side, false)
+    ship.mode(4)
+    ship.beaconFrequency(freq)
+    ship.jump()
+    -- ship = nil
+  end
+  -- rs.setOutput(alarm_side, false)
+end
+
+function core_page_jumpToGate()
+  ShowTitle("<==== Jump to Jumpgate ====>")
+  
+  Write("Enter jumpgate name: ")
+  local name = readInputText("")
+  -- rs.setOutput(alarm_side, true)
+  if readConfirmation() then
+    -- rs.setOutput(alarm_side, false)
+    ship.mode(6)
+    ship.targetJumpgate(name)
+    ship.jump()
+    -- ship = nil
+  end
+  -- rs.setOutput(alarm_side, false)
+end
+
+function core_page()
+  ShowTitle(label .. " - Ship status")
+  if ship ~= nil then
+    -- WriteLn("")
+    X, Y, Z = ship.position()
+    WriteLn("Core:")
+    WriteLn(" x, y, z          = " .. X .. ", " .. Y .. ", " .. Z)
+    local energy, energyMax = ship.energy()
+    if energy == nil then energy = 0 end
+    if energyMax == nil then energyMax = 1 end
+    WriteLn(" Energy           = " .. math.floor(energy / energyMax * 100) .. " % (" .. energy .. "EU)")
+    local playersString, playersArray = ship.getAttachedPlayers()
+    if playersString == "" then players = "-" end
+    WriteLn(" Attached players = " .. playersString)
+    -- WriteLn("")
+    WriteLn("Dimensions:")
+    WriteLn(" Front, Right, Up = " .. FormatInteger(core_front) .. ", " .. FormatInteger(core_right) .. ", " .. FormatInteger(core_up))
+    WriteLn(" Back, Left, Down = " .. FormatInteger(core_back) .. ", " .. FormatInteger(core_left) .. ", " .. FormatInteger(core_down))
+    WriteLn(" Size             = " .. core_shipSize .. " blocks")
+    -- WriteLn("")
+    WriteLn("Warp data:")
+    core_writeMovement()
+    local dest = core_computeNewCoordinates(X, Y, Z)
+    WriteLn(" Distance         = " .. core_actualDistance .. " (" .. core_jumpCost .. "EU, " .. math.floor(energy / core_jumpCost) .. " jumps)")
+    WriteLn(" Dest.coordinates = " .. FormatInteger(dest.x) .. ", " .. FormatInteger(dest.y) .. ", " .. FormatInteger(dest.z))
+    if data.core_summon then
+      WriteLn(" Summon after     = Yes")
+    else
+      WriteLn(" Summon after     = No")
+    end
+  else
+    ShowWarning("No ship controller detected")
+  end
+  
+  SetCursorPos(1, 15)
+  SetColorTitle()
+  ShowMenu("D - Dimensions, N - set ship Name, M - set Movement")
+  ShowMenu("J - Jump, G - jump through Gate, B - jump to Beacon")
+  ShowMenu("H - Hyperspace, C - summon Crew, T - Toggle summon")
+end
+
+function core_key(char, keycode)
+  if keycode == 50 then -- M
+    core_page_setMovement()
+    core_page_setRotation()
+    return true
+  elseif keycode == 20 then -- T
+    if data.core_summon then
+      data.core_summon = false
+    else
+      data.core_summon = true
+    end
+    data_save()
+    return true
+  elseif keycode == 32 then -- D
+    core_page_setDimensions()
+    return true
+  elseif keycode == 36 then -- J
+    core_warp()
+    return true
+  elseif keycode == 46 then -- C
+    core_page_summon()
+    return true
+  elseif keycode == 48 then -- B
+    core_page_jumpToBeacon()
+    return true
+  elseif keycode == 34 then -- G
+    core_page_jumpToGate()
+    return true
+  elseif keycode == 35 then -- H
+    -- rs.setOutput(alarm_side, true)
+    if readConfirmation() then
+      -- rs.setOutput(alarm_side, false)
+      ship.mode(5)
+      ship.jump()
+      -- ship = nil
+    end
+    -- rs.setOutput(alarm_side, false)
+    return true
+  elseif keycode == 49 then
+    data_setName()
+    return true
+  end
+  return false
+end
+
+----------- Boot sequence
+math.randomseed(os.time())
+label = os.getComputerLabel()
+if not label then
+  label = "" .. os.getComputerID()
+end
+
+-- read configuration
+data_read()
+Clear()
+print("data_read...")
+
+-- initial scanning
+monitors = {}
+ShowTitle(label .. " - Connecting...")
+WriteLn("")
+
+sides = peripheral.getNames()
+ship = nil
+for key,side in pairs(sides) do
+  os.sleep(0)
+  Write("Checking " .. side .. " ")
+  local componentType = peripheral.getType(side)
+  Write(componentType .. " ")
+  if componentType == "monitor" then
+    Write("wrapping!")
+    lmonitor = peripheral.wrap(side)
+    table.insert(monitors, lmonitor)
+    lmonitor.setTextScale(monitor_textScale)
+  elseif componentType == "warpdriveShipController" then
+    Write("wrapping!")
+    ship = peripheral.wrap(side)
+  end
+  WriteLn("")
+end
+
+if not os.getComputerLabel() and ship ~= nil then
+  data_setName()
+end
+
+-- peripherals status
+function connections_page()
+  ShowTitle(label .. " - Connections")
+  
+  WriteLn("")
+  if ship == nil then
+    SetColorDisabled()
+    WriteLn("No ship controller detected")
+  else
+    SetColorSuccess()
+    WriteLn("Ship controller detected")
+  end
+end
+
+-- peripheral boot up
+Clear()
+connections_page()
+SetColorDefault()
+WriteLn("")
+os.sleep(0)
+core_boot()
+os.sleep(0)
+
+-- main loop
+abort = false
+refresh = true
+page = connections_page
+keyHandler = nil
+repeat
+  ClearWarning()
+  if refresh then
+    Clear()
+    page()
+    menu_common()
+    refresh = false
+  end
+  params = { os.pullEventRaw() }
+  eventName = params[1]
+  address = params[2]
+  if address == nil then address = "none" end
+  -- WriteLn("...")
+  -- WriteLn("Event '" .. eventName .. "', " .. address .. ", " .. params[3] .. ", " .. params[4] .. " received")
+  -- os.sleep(0.2)
+  if eventName == "key" then
+    keycode = params[2]
+    if char == 88 or char == 120 or keycode == 45 then -- x for eXit
+      os.pullEventRaw()
+      abort = true
+    elseif char == 48 or keycode == 11 or keycode == 82 then -- 0
+      page = connections_page
+      keyHandler = nil
+      refresh = true
+    elseif char == 49 or keycode == 2 or keycode == 79 then -- 1
+      page = core_page
+      keyHandler = core_key
+      refresh = true
+    elseif keyHandler ~= nil and keyHandler(char, keycode) then
+      refresh = true
+      os.sleep(0)
+    elseif char == 0 then -- control chars
+      refresh = false
+      os.sleep(0)
+    else
+      ShowWarning("Key " .. keycode .. " is invalid")
+      os.sleep(0.2)
+    end
+  elseif eventName == "terminate" then
+    abort = true
+  elseif not common_event(eventName, params[2]) then
+    ShowWarning("Event '" .. eventName .. "', " .. address .. " is unsupported")
+    refresh = true
+    os.sleep(0.2)
+  end
+until abort
+
+-- exiting
+if data.core_summon then
+  data.core_summon = false
+  data_save()
+end
+
+if ship ~= nil then
+  ship.mode(0)
+end
+
+-- clear screens on exit
+SetMonitorColorFrontBack(colors.white, colors.black)
+term.clear()
+if monitors ~= nil then
+  for key,monitor in pairs(monitors) do
+    monitor.clear()
+  end
+end
+SetCursorPos(1, 1)
+Write("")
