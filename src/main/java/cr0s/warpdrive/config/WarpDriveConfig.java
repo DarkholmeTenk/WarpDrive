@@ -3,7 +3,6 @@ package cr0s.warpdrive.config;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -12,35 +11,17 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import net.minecraft.util.ResourceLocation;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import cr0s.warpdrive.WarpDrive;
 import cr0s.warpdrive.api.IBlockTransformer;
-import cr0s.warpdrive.compat.CompatAdvancedRepulsionSystems;
-import cr0s.warpdrive.compat.CompatAppliedEnergistics2;
-import cr0s.warpdrive.compat.CompatArsMagica2;
-import cr0s.warpdrive.compat.CompatBiblioCraft;
-import cr0s.warpdrive.compat.CompatBotania;
-import cr0s.warpdrive.compat.CompatComputerCraft;
-import cr0s.warpdrive.compat.CompatEnderIO;
-import cr0s.warpdrive.compat.CompatEvilCraft;
-import cr0s.warpdrive.compat.CompatForgeMultipart;
-import cr0s.warpdrive.compat.CompatImmersiveEngineering;
-import cr0s.warpdrive.compat.CompatIndustrialCraft2;
-import cr0s.warpdrive.compat.CompatJABBA;
-import cr0s.warpdrive.compat.CompatMetallurgy;
-import cr0s.warpdrive.compat.CompatNatura;
-import cr0s.warpdrive.compat.CompatOpenComputers;
-import cr0s.warpdrive.compat.CompatRedstonePaste;
-import cr0s.warpdrive.compat.CompatSGCraft;
-import cr0s.warpdrive.compat.CompatStargateTech2;
-import cr0s.warpdrive.compat.CompatTConstruct;
-import cr0s.warpdrive.compat.CompatThaumcraft;
+import cr0s.warpdrive.compat.*;
 import cr0s.warpdrive.config.filler.FillerManager;
 import cr0s.warpdrive.config.structures.StructureManager;
 import cr0s.warpdrive.config.structures.StructureReference;
@@ -69,7 +50,7 @@ public class WarpDriveConfig {
 	public static boolean isForgeMultipartLoaded = false;
 	public static boolean isAdvancedSolarPanelLoaded = false;
 	public static boolean isAppliedEnergistics2Loaded = false;
-	public static boolean isICBMloaded = false;
+	public static boolean isICBMLoaded = false;
 	public static boolean isIndustrialCraft2Loaded = false;
 	public static boolean isComputerCraftLoaded = false;
 	public static boolean isOpenComputersLoaded = false;
@@ -78,7 +59,7 @@ public class WarpDriveConfig {
 	public static boolean isArsMagica2Loaded = false;
 	public static boolean isImmersiveEngineeringLoaded = false;
 	public static boolean isGregTech5Loaded = false;
-	public static boolean isEnderIOloaded = false;
+	public static boolean isEnderIOLoaded = false;
 	public static boolean isAdvancedRepulsionSystemLoaded = false;
 	
 	public static ItemStack IC2_compressedAir;
@@ -95,7 +76,6 @@ public class WarpDriveConfig {
 	public static int G_HYPERSPACE_PROVIDER_ID = 15;
 	public static int G_HYPERSPACE_DIMENSION_ID = -3;
 	public static int G_SPACE_WORLDBORDER_BLOCKS = 100000;
-	public static int G_ENTITY_JUMP_ID = 240;
 	public static int G_ENTITY_SPHERE_GENERATOR_ID = 241;
 	public static int G_ENTITY_STAR_CORE_ID = 242;
 	public static int G_ENTITY_CAMERA_ID = 243;
@@ -168,6 +148,8 @@ public class WarpDriveConfig {
 	public static int SHIP_CORE_ISOLATION_UPDATE_INTERVAL_SECONDS = 10;
 	public static String[] SHIP_VOLUME_UNLIMITED_PLAYERNAMES = { "notch", "someone" };
 	public static boolean SHIP_WARMUP_SICKNESS = true;
+	public static int SHIP_SUMMON_MAX_RANGE = 500;
+	public static boolean SHIP_SUMMON_ACROSS_DIMENSIONS = false;
 	
 	// Radar
 	public static int RADAR_MAX_ENERGY_STORED = 100000000; // 100kk eU
@@ -176,8 +158,8 @@ public class WarpDriveConfig {
 	public static int RADAR_SCAN_MIN_DELAY_SECONDS = 1;
 	public static double[] RADAR_SCAN_DELAY_FACTORS_SECONDS = { 1.0, 0.001, 0.0, 0.0 };
 	public static int RADAR_MAX_ISOLATION_RANGE = 2;
-	public static int RADAR_MIN_ISOLATION_BLOCKS = 5;
-	public static int RADAR_MAX_ISOLATION_BLOCKS = 60;
+	public static int RADAR_MIN_ISOLATION_BLOCKS = 2;
+	public static int RADAR_MAX_ISOLATION_BLOCKS = 16;
 	public static double RADAR_MIN_ISOLATION_EFFECT = 0.12;
 	public static double RADAR_MAX_ISOLATION_EFFECT = 1.00;
 	
@@ -188,7 +170,8 @@ public class WarpDriveConfig {
 	public static int SS_MAX_DEPLOY_RADIUS_BLOCKS = 50;
 	public static int SS_SEARCH_INTERVAL_TICKS = 20;
 	public static int SS_SCAN_BLOCKS_PER_SECOND = 10;
-	public static int SS_DEPLOY_BLOCKS_PER_SECOND = 10;
+	public static int SS_DEPLOY_BLOCKS_PER_INTERVAL = 10;
+	public static int SS_DEPLOY_INTERVAL_TICKS = 4;
 	
 	// Laser medium
 	public static int LASER_MEDIUM_MAX_ENERGY_STORED = 100000;
@@ -273,10 +256,10 @@ public class WarpDriveConfig {
 	public static int CLOAKING_FIELD_REFRESH_INTERVAL_SECONDS = 3;
 	
 	// Air generator
-	public static int AIRGEN_ENERGY_PER_CANISTER = 20;
+	public static int AIRGEN_ENERGY_PER_CANISTER = 200;
 	public static int AIRGEN_ENERGY_PER_NEWAIRBLOCK = 12;
 	public static int AIRGEN_ENERGY_PER_EXISTINGAIRBLOCK = 4;
-	public static int AIRGEN_MAX_ENERGY_STORED = 4000;
+	public static int AIRGEN_MAX_ENERGY_STORED = 1400;
 	public static int AIRGEN_AIR_GENERATION_TICKS = 40;
 	
 	// IC2 Reactor monitor
@@ -299,8 +282,8 @@ public class WarpDriveConfig {
 	public static int ENERGY_BANK_MAX_ENERGY_STORED = 1000000;
 	
 	// Laser lift
-	public static int LIFT_MAX_ENERGY_STORED = 2400;
-	public static int LIFT_ENERGY_PER_ENTITY = 800;
+	public static int LIFT_MAX_ENERGY_STORED = 900;
+	public static int LIFT_ENERGY_PER_ENTITY = 150;
 	public static int LIFT_UPDATE_INTERVAL_TICKS = 10;
 	
 	// Chunk loader
@@ -318,7 +301,7 @@ public class WarpDriveConfig {
 	
 	public static Block getModBlock(final String mod, final String id) {
 		try {
-			return GameRegistry.findBlock(mod, id);
+			return Block.REGISTRY.getObject(new ResourceLocation(mod, id));
 		} catch (Exception exception) {
 			WarpDrive.logger.info("Failed to get mod block for " + mod + ":" + id);
 			exception.printStackTrace();
@@ -328,12 +311,18 @@ public class WarpDriveConfig {
 	
 	public static ItemStack getModItemStack(final String mod, final String id, final int meta) {
 		try {
-			ItemStack item = new ItemStack((Item) Item.itemRegistry.getObject(mod + ":" + id));
-			if (meta != -1) {
-				item.setItemDamage(meta);
+			Item item = Item.REGISTRY.getObject(new ResourceLocation(mod + ":" + id));
+			if (item == null) {
+				WarpDrive.logger.info("Failed to get mod item for " + mod + ":" + id + "@" + meta);
+				return null;
 			}
-			return item;
+			ItemStack itemStack = new ItemStack(item);
+			if (meta != -1) {
+				itemStack.setItemDamage(meta);
+			}
+			return itemStack;
 		} catch (Exception exception) {
+			exception.printStackTrace();
 			WarpDrive.logger.info("Failed to get mod item for " + mod + ":" + id + "@" + meta);
 		}
 		return null;
@@ -350,6 +339,25 @@ public class WarpDriveConfig {
 		
 		// read configuration file
 		loadWarpDriveConfig(new File(configDirectory, WarpDrive.MODID + ".cfg"));
+		
+		// read mod dependencies
+		isForgeMultipartLoaded = Loader.isModLoaded("ForgeMultipart");
+		isIndustrialCraft2Loaded = Loader.isModLoaded("IC2");
+		isComputerCraftLoaded = Loader.isModLoaded("ComputerCraft");
+		isAdvancedSolarPanelLoaded = Loader.isModLoaded("AdvancedSolarPanel");
+		isCoFHCoreLoaded = Loader.isModLoaded("CoFHCore");
+		isThermalExpansionLoaded = Loader.isModLoaded("ThermalExpansion");
+		isAppliedEnergistics2Loaded = Loader.isModLoaded("appliedenergistics2");
+		isOpenComputersLoaded = Loader.isModLoaded("OpenComputers");
+		isArsMagica2Loaded = Loader.isModLoaded("arsmagica2");
+		isImmersiveEngineeringLoaded = Loader.isModLoaded("ImmersiveEngineering");
+		isGregTech5Loaded = false;
+		if (Loader.isModLoaded("gregtech")) {
+			String gregTechVersion = FMLCommonHandler.instance().findContainerFor("gregtech").getVersion();
+			isGregTech5Loaded = gregTechVersion.equalsIgnoreCase("MC1710") || gregTechVersion.startsWith("5.");
+		}
+		isEnderIOLoaded = Loader.isModLoaded("EnderIO");
+		isAdvancedRepulsionSystemLoaded = Loader.isModLoaded("AdvancedRepulsionSystems");
 	}
 	
 	public static void loadWarpDriveConfig(File file) {
@@ -370,8 +378,6 @@ public class WarpDriveConfig {
 		G_SPACE_WORLDBORDER_BLOCKS = clamp(0, 3000000,
 				config.get("general", "space_worldborder_blocks", G_SPACE_WORLDBORDER_BLOCKS, "World border applied to hyperspace & space, set to 0 to disable it").getInt());
 		
-		G_ENTITY_JUMP_ID = clamp(Integer.MIN_VALUE, Integer.MAX_VALUE,
-				config.get("general", "entity_jump_id", G_ENTITY_JUMP_ID, "Entity jump ID").getInt());
 		G_ENTITY_SPHERE_GENERATOR_ID = clamp(Integer.MIN_VALUE, Integer.MAX_VALUE,
 				config.get("general", "entity_sphere_generator_id", G_ENTITY_SPHERE_GENERATOR_ID, "Entity sphere generator ID").getInt());
 		G_ENTITY_STAR_CORE_ID = clamp(Integer.MIN_VALUE, Integer.MAX_VALUE,
@@ -429,7 +435,11 @@ public class WarpDriveConfig {
 		{
 			config.addCustomCategoryComment("planets",
 					  "Planets are other dimensions connected through the Space dimension. Default is overworld with 100k radius.\n"
-					+ "Each planet orbit is square shaped and defined as a list of 7 integers (all measured in blocks).");
+					+ "Each planet orbit is square shaped and defined as a list of 7 integers (all measured in blocks):\n" 
+					+ "dimensionId = dimension ID (0, 1, -1 or something like -13)\n"
+					+ "dimensionCenterX, dimensionCenterZ = center of the transfer area inside the dimension itself\n"
+					+ "radiusX, radiusZ = world borders of the dimension\n"
+					+ "spaceCenterX, spaceCenterZ = coordinates of the transfer area in Space dimension\n");
 			
 			ConfigCategory categoryPlanets = config.getCategory("planets");
 			String[] planetsName = categoryPlanets.getValues().keySet().toArray(new String[0]);
@@ -496,6 +506,9 @@ public class WarpDriveConfig {
 				config.get("ship", "warmup_random_ticks", SHIP_WARMUP_RANDOM_TICKS, "Random variation added to warmup (measured in ticks)").getInt());
 		SHIP_WARMUP_SICKNESS = config.get("ship", "warmup_sickness", true, "Enable warp sickness during warmup").getBoolean(true);
 		
+		SHIP_SUMMON_MAX_RANGE = config.get("ship", "summon_max_range", SHIP_SUMMON_MAX_RANGE, "Maximum range from which players can be summoned (measured in blocks), set to -1 for unlimited range").getInt();
+		SHIP_SUMMON_ACROSS_DIMENSIONS = config.get("ship", "summon_across_dimensions", false, "Enable summoning players from another dimension").getBoolean(false);
+		
 		SHIP_CORE_REGISTRY_UPDATE_INTERVAL_SECONDS = clamp(0, 300,
 				config.get("ship", "core_registry_update_interval", SHIP_CORE_REGISTRY_UPDATE_INTERVAL_SECONDS, "(measured in seconds)").getInt());
 		SHIP_CORE_ISOLATION_UPDATE_INTERVAL_SECONDS = clamp(0, 300,
@@ -546,17 +559,25 @@ public class WarpDriveConfig {
 		SS_ENERGY_PER_BLOCK_SCAN = config.get("ship_scanner", "energy_per_block_when_scanning", SS_ENERGY_PER_BLOCK_SCAN,
 				"Energy consumed per block when scanning a ship (use -1 to consume everything)").getInt();
 		if (SS_ENERGY_PER_BLOCK_SCAN != -1) {
-			SS_ENERGY_PER_BLOCK_SCAN = clamp(1, SS_MAX_ENERGY_STORED, SS_ENERGY_PER_BLOCK_SCAN);
+			SS_ENERGY_PER_BLOCK_SCAN = clamp(0, SS_MAX_ENERGY_STORED, SS_ENERGY_PER_BLOCK_SCAN);
 		}
 		
 		SS_ENERGY_PER_BLOCK_DEPLOY = config.get("ship_scanner", "energy_per_block_when_deploying", SS_ENERGY_PER_BLOCK_DEPLOY,
 				"Energy consumed per block when deploying a ship (use -1 to consume everything)").getInt();
 		if (SS_ENERGY_PER_BLOCK_DEPLOY != -1) {
-			SS_ENERGY_PER_BLOCK_DEPLOY = clamp(1, SS_MAX_ENERGY_STORED, SS_ENERGY_PER_BLOCK_DEPLOY);
+			SS_ENERGY_PER_BLOCK_DEPLOY = clamp(0, SS_MAX_ENERGY_STORED, SS_ENERGY_PER_BLOCK_DEPLOY);
 		}
 		
 		SS_MAX_DEPLOY_RADIUS_BLOCKS = clamp(5, 150,
 				config.get("ship_scanner", "max_deploy_radius_blocks", SS_MAX_DEPLOY_RADIUS_BLOCKS, "Max distance from ship scanner to ship core, measured in blocks (5-150)").getInt());
+		SS_SEARCH_INTERVAL_TICKS = clamp(5, 150,
+			config.get("ship_scanner", "search_interval_ticks", SS_SEARCH_INTERVAL_TICKS, "Max distance from ship scanner to ship core, measured in blocks (5-150)").getInt());
+		SS_SCAN_BLOCKS_PER_SECOND = clamp(1, 50000,
+			config.get("ship_scanner", "scan_blocks_per_second", SS_SCAN_BLOCKS_PER_SECOND, "Scanning speed, measured in blocks (1-5000)").getInt());
+		SS_DEPLOY_BLOCKS_PER_INTERVAL = clamp(1, 3000,
+			config.get("ship_scanner", "deploy_blocks_per_interval", SS_DEPLOY_BLOCKS_PER_INTERVAL, "Deployment speed, measured in blocks (1-3000)").getInt());
+		SS_DEPLOY_INTERVAL_TICKS = clamp(1, 60,
+			config.get("ship_scanner", "deploy_interval_ticks", SS_DEPLOY_INTERVAL_TICKS, "Delay between deployment of 2 sets of blocks, measured in ticks (1-60)").getInt());
 		
 		// Laser medium
 		LASER_MEDIUM_MAX_ENERGY_STORED = clamp(1, Integer.MAX_VALUE,
@@ -696,11 +717,11 @@ public class WarpDriveConfig {
 		AIRGEN_ENERGY_PER_CANISTER = clamp(1, AIRGEN_MAX_ENERGY_STORED,
 				config.get("air_generator", "energy_per_canister", AIRGEN_ENERGY_PER_CANISTER, "Energy cost per air canister refilled").getInt());
 		AIRGEN_ENERGY_PER_NEWAIRBLOCK = clamp(1, AIRGEN_MAX_ENERGY_STORED,
-				config.get("air_generator", "energy_per_new_air_block", AIRGEN_ENERGY_PER_NEWAIRBLOCK, "Energy cost to start air distribution per open side").getInt());
+				config.get("air_generator", "energy_per_new_air_block", AIRGEN_ENERGY_PER_NEWAIRBLOCK, "Energy cost to start air distribution per open side per interval").getInt());
 		AIRGEN_ENERGY_PER_EXISTINGAIRBLOCK = clamp(1, AIRGEN_MAX_ENERGY_STORED,
-				config.get("air_generator", "energy_per_existing_air_block", AIRGEN_ENERGY_PER_EXISTINGAIRBLOCK, "Energy cost to sustain air distribution per open side").getInt());
+				config.get("air_generator", "energy_per_existing_air_block", AIRGEN_ENERGY_PER_EXISTINGAIRBLOCK, "Energy cost to sustain air distribution per open side per interval").getInt());
 		AIRGEN_AIR_GENERATION_TICKS = clamp(1, 300,
-				config.get("air_generator", "air_generation_ticks", AIRGEN_AIR_GENERATION_TICKS).getInt());
+				config.get("air_generator", "air_generation_interval_ticks", AIRGEN_AIR_GENERATION_TICKS, "Update speed of air generation").getInt());
 		
 		// IC2 Reactor monitor
 		IC2_REACTOR_MAX_ENERGY_STORED = clamp(1, Integer.MAX_VALUE,
@@ -761,52 +782,37 @@ public class WarpDriveConfig {
 	}
 	
 	public static void onFMLInitialization() {
-		isForgeMultipartLoaded = Loader.isModLoaded("ForgeMultipart");
+		CompatWarpDrive.register();
+		
 		if (isForgeMultipartLoaded) {
 			isForgeMultipartLoaded = CompatForgeMultipart.register();
 		}
-		
-		isIndustrialCraft2Loaded = Loader.isModLoaded("IC2");
 		if (isIndustrialCraft2Loaded) {
 			loadIC2();
 			CompatIndustrialCraft2.register();
 		}
-		
-		isComputerCraftLoaded = Loader.isModLoaded("ComputerCraft");
 		if (isComputerCraftLoaded) {
 			loadCC();
 			CompatComputerCraft.register();
 		}
-		
-		isAdvancedSolarPanelLoaded = Loader.isModLoaded("AdvancedSolarPanel");
-		isCoFHCoreLoaded = Loader.isModLoaded("CoFHCore");
-		isThermalExpansionLoaded = Loader.isModLoaded("ThermalExpansion");
-		isAppliedEnergistics2Loaded = Loader.isModLoaded("appliedenergistics2");
+		if (isThermalExpansionLoaded) {
+			CompatThermalExpansion.register();
+		}
 		if (isAppliedEnergistics2Loaded) {
 			CompatAppliedEnergistics2.register();
 		}
-		isOpenComputersLoaded = Loader.isModLoaded("OpenComputers");
 		if (isOpenComputersLoaded) {
 			CompatOpenComputers.register();
 		}
-		isArsMagica2Loaded = Loader.isModLoaded("arsmagica2");
 		if (isArsMagica2Loaded) {
 			CompatArsMagica2.register();
 		}
-		isImmersiveEngineeringLoaded = Loader.isModLoaded("ImmersiveEngineering");
 		if (isImmersiveEngineeringLoaded) {
 			CompatImmersiveEngineering.register();
 		}
-		isGregTech5Loaded = false;
-		if (Loader.isModLoaded("gregtech")) {
-			String gregTechVersion = FMLCommonHandler.instance().findContainerFor("gregtech").getVersion();
-			isGregTech5Loaded = gregTechVersion.equalsIgnoreCase("MC1710") || gregTechVersion.startsWith("5.");
-		}
-		isEnderIOloaded = Loader.isModLoaded("EnderIO");
-		if (isEnderIOloaded) {
+		if (isEnderIOLoaded) {
 			CompatEnderIO.register();
 		}
-		isAdvancedRepulsionSystemLoaded = Loader.isModLoaded("AdvancedRepulsionSystems");
 		if (isAdvancedRepulsionSystemLoaded) {
 			CompatAdvancedRepulsionSystems.register();
 		}
@@ -815,9 +821,13 @@ public class WarpDriveConfig {
 		if (isBotaniaLoaded) {
 			CompatBotania.register();
 		}
-		boolean isBibliocraftLoaded = Loader.isModLoaded("BiblioCraft");
-		if (isBibliocraftLoaded) {
+		boolean isBiblioCraftLoaded = Loader.isModLoaded("BiblioCraft");
+		if (isBiblioCraftLoaded) {
 			CompatBiblioCraft.register();
+		}
+		boolean isCarpentersBlocksLoaded = Loader.isModLoaded("CarpentersBlocks");
+		if (isCarpentersBlocksLoaded) {
+			CompatCarpentersBlocks.register();
 		}
 		boolean isEvilCraftLoaded = Loader.isModLoaded("evilcraft");
 		if (isEvilCraftLoaded) {
@@ -826,6 +836,10 @@ public class WarpDriveConfig {
 		boolean isJABBAloaded = Loader.isModLoaded("JABBA");
 		if (isJABBAloaded) {
 			CompatJABBA.register();
+		}
+		boolean isMekanismLoaded = Loader.isModLoaded("Mekanism");
+		if (isMekanismLoaded) {
+			CompatMekanism.register();
 		}
 		boolean isMetallurgyLoaded = Loader.isModLoaded("Metallurgy");
 		if (isMetallurgyLoaded) {
@@ -854,6 +868,10 @@ public class WarpDriveConfig {
 		boolean isThaumcraftLoaded = Loader.isModLoaded("Thaumcraft");
 		if (isThaumcraftLoaded) {
 			CompatThaumcraft.register();
+		}
+		boolean isThermalDynamicsLoaded = Loader.isModLoaded("ThermalDynamics");
+		if (isThermalDynamicsLoaded) {
+			CompatThermalDynamics.register();
 		}
 	}
 	

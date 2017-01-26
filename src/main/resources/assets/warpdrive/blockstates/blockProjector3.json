@@ -1,0 +1,32 @@
+{
+	"forge_marker": 1,
+	"defaults": {
+		"model": "warpdrive:forcefield/projector_base.wobj",
+		"textures": {
+			"particle": "warpdrive:blocks/forcefield/projector-side_not_connected",
+			"#m_shape": "warpdrive:blocks/forcefield/projector-shape_none",
+			"side"    : "warpdrive:blocks/forcefield/projector-side_not_connected"
+		},
+		"transform": "forge:default-block"
+	},
+	"variants": {
+		"normal": [{}],
+		"inventory": [{}],
+		"facing": {
+			"down" : { "x": 180 },
+			"up"   : { },
+			"north": { "x": 90 },
+			"south": { "x": -90 },
+			"west" : { "x": 90, "y": -90 },
+			"east" : { "x": 90, "y": 90 }
+		},
+		"is_double_sided": {
+			"false": {
+				
+			},
+			"true": {
+				
+			}
+		}
+	}
+}

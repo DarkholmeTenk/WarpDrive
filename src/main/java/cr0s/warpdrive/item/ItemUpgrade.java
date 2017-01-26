@@ -2,23 +2,22 @@ package cr0s.warpdrive.item;
 
 import java.util.List;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.IIcon;
 import cr0s.warpdrive.WarpDrive;
 import cr0s.warpdrive.data.UpgradeType;
 
-public class ItemUpgrade extends Item {
+import javax.annotation.Nonnull;
+
+public class ItemUpgrade extends ItemAbstractBase {
 	private static ItemStack[] isCache = new ItemStack[UpgradeType.values().length];
-	private static IIcon[] iconBuffer = new IIcon[UpgradeType.values().length];
 	
-	public ItemUpgrade() {
+	public ItemUpgrade(final String registryName) {
+		super(registryName);
 		setHasSubtypes(true);
 		setUnlocalizedName("warpdrive.upgrade.Malformed");
-		setCreativeTab(WarpDrive.creativeTabWarpDrive);
 	}
 	
 	private static boolean isValidDamage(int damage) {
@@ -43,11 +42,12 @@ public class ItemUpgrade extends Item {
 		
 		return new ItemStack(WarpDrive.itemUpgrade, 1, energy.ordinal());
 	}
-	
+
+	@Nonnull
 	@Override
 	public String getUnlocalizedName(ItemStack itemStack) {
 		if (itemStack == null) {
-			return null;
+			return "invalidItemStack";
 		}
 		
 		int damage = itemStack.getItemDamage();
@@ -55,23 +55,23 @@ public class ItemUpgrade extends Item {
 			return "item.warpdrive.upgrade." + UpgradeType.values()[damage];
 		}
 		
-		return null;
+		return "invalidUpgradeItemDamage";
 	}
 	
 	@Override
-	public void getSubItems(Item item, CreativeTabs creativeTab, List list) {
+	public void getSubItems(@Nonnull Item item, @Nonnull CreativeTabs creativeTabs, @Nonnull List<ItemStack> subItems) {
 		for (UpgradeType upgradeType : UpgradeType.values()) {
-			list.add(getItemStack(upgradeType));
+			subItems.add(getItemStack(upgradeType));
 		}
 	}
 	
 	@Override
-	public void addInformation(ItemStack is, EntityPlayer pl, List list, boolean par4) {
-		if (is == null) {
+	public void addInformation(ItemStack itemStack, EntityPlayer entityPlayer, List<String> list, boolean par4) {
+		if (itemStack == null) {
 			return;
 		}
 		
-		int damage = is.getItemDamage();
+		int damage = itemStack.getItemDamage();
 		if (damage == UpgradeType.Energy.ordinal()) {
 			list.add("Increases the max energy of the machine");
 		} else if (damage == UpgradeType.Power.ordinal()) {
@@ -81,20 +81,5 @@ public class ItemUpgrade extends Item {
 		} else if (damage == UpgradeType.Range.ordinal()) {
 			list.add("Increases the range of the machine");
 		}
-	}
-	
-	@Override
-	public void registerIcons(IIconRegister ir) {
-		for (UpgradeType val : UpgradeType.values()) {
-			iconBuffer[val.ordinal()] = ir.registerIcon("warpdrive:upgrade" + val);
-		}
-	}
-	
-	@Override
-	public IIcon getIconFromDamage(int damage) {
-		if (damage >= 0 && damage < UpgradeType.values().length) {
-			return iconBuffer[damage];
-		}
-		return iconBuffer[0];
 	}
 }

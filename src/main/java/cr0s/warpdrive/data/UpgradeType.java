@@ -1,5 +1,6 @@
 package cr0s.warpdrive.data;
 
-public enum UpgradeType {
+public @Deprecated
+enum UpgradeType {
 	Power, Energy, Speed, Range
 }

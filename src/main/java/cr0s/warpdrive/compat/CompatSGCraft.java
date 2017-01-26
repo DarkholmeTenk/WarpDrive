@@ -7,10 +7,10 @@ import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChunkCoordinates;
 import cr0s.warpdrive.api.IBlockTransformer;
 import cr0s.warpdrive.api.ITransformation;
 import cr0s.warpdrive.config.WarpDriveConfig;
+import net.minecraft.util.math.BlockPos;
 
 public class CompatSGCraft implements IBlockTransformer {
 	
@@ -77,10 +77,10 @@ public class CompatSGCraft implements IBlockTransformer {
 		if (nbtTileEntity.hasKey("isLinkedToStargate")) {
 			if ( nbtTileEntity.getBoolean("isLinkedToStargate")
 			  && nbtTileEntity.hasKey("linkedX") && nbtTileEntity.hasKey("linkedY") && nbtTileEntity.hasKey("linkedZ")) {
-				ChunkCoordinates targetLink = transformation.apply(nbtTileEntity.getInteger("linkedX"), nbtTileEntity.getInteger("linkedY"), nbtTileEntity.getInteger("linkedZ"));
-				nbtTileEntity.setInteger("linkedX", targetLink.posX);
-				nbtTileEntity.setInteger("linkedY", targetLink.posY);
-				nbtTileEntity.setInteger("linkedZ", targetLink.posZ);
+				BlockPos targetLink = transformation.apply(nbtTileEntity.getInteger("linkedX"), nbtTileEntity.getInteger("linkedY"), nbtTileEntity.getInteger("linkedZ"));
+				nbtTileEntity.setInteger("linkedX", targetLink.getX());
+				nbtTileEntity.setInteger("linkedY", targetLink.getY());
+				nbtTileEntity.setInteger("linkedZ", targetLink.getZ());
 			}
 		}
 		
@@ -88,10 +88,10 @@ public class CompatSGCraft implements IBlockTransformer {
 		if (nbtTileEntity.hasKey("isMerged")) {
 			if ( nbtTileEntity.getBoolean("isMerged")
 			  && nbtTileEntity.hasKey("baseX") && nbtTileEntity.hasKey("baseY") && nbtTileEntity.hasKey("baseZ")) {
-				ChunkCoordinates targetLink = transformation.apply(nbtTileEntity.getInteger("baseX"), nbtTileEntity.getInteger("baseY"), nbtTileEntity.getInteger("baseZ"));
-				nbtTileEntity.setInteger("baseX", targetLink.posX);
-				nbtTileEntity.setInteger("baseY", targetLink.posY);
-				nbtTileEntity.setInteger("baseZ", targetLink.posZ);
+				BlockPos targetLink = transformation.apply(nbtTileEntity.getInteger("baseX"), nbtTileEntity.getInteger("baseY"), nbtTileEntity.getInteger("baseZ"));
+				nbtTileEntity.setInteger("baseX", targetLink.getX());
+				nbtTileEntity.setInteger("baseY", targetLink.getY());
+				nbtTileEntity.setInteger("baseZ", targetLink.getZ());
 			}
 		}
 		

@@ -4,6 +4,7 @@ import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import cr0s.warpdrive.WarpDrive;
@@ -30,9 +31,9 @@ public class WorldGenStructure {
 		default:
 		case 0:
 		case 1:
-			hullPlain_block = Blocks.stained_hardened_clay;
+			hullPlain_block = Blocks.STAINED_HARDENED_CLAY;
 			hullPlain_metadata = rand.nextInt(16);
-			hullGlass_block = Blocks.stained_glass;
+			hullGlass_block = Blocks.STAINED_GLASS;
 			hullGlass_metadata = hullPlain_metadata;
 			break;
 			
@@ -72,16 +73,16 @@ public class WorldGenStructure {
 				solarPanel_block = WarpDriveConfig.getModBlock("IC2", "blockGenerator");
 				solarPanel_metadata = 3;
 			}
-		} else if (WarpDriveConfig.isEnderIOloaded) {
+		} else if (WarpDriveConfig.isEnderIOLoaded) {
 			solarPanel_block = WarpDriveConfig.getModBlock("EnderIO", "blockSolarPanel");
 			solarPanel_metadata = 0;
 		} else {
-			solarPanel_block = Blocks.air;
+			solarPanel_block = Blocks.AIR;
 			solarPanel_metadata = 0;
 		}
 		
 		// choose a wiring
-		cable_block = Blocks.air;
+		cable_block = Blocks.AIR;
 		cable_metadata = 0;
 		if (WarpDriveConfig.isIndustrialCraft2Loaded) {
 			cable_block = WarpDriveConfig.getModBlock("IC2", "blockCable");
@@ -114,33 +115,33 @@ public class WorldGenStructure {
 		if (corrupted && (rand.nextInt(400) == 1)) {
 			world.newExplosion(null, x + 0.5D, y + 0.5D, z + 0.5D, 17, false, true);
 		} else if (corrupted && (rand.nextInt(10) == 1)) {
-			world.setBlock(x, y, z, Blocks.air, 0, 2);
+			world.setBlockState(new BlockPos(x, y, z), Blocks.AIR.getDefaultState(), 2);
 		} else {
-			world.setBlock(x, y, z, hullPlain_block, hullPlain_metadata, 2);
+			world.setBlockState(new BlockPos(x, y, z), hullPlain_block.getStateFromMeta(hullPlain_metadata), 2);
 		}
 	}
 	
 	public void setHullGlass(World world, final int x, final int y, final int z) {
 		if (corrupted && (rand.nextInt(5) == 1)) {
-			world.setBlock(x, y, z, Blocks.air, 0, 2);
+			world.setBlockState(new BlockPos(x, y, z), Blocks.AIR.getDefaultState(), 2);
 		} else {
-			world.setBlock(x, y, z, hullGlass_block, hullGlass_metadata, 2);
+			world.setBlockState(new BlockPos(x, y, z), hullGlass_block.getStateFromMeta(hullGlass_metadata), 2);
 		}
 	}
 	
 	public void setCable(World world, final int x, final int y, final int z) {
 		if (corrupted && (rand.nextInt(3) == 1)) {
-			world.setBlock(x, y, z, Blocks.air, 0, 2);
+			world.setBlockState(new BlockPos(x, y, z), Blocks.AIR.getDefaultState(), 2);
 		} else {
-			world.setBlock(x, y, z, cable_block, cable_metadata, 2);
+			world.setBlockState(new BlockPos(x, y, z), cable_block.getStateFromMeta(cable_metadata), 2);
 		}
 	}
 	
 	public void setSolarPanel(World world, final int x, final int y, final int z) {
 		if (corrupted && (rand.nextInt(3) == 1)) {
-			world.setBlock(x, y, z, Blocks.air, 0, 2);
+			world.setBlockState(new BlockPos(x, y, z), Blocks.AIR.getDefaultState(), 2);
 		} else {
-			world.setBlock(x, y, z, solarPanel_block, solarPanel_metadata, 2);
+			world.setBlockState(new BlockPos(x, y, z), solarPanel_block.getStateFromMeta(solarPanel_metadata), 2);
 		}
 	}
 }

@@ -1,0 +1,9 @@
+# Blender MTL File: 'lamp_long.blend' by Rashintawak for WarpDrive mod
+# All rights reserved
+# Material Count: 1
+
+newmtl txt_lamp_long
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+d 1.000000
+map_Kd warpdrive:blocks/decoration/lamp_long

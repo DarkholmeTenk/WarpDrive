@@ -3,10 +3,10 @@ package cr0s.warpdrive.block.energy;
 import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
-import cpw.mods.fml.common.Optional;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import cr0s.warpdrive.WarpDrive;
 import cr0s.warpdrive.block.TileEntityAbstractLaser;
 import cr0s.warpdrive.config.WarpDriveConfig;
@@ -18,7 +18,7 @@ import dan200.computercraft.api.peripheral.IComputerAccess;
 public class TileEntityEnanReactorLaser extends TileEntityAbstractLaser {
 	Vector3 myVec;
 	Vector3 reactorVec;
-	ForgeDirection side = ForgeDirection.UNKNOWN;
+	EnumFacing side = null;
 	TileEntityEnanReactorCore reactor;
 	
 	private boolean isFirstUpdate = true;
@@ -33,38 +33,38 @@ public class TileEntityEnanReactorLaser extends TileEntityAbstractLaser {
 		});
 		peripheralName = "warpdriveEnanReactorLaser";
 		laserMediumMaxCount = 1;
-		directionsValidLaserMedium = new ForgeDirection[] { ForgeDirection.UP, ForgeDirection.DOWN };
+		directionsValidLaserMedium = new EnumFacing[] { EnumFacing.UP, EnumFacing.DOWN };
 	}
 	
 	public TileEntityEnanReactorCore scanForReactor() {
 		reactor = null;
 		TileEntity tileEntity;
+		side = null;
 		// I AM ON THE NORTH SIDE
-		side = ForgeDirection.UNKNOWN;
-		tileEntity = worldObj.getTileEntity(xCoord, yCoord, zCoord + 2);
-		if (tileEntity instanceof TileEntityEnanReactorCore && worldObj.isAirBlock(xCoord, yCoord, zCoord + 1)) {
-			side = ForgeDirection.NORTH;
+		tileEntity = worldObj.getTileEntity(pos.add(0, 0, 2));
+		if (tileEntity instanceof TileEntityEnanReactorCore && worldObj.isAirBlock(pos.add(0, 0, 1))) {
+			side = EnumFacing.NORTH;
 			reactor = (TileEntityEnanReactorCore) tileEntity;
 		}
 		
 		// I AM ON THE SOUTH SIDE
-		tileEntity = worldObj.getTileEntity(xCoord, yCoord, zCoord - 2);
-		if (tileEntity instanceof TileEntityEnanReactorCore && worldObj.isAirBlock(xCoord, yCoord, zCoord - 1)) {
-			side = ForgeDirection.SOUTH;
+		tileEntity = worldObj.getTileEntity(pos.add(0, 0, -2));
+		if (tileEntity instanceof TileEntityEnanReactorCore && worldObj.isAirBlock(pos.add(0, 0, -1))) {
+			side = EnumFacing.SOUTH;
 			reactor = (TileEntityEnanReactorCore) tileEntity;
 		}
 		
 		// I AM ON THE WEST SIDE
-		tileEntity = worldObj.getTileEntity(xCoord + 2, yCoord, zCoord);
-		if (tileEntity instanceof TileEntityEnanReactorCore && worldObj.isAirBlock(xCoord + 1, yCoord, zCoord)) {
-			side = ForgeDirection.WEST;
+		tileEntity = worldObj.getTileEntity(pos.add(2, 0, 0));
+		if (tileEntity instanceof TileEntityEnanReactorCore && worldObj.isAirBlock(pos.add(1, 0, 0))) {
+			side = EnumFacing.WEST;
 			reactor = (TileEntityEnanReactorCore) tileEntity;
 		}
 		
 		// I AM ON THE EAST SIDE
-		tileEntity = worldObj.getTileEntity(xCoord - 2, yCoord, zCoord);
-		if (tileEntity instanceof TileEntityEnanReactorCore && worldObj.isAirBlock(xCoord - 1, yCoord, zCoord)) {
-			side = ForgeDirection.EAST;
+		tileEntity = worldObj.getTileEntity(pos.add(-2, 0, 0));
+		if (tileEntity instanceof TileEntityEnanReactorCore && worldObj.isAirBlock(pos.add(-1, 0, 0))) {
+			side = EnumFacing.EAST;
 			reactor = (TileEntityEnanReactorCore) tileEntity;
 		}
 		
@@ -78,17 +78,17 @@ public class TileEntityEnanReactorLaser extends TileEntityAbstractLaser {
 	
 	private void setMetadata() {
 		int metadata = 0;
-		if (side != ForgeDirection.UNKNOWN) {
+		if (side != null) {
 			metadata = side.ordinal() - 1;
 		}
 		if (getBlockMetadata() != metadata) {
-			worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, metadata, 3);
+			updateMetadata(metadata);
 		}
 	}
 	
 	@Override
-	public void updateEntity() {
-		super.updateEntity();
+	public void update() {
+		super.update();
 		
 		if (isFirstUpdate) {
 			isFirstUpdate = false;
@@ -98,7 +98,7 @@ public class TileEntityEnanReactorLaser extends TileEntityAbstractLaser {
 	}
 	
 	public void unlink() {
-		side = ForgeDirection.UNKNOWN;
+		side = null;
 		setMetadata();
 	}
 	
@@ -115,7 +115,7 @@ public class TileEntityEnanReactorLaser extends TileEntityAbstractLaser {
 		}
 		
 		scanForReactor();
-		if (directionLaserMedium == ForgeDirection.UNKNOWN) {
+		if (facingLaserMedium == null) {
 			return;
 		}
 		if (reactor == null) {
@@ -131,8 +131,8 @@ public class TileEntityEnanReactorLaser extends TileEntityAbstractLaser {
 	}
 	
 	@Override
-	public void writeToNBT(NBTTagCompound nbt) {
-		super.writeToNBT(nbt);
+	public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+		return super.writeToNBT(nbt);
 	}
 	
 	@Override

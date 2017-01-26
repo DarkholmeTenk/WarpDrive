@@ -3,6 +3,7 @@ package cr0s.warpdrive.config.structures;
 import java.util.Random;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import cr0s.warpdrive.config.WarpDriveConfig;
 import cr0s.warpdrive.config.structures.Orb.OrbShell;
@@ -70,17 +71,17 @@ public class OrbInstance extends AbstractInstance {
 	}
 	
 	@Override
-	public boolean generate(World world, Random random, int x, int y, int z) {
+	public boolean generate(World world, Random random, BlockPos blockPos) {
 		boolean hasShip = schematicName != null && !schematicName.isEmpty();
 		int y2 = Math.min(WarpDriveConfig.SPACE_GENERATOR_Y_MAX_BORDER - totalThickness,
-			  Math.max(y, WarpDriveConfig.SPACE_GENERATOR_Y_MIN_BORDER + totalThickness));
+			  Math.max(blockPos.getY(), WarpDriveConfig.SPACE_GENERATOR_Y_MIN_BORDER + totalThickness));
 		if (hasShip) {
-			new WorldGenSmallShip(random.nextFloat() < 0.2F).generate(world, random, x, y2, z);
+			new WorldGenSmallShip(random.nextFloat() < 0.2F).generate(world, random, new BlockPos(blockPos.getX(), y2, blockPos.getZ()));
 		}
-		EntitySphereGen entitySphereGen = new EntitySphereGen(world, x, y2, z, this, !hasShip);
+		EntitySphereGen entitySphereGen = new EntitySphereGen(world, blockPos.getX(), y2, blockPos.getZ(), this, !hasShip);
 		world.spawnEntityInWorld(entitySphereGen);
 		if (((Orb)structure).hasStarCore) {
-			return world.spawnEntityInWorld(new EntityStarCore(world, x, y2, z, totalThickness));
+			return world.spawnEntityInWorld(new EntityStarCore(world, blockPos.getX(), y2, blockPos.getZ(), totalThickness));
 		}
 		return true;
 	}

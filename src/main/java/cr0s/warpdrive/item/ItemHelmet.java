@@ -3,24 +3,30 @@ package cr0s.warpdrive.item;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import cr0s.warpdrive.WarpDrive;
 import cr0s.warpdrive.api.IAirCanister;
 import cr0s.warpdrive.api.IBreathingHelmet;
 import cr0s.warpdrive.config.WarpDriveConfig;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+
+import javax.annotation.Nonnull;
 
 public class ItemHelmet extends ItemArmor implements IBreathingHelmet {
 	
-	public ItemHelmet(ArmorMaterial mat, int slot) {
-		super(mat, 0, slot);
+	public ItemHelmet(final String registryName, ArmorMaterial mat, EntityEquipmentSlot entityEquipmentSlot) {
+		super(mat, 0, entityEquipmentSlot);
 		setUnlocalizedName("warpdrive.armor.Helmet");
+		setRegistryName(registryName);
 		setCreativeTab(WarpDrive.creativeTabWarpDrive);
-		setTextureName("warpdrive:warpArmorHelmet");
+		GameRegistry.register(this);
 	}
 	
+	@Nonnull
 	@Override
-	public String getArmorTexture(ItemStack is, Entity en, int parSlot, String type) {
+	public String getArmorTexture(ItemStack itemStack, Entity entity, EntityEquipmentSlot slot, String type) {
 		return "warpdrive:textures/armor/warpArmor_1.png";
 	}
 	

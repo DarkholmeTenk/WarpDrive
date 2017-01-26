@@ -1,0 +1,34 @@
+{
+	"forge_marker": 1,
+	"defaults": {
+		"model": "minecraft:cube_bottom_top",
+		"textures": {
+			"side"  : "warpdrive:blocks/movement/lift-side_offline",
+			"bottom": "warpdrive:blocks/movement/lift-top_inactive",
+			"top"   : "warpdrive:blocks/movement/lift-top_inactive"
+		},
+		"transform": "forge:default-block"
+	},
+	"variants": {
+		"normal": [{}],
+		"inventory": [{}],
+		"mode": {
+			"inactive": {},
+			"up": {
+				"textures": {
+					"side"  : "warpdrive:blocks/movement/lift-side_up",
+					"bottom": "warpdrive:blocks/movement/lift-top_in",
+					"top"   : "warpdrive:blocks/movement/lift-top_out"
+				}
+			},
+			"down": {
+				"textures": {
+					"side"  : "warpdrive:blocks/movement/lift-side_down",
+					"bottom": "warpdrive:blocks/movement/lift-top_out",
+					"top"   : "warpdrive:blocks/movement/lift-top_in"
+				}
+			},
+			"redstone": {}
+		}
+	}
+}

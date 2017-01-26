@@ -12,6 +12,7 @@ import cr0s.warpdrive.WarpDrive;
 import cr0s.warpdrive.api.IBlockTransformer;
 import cr0s.warpdrive.api.ITransformation;
 import cr0s.warpdrive.config.WarpDriveConfig;
+import net.minecraftforge.common.util.Constants;
 
 public class CompatForgeMultipart implements IBlockTransformer {
 	
@@ -58,8 +59,6 @@ public class CompatForgeMultipart implements IBlockTransformer {
 	public void remove(TileEntity tileEntity) {
 		// nothing to do
 	}
-	
-	private static final byte NBTTagCompoundId = 10; // new NBTTagCompound().getId();
 	
 	// Microblocks shape is bits 0-3 for shape/slot, bits 4-7 for size:
 	// - mcr_cnr (nook, corner, notch): 16 20 22 18 / 17 21 23 19                  => shape/slot: 0 4 6 2 / 1 5 7 3 
@@ -159,7 +158,7 @@ public class CompatForgeMultipart implements IBlockTransformer {
 		
 		// Parts
 		if (nbtTileEntity.hasKey("parts")) {
-			NBTTagList nbtParts = nbtTileEntity.getTagList("parts", NBTTagCompoundId);
+			NBTTagList nbtParts = nbtTileEntity.getTagList("parts", Constants.NBT.TAG_COMPOUND);
 			NBTTagList nbtNewParts = new NBTTagList(); 
 			for (int index = 0; index < nbtParts.tagCount(); index++) {
 				NBTTagCompound nbtPart = nbtParts.getCompoundTagAt(index);

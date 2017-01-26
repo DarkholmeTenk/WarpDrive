@@ -1,6 +1,7 @@
 package cr0s.warpdrive.data;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.AxisAlignedBB;
 
 /**
  * Transition planes between dimensions to land on a planet or take off from it to reach space.
@@ -34,9 +35,27 @@ public class Planet implements Cloneable {
 	/**
 	 * Makes a new copy of this TransitionPlane. Prevents variable referencing problems.
 	 */
+	@SuppressWarnings("CloneDoesntCallSuperClone")
 	@Override
 	public Planet clone() {
 		return new Planet(dimensionId, dimensionCenterX, dimensionCenterZ, borderSizeX, borderSizeZ, spaceCenterX, spaceCenterZ);
+	}
+	
+	/**
+	 * Check if given bounding box is inside borders. It's up to caller to verify if this transition plane match current dimension.
+	 *
+	 * @param aabb bounding box that should fit within border
+	 * @return distance to transition borders, 0 if take off is possible
+	 */
+	public int isInsideBorder(AxisAlignedBB aabb) {
+		double rangeX = Math.max(Math.abs(aabb.minX - dimensionCenterX), Math.abs(aabb.maxX - dimensionCenterX));
+		double rangeZ = Math.max(Math.abs(aabb.minZ - dimensionCenterZ), Math.abs(aabb.maxZ - dimensionCenterZ));
+		if ((rangeX <= borderSizeX) && (rangeZ <= borderSizeZ)) {
+			return 0;
+		}
+		return (int) Math.sqrt(
+				  Math.pow(Math.max(0D, rangeX - borderSizeX), 2.0D)
+				+ Math.pow(Math.max(0D, rangeZ - borderSizeZ), 2.0D));
 	}
 	
 	/**
@@ -78,7 +97,7 @@ public class Planet implements Cloneable {
 		spaceCenterZ = tag.getInteger("spaceCenterZ");
 	}
 	
-	public void writeToNBT(NBTTagCompound tag) {
+	public NBTTagCompound writeToNBT(NBTTagCompound tag) {
 		tag.setInteger("dimensionId", dimensionId);
 		tag.setInteger("dimensionCenterX", dimensionCenterX);
 		tag.setInteger("dimensionCenterZ", dimensionCenterZ);
@@ -86,6 +105,7 @@ public class Planet implements Cloneable {
 		tag.setInteger("borderSizeZ", borderSizeZ);
 		tag.setInteger("spaceCenterX", spaceCenterX);
 		tag.setInteger("spaceCenterZ", spaceCenterZ);
+		return tag;
 	}
 	
 	@Override

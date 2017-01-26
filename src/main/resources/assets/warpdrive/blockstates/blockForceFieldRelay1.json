@@ -1,0 +1,36 @@
+{
+	"forge_marker": 1,
+	"defaults": {
+		"model": "minecraft:cube_column",
+		"textures": {
+			"side": "warpdrive:blocks/forcefield/relay-none",
+			"end" : "warpdrive:blocks/forcefield/relay-top"
+		},
+		"transform": "forge:default-block"
+	},
+	"variants": {
+		"normal": [{}],
+		"inventory": [{}],
+		"upgrade": {
+			"none": {},
+			"attraction"   : { "textures": { "side": "warpdrive:blocks/forcefield/relay-attraction" } },
+			"breaking"     : { "textures": { "side": "warpdrive:blocks/forcefield/relay-breaking" } },
+			"camouflage"   : { "textures": { "side": "warpdrive:blocks/forcefield/relay-camouflage" } },
+			"cooling"      : { "textures": { "side": "warpdrive:blocks/forcefield/relay-cooling" } },
+			"fusion"       : { "textures": { "side": "warpdrive:blocks/forcefield/relay-fusion" } },
+			"heating"      : { "textures": { "side": "warpdrive:blocks/forcefield/relay-heating" } },
+			"inversion"    : { "textures": { "side": "warpdrive:blocks/forcefield/relay-inversion" } },
+			"item_port"    : { "textures": { "side": "warpdrive:blocks/forcefield/relay-item_port" } },
+			"pumping"      : { "textures": { "side": "warpdrive:blocks/forcefield/relay-pumping" } },
+			"range"        : { "textures": { "side": "warpdrive:blocks/forcefield/relay-range" } },
+			"repulsion"    : { "textures": { "side": "warpdrive:blocks/forcefield/relay-repulsion" } },
+			"rotation"     : { "textures": { "side": "warpdrive:blocks/forcefield/relay-rotation" } },
+			"shock"        : { "textures": { "side": "warpdrive:blocks/forcefield/relay-shock" } },
+			"silencer"     : { "textures": { "side": "warpdrive:blocks/forcefield/relay-silencer" } },
+			"speed"        : { "textures": { "side": "warpdrive:blocks/forcefield/relay-speed" } },
+			"stabilization": { "textures": { "side": "warpdrive:blocks/forcefield/relay-stabilization" } },
+			"thickness"    : { "textures": { "side": "warpdrive:blocks/forcefield/relay-thickness" } },
+			"translation"  : { "textures": { "side": "warpdrive:blocks/forcefield/relay-translation" } }
+		}
+	}
+}

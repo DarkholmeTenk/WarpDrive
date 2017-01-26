@@ -6,19 +6,19 @@ import java.util.List;
 import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
-import cpw.mods.fml.common.Optional;
+import net.minecraftforge.fml.common.Optional;
 import cr0s.warpdrive.config.WarpDriveConfig;
 import dan200.computercraft.api.lua.ILuaContext;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 
 // Abstract class to manage laser mediums
 public abstract class TileEntityAbstractLaser extends TileEntityAbstractInterfaced {
 	// direction of the laser medium stack
-	protected ForgeDirection directionLaserMedium = ForgeDirection.UNKNOWN;
-	protected ForgeDirection[] directionsValidLaserMedium = ForgeDirection.VALID_DIRECTIONS;
+	protected EnumFacing facingLaserMedium = null;
+	protected EnumFacing[] directionsValidLaserMedium = EnumFacing.values();
 	protected int laserMediumMaxCount = 0;
 	protected int laserMediumCount = 0;
 	
@@ -37,8 +37,8 @@ public abstract class TileEntityAbstractLaser extends TileEntityAbstractInterfac
 	}
 	
 	@Override
-	public void updateEntity() {
-		super.updateEntity();
+	public void update() {
+		super.update();
 		
 		if (worldObj.isRemote) {
 			return;
@@ -47,7 +47,7 @@ public abstract class TileEntityAbstractLaser extends TileEntityAbstractInterfac
 		// accelerate update ticks during boot
 		if (bootTicks > 0) {
 			bootTicks--;
-			if (directionLaserMedium == ForgeDirection.UNKNOWN) {
+			if (facingLaserMedium == null) {
 				updateTicks = 1;
 			}
 		}
@@ -60,22 +60,19 @@ public abstract class TileEntityAbstractLaser extends TileEntityAbstractInterfac
 	}
 	
 	private void updateLaserMediumStatus() {
-		for(ForgeDirection direction : directionsValidLaserMedium) {
-			TileEntity tileEntity = worldObj.getTileEntity(xCoord + direction.offsetX, yCoord + direction.offsetY, zCoord + direction.offsetZ);
+		for(EnumFacing facing : directionsValidLaserMedium) {
+			TileEntity tileEntity = worldObj.getTileEntity(pos.offset(facing));
 			if (tileEntity != null && tileEntity instanceof TileEntityLaserMedium) {
-				directionLaserMedium = direction;
+				facingLaserMedium = facing;
 				laserMediumCount = 0;
 				while(tileEntity != null && (tileEntity instanceof TileEntityLaserMedium) && laserMediumCount < laserMediumMaxCount) {
 					laserMediumCount++;
-					tileEntity = worldObj.getTileEntity(
-							xCoord + (laserMediumCount + 1) * direction.offsetX,
-							yCoord + (laserMediumCount + 1) * direction.offsetY,
-							zCoord + (laserMediumCount + 1) * direction.offsetZ);
+					tileEntity = worldObj.getTileEntity(pos.offset(facing, laserMediumCount + 1));
 				}
 				return;
 			}
 		}
-		directionLaserMedium = ForgeDirection.UNKNOWN;
+		facingLaserMedium = null;
 	}
 	
 	protected int getEnergyStored() {
@@ -83,11 +80,19 @@ public abstract class TileEntityAbstractLaser extends TileEntityAbstractInterfac
 	}
 	
 	protected boolean consumeEnergyFromLaserMediums(final int amount, final boolean simulate) {
-		return amount <= consumeCappedEnergyFromLaserMediums(amount, simulate);
+		if (simulate) {
+			return amount <= consumeCappedEnergyFromLaserMediums(amount, true);
+		} else {
+			if (amount > consumeCappedEnergyFromLaserMediums(amount, true)) {
+				return false;
+			} else {
+				return amount <= consumeCappedEnergyFromLaserMediums(amount, false);
+			}
+		}
 	}
 	
 	protected int consumeCappedEnergyFromLaserMediums(final int amount, final boolean simulate) {
-		if (directionLaserMedium == ForgeDirection.UNKNOWN) {
+		if (facingLaserMedium == null) {
 			return 0;
 		}
 		
@@ -96,10 +101,7 @@ public abstract class TileEntityAbstractLaser extends TileEntityAbstractInterfac
 		int count = 1;
 		List<TileEntityLaserMedium> laserMediums = new LinkedList<>();
 		for (; count <= laserMediumMaxCount; count++) {
-			TileEntity tileEntity = worldObj.getTileEntity(
-					xCoord + count * directionLaserMedium.offsetX,
-					yCoord + count * directionLaserMedium.offsetY,
-					zCoord + count * directionLaserMedium.offsetZ);
+			TileEntity tileEntity = worldObj.getTileEntity(pos.offset(facingLaserMedium, count));
 			if (!(tileEntity instanceof TileEntityLaserMedium)) {
 				break;
 			}
@@ -136,14 +138,14 @@ public abstract class TileEntityAbstractLaser extends TileEntityAbstractInterfac
 			int energyStored = laserMedium.getEnergyStored();
 			int energyToConsume = Math.min(energyStored, energyAverage + energyLeftOver);
 			energyLeftOver -= Math.max(0, energyToConsume - energyAverage);
-			laserMedium.consumeEnergy(energyToConsume, simulate); // FIXME simulate is always false here
+			laserMedium.consumeEnergy(energyToConsume, false); // simulate is always false here
 			energyTotalConsumed += energyToConsume;
 		}
 		return energyTotalConsumed;
 	}
 	
 	protected Object[] energy() {
-		if (directionLaserMedium == ForgeDirection.UNKNOWN) {
+		if (facingLaserMedium == null) {
 			return new Object[] { 0, 0 };
 		} else {
 			int energyStored = 0;
@@ -151,10 +153,7 @@ public abstract class TileEntityAbstractLaser extends TileEntityAbstractInterfac
 			int count = 1;
 			// List<TileEntityLaserMedium> laserMediums = new LinkedList();
 			for (; count <= laserMediumMaxCount; count++) {
-				TileEntity tileEntity = worldObj.getTileEntity(
-						xCoord + count * directionLaserMedium.offsetX,
-						yCoord + count * directionLaserMedium.offsetY,
-						zCoord + count * directionLaserMedium.offsetZ);
+				TileEntity tileEntity = worldObj.getTileEntity(pos.offset(facingLaserMedium, count));
 				if (!(tileEntity instanceof TileEntityLaserMedium)) {
 					break;
 				}
@@ -167,7 +166,7 @@ public abstract class TileEntityAbstractLaser extends TileEntityAbstractInterfac
 	}
 	
 	protected Object[] laserMediumDirection() {
-		return new Object[] { directionLaserMedium.name(), directionLaserMedium.offsetX, directionLaserMedium.offsetY, directionLaserMedium.offsetZ };
+		return new Object[] { facingLaserMedium.name(), facingLaserMedium.getFrontOffsetX(), facingLaserMedium.getFrontOffsetY(), facingLaserMedium.getFrontOffsetZ() };
 	}
 	
 	protected Object[] laserMediumCount() {

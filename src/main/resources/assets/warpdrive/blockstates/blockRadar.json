@@ -1,0 +1,29 @@
+{
+	"forge_marker": 1,
+	"defaults": {
+		"model": "minecraft:cube_bottom_top",
+		"textures": {
+			"side"  : "warpdrive:blocks/detection/radar-side_inactive",
+			"bottom": "warpdrive:blocks/detection/radar-bottom",
+			"top"   : "warpdrive:blocks/detection/radar-top"
+		},
+		"transform": "forge:default-block"
+	},
+	"variants": {
+		"normal": [{}],
+		"inventory": [{}],
+		"mode": {
+			"inactive": {},
+			"active": {
+				"textures": {
+					"side"  : "warpdrive:blocks/detection/radar-side_active"
+				}
+			},
+			"scanning": {
+				"textures": {
+					"side"  : "warpdrive:blocks/detection/radar-side_scanning"
+				}
+			}
+		}
+	}
+}

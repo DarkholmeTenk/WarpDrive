@@ -2,28 +2,32 @@ package cr0s.warpdrive.item;
 
 import java.util.List;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
+import cr0s.warpdrive.data.SoundEvents;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemDye;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.*;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import cr0s.warpdrive.WarpDrive;
 import cr0s.warpdrive.api.IBeamFrequency;
 import cr0s.warpdrive.api.IVideoChannel;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class ItemTuningFork extends Item {
-	private IIcon icons[];
+import javax.annotation.Nonnull;
+
+public class ItemTuningFork extends ItemAbstractBase {
 	
-	public ItemTuningFork() {
-		super();
+	public ItemTuningFork(final String registryName) {
+		super(registryName);
 		setMaxDamage(0);
-		setCreativeTab(WarpDrive.creativeTabWarpDrive);
 		setMaxStackSize(1);
 		setUnlocalizedName("warpdrive.tool.TuningFork");
 		setFull3D();
@@ -31,38 +35,30 @@ public class ItemTuningFork extends Item {
 	}
 	
 	@Override
-	public void registerIcons(IIconRegister iconRegister) {
-		icons = new IIcon[16];
-		
-		for (int i = 0; i < 16; ++i) {
-			icons[i] = iconRegister.registerIcon("warpdrive:tool/tuningFork_" + getDyeColorName(i));
-		}
-	}
-	
-	public static String getDyeColorName(int metadata) {
-		return ItemDye.field_150921_b[metadata];
-	}
-
-	@Override
-	public IIcon getIconFromDamage(int damage) {
-		if (damage < icons.length) {
-			return icons[damage];
-		}
-		return Blocks.fire.getFireIcon(0);
-	}
-	
-	@Override
-	public void getSubItems(Item item, CreativeTabs creativeTab, List list) {
+	public void getSubItems(@Nonnull Item item, @Nonnull CreativeTabs creativeTabs, @Nonnull List<ItemStack> subItems) {
 		for(int dyeColor = 0; dyeColor < 16; dyeColor++) {
-			list.add(new ItemStack(item, 1, dyeColor));
+			subItems.add(new ItemStack(item, 1, dyeColor));
 		}
 	}
 	
+	@Nonnull
+	@Override
+	@SideOnly(Side.CLIENT)
+	public ModelResourceLocation getModelResourceLocation(ItemStack itemStack) {
+		int damage = itemStack.getItemDamage();
+		ResourceLocation resourceLocation = getRegistryName();
+		if (damage >= 0 && damage < 16) {
+			resourceLocation = new ResourceLocation(resourceLocation.getResourceDomain(), resourceLocation.getResourcePath() + "-" + EnumDyeColor.byDyeDamage(damage).getUnlocalizedName());
+		}
+		return new ModelResourceLocation(resourceLocation, "inventory");
+	}
+	
+	@Nonnull
 	@Override
 	public String getUnlocalizedName(ItemStack itemStack) {
 		int damage = itemStack.getItemDamage();
 		if (damage >= 0 && damage < 16) {
-			return getUnlocalizedName() + "." + ItemDye.field_150923_a[damage];
+			return getUnlocalizedName() + "." + EnumDyeColor.byDyeDamage(damage).getUnlocalizedName();
 		}
 		return getUnlocalizedName();
 	}
@@ -81,50 +77,51 @@ public class ItemTuningFork extends Item {
 		return ((itemStack.getItemDamage() % 16) + 1) * 10;
 	}
 	
+	@Nonnull
 	@Override
-	public boolean onItemUse(ItemStack itemStack, EntityPlayer entityPlayer, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
+	public EnumActionResult onItemUse(ItemStack itemStack, EntityPlayer entityPlayer, World world, BlockPos blockPos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		if (world.isRemote) {
-			return false;
+			return EnumActionResult.FAIL;
 		}
-		TileEntity tileEntity = world.getTileEntity(x, y, z);
+		TileEntity tileEntity = world.getTileEntity(blockPos);
 		if (tileEntity == null) {
-			return false;
+			return EnumActionResult.FAIL;
 		}
 		
 		boolean hasVideoChannel = tileEntity instanceof IVideoChannel;
 		boolean hasBeamFrequency = tileEntity instanceof IBeamFrequency;
 		if (!hasVideoChannel && !hasBeamFrequency) {
-			return false;
+			return EnumActionResult.FAIL;
 		}
 		if (hasVideoChannel && !(entityPlayer.isSneaking() && hasBeamFrequency)) {
 			((IVideoChannel)tileEntity).setVideoChannel(getVideoChannel(itemStack));
-			WarpDrive.addChatMessage(entityPlayer, StatCollector.translateToLocalFormatted("item.warpdrive.tool.TuningFork.use.setVideoChannel",
+			WarpDrive.addChatMessage(entityPlayer, new TextComponentTranslation("item.warpdrive.tool.TuningFork.use.setVideoChannel",
 					tileEntity.getBlockType().getLocalizedName(),
 					getVideoChannel(itemStack)));
-			world.playSoundAtEntity(entityPlayer, "WarpDrive:ding", 0.1F, 1F);
+			world.playSound(entityPlayer.posX, entityPlayer.posY, entityPlayer.posZ, SoundEvents.DING, SoundCategory.PLAYERS, 0.1F, 1F, false);
 		} else if (hasBeamFrequency) {
 			((IBeamFrequency)tileEntity).setBeamFrequency(getBeamFrequency(itemStack));
-			WarpDrive.addChatMessage(entityPlayer, StatCollector.translateToLocalFormatted("item.warpdrive.tool.TuningFork.use.setBeamFrequency",
+			WarpDrive.addChatMessage(entityPlayer, new TextComponentTranslation("item.warpdrive.tool.TuningFork.use.setBeamFrequency",
 					tileEntity.getBlockType().getLocalizedName(),
 					getBeamFrequency(itemStack)));
-			world.playSoundAtEntity(entityPlayer, "WarpDrive:ding", 0.1F, 1F);
+			world.playSound(entityPlayer.posX, entityPlayer.posY, entityPlayer.posZ, SoundEvents.DING, SoundCategory.PLAYERS, 0.1F, 1F, false);
 		} else {
-			WarpDrive.addChatMessage(entityPlayer, "Error: invalid state, please contact the mod authors"
+			WarpDrive.addChatMessage(entityPlayer, new TextComponentString("Error: invalid state, please contact the mod authors"
 					+ "\nof " + itemStack
-					+ "\nand " + tileEntity);
+					+ "\nand " + tileEntity));
 		}
-		return true;
+		return EnumActionResult.SUCCESS;
 	}
 	
 	@Override
-	public void addInformation(ItemStack itemStack, EntityPlayer entityPlayer, List list, boolean advancedItemTooltips) {
+	public void addInformation(ItemStack itemStack, EntityPlayer entityPlayer, List<String> list, boolean advancedItemTooltips) {
 		super.addInformation(itemStack, entityPlayer, list, advancedItemTooltips);
 		
 		String tooltip = "";
-		tooltip += StatCollector.translateToLocalFormatted("item.warpdrive.tool.TuningFork.tooltip.videoChannel", getVideoChannel(itemStack));
-		tooltip += "\n" + StatCollector.translateToLocalFormatted("item.warpdrive.tool.TuningFork.tooltip.beamFrequency", getBeamFrequency(itemStack));
+		tooltip += new TextComponentTranslation("item.warpdrive.tool.TuningFork.tooltip.videoChannel", getVideoChannel(itemStack));
+		tooltip += "\n" + new TextComponentTranslation("item.warpdrive.tool.TuningFork.tooltip.beamFrequency", getBeamFrequency(itemStack));
 		
-		tooltip += StatCollector.translateToLocal("item.warpdrive.tool.TuningFork.tooltip.usage");
+		tooltip += "\n\n" + new TextComponentTranslation("item.warpdrive.tool.TuningFork.tooltip.usage").getFormattedText();
 		
 		WarpDrive.addTooltip(list, tooltip);
 	}

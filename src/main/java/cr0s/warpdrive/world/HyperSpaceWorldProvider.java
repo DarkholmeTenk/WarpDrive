@@ -3,15 +3,16 @@ package cr0s.warpdrive.world;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldProvider;
-import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraft.world.biome.WorldChunkManagerHell;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.BiomeProviderSingle;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.IChunkProvider;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.world.chunk.IChunkGenerator;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import cr0s.warpdrive.WarpDrive;
 import cr0s.warpdrive.config.WarpDriveConfig;
 import cr0s.warpdrive.render.RenderBlank;
@@ -19,13 +20,13 @@ import cr0s.warpdrive.render.RenderBlank;
 public class HyperSpaceWorldProvider extends WorldProvider {
 	
 	public HyperSpaceWorldProvider() {
-		worldChunkMgr = new WorldChunkManagerHell(WarpDrive.spaceBiome, 0.0F);
-		hasNoSky = false;
+		biomeProvider  = new BiomeProviderSingle(WarpDrive.spaceBiome);
+		hasNoSky = true;
 	}
 	
 	@Override
-	public String getDimensionName() {
-		return "Hyperspace";
+	public DimensionType getDimensionType() {
+		return WarpDrive.dimensionTypeHyperSpace;
 	}
 	
 	@Override
@@ -60,7 +61,7 @@ public class HyperSpaceWorldProvider extends WorldProvider {
 	}
 	
 	@Override
-	public BiomeGenBase getBiomeGenForCoords(int x, int z) {
+	public Biome getBiomeForCoords(BlockPos blockPos) {
 		return WarpDrive.spaceBiome;
 	}
 	
@@ -87,25 +88,25 @@ public class HyperSpaceWorldProvider extends WorldProvider {
 	@SideOnly(Side.CLIENT)
 	@Override
 	public String getSaveFolder() {
-		return (dimensionId == 0 ? null : "WarpDriveHyperSpace" + dimensionId);
+		return (getDimensionType().getId() == 0 ? null : "WarpDriveHyperSpace" + getDimensionType().getId());
 	}
 	
 	@Override
-	public boolean canCoordinateBeSpawn(int par1, int par2) {
-		int var3 = worldObj.getTopSolidOrLiquidBlock(par1, par2);
-		return var3 != 0;
+	public boolean canCoordinateBeSpawn(int x, int z) {
+		BlockPos blockPos = worldObj.getTopSolidOrLiquidBlock(new BlockPos(x, 0, z));
+		return blockPos.getY() != 0;
 	}
 	
 	@Override
-	public Vec3 getSkyColor(Entity cameraEntity, float partialTicks) {
+	public Vec3d getSkyColor(Entity cameraEntity, float partialTicks) {
 		setCloudRenderer(new RenderBlank());
 		setSkyRenderer(new RenderBlank());
-		return Vec3.createVectorHelper(1.0D, 0.0D, 0.0D);
+		return new Vec3d(1.0D, 0.0D, 0.0D);
 	}
 	
 	@Override
-	public Vec3 getFogColor(float par1, float par2) {
-		return Vec3.createVectorHelper(0.1D, 0.0D, 0.0D);
+	public Vec3d getFogColor(float par1, float par2) {
+		return new Vec3d(0.1D, 0.0D, 0.0D);
 	}
 	
 	@SideOnly(Side.CLIENT)
@@ -113,65 +114,56 @@ public class HyperSpaceWorldProvider extends WorldProvider {
 	public boolean isSkyColored() {
 		return true;
 	}
-	
-	@Override
-	public ChunkCoordinates getEntrancePortalLocation() {
-		return null;
-	}
-	
+		
 	@Override
 	public int getRespawnDimension(EntityPlayerMP player) {
 		return WarpDriveConfig.G_HYPERSPACE_DIMENSION_ID;
 	}
 	
 	@Override
-	public IChunkProvider createChunkGenerator() {
-		return new HyperSpaceGenerator(worldObj, 46);
+	public IChunkGenerator createChunkGenerator() {
+		return new HyperSpaceChunkProvider(worldObj, 46);
 	}
 	
 	@Override
-	public boolean canBlockFreeze(int x, int y, int z, boolean byWater) {
+	public boolean canBlockFreeze(BlockPos blockPos, boolean byWater) {
 		return false;
 	}
 	
 	@Override
-	public ChunkCoordinates getRandomizedSpawnPoint() {
-		ChunkCoordinates var5 = new ChunkCoordinates(worldObj.getSpawnPoint());
+	public BlockPos getRandomizedSpawnPoint() {
+		BlockPos blockPos = new BlockPos(worldObj.getSpawnPoint());
 		// boolean isAdventure = worldObj.getWorldInfo().getGameType() == EnumGameType.ADVENTURE;
 		int spawnFuzz = 100;
 		int spawnFuzzHalf = spawnFuzz / 2;
 		{
-			var5.posX += worldObj.rand.nextInt(spawnFuzz) - spawnFuzzHalf;
-			var5.posZ += worldObj.rand.nextInt(spawnFuzz) - spawnFuzzHalf;
-			var5.posY = 200;
+			blockPos = new BlockPos(
+				blockPos.getX() + worldObj.rand.nextInt(spawnFuzz) - spawnFuzzHalf,
+				200,
+				blockPos.getZ() + worldObj.rand.nextInt(spawnFuzz) - spawnFuzzHalf);
 		}
 		
-		if (worldObj.isAirBlock(var5.posX, var5.posY, var5.posZ)) {
-			worldObj.setBlock(var5.posX, var5.posY, var5.posZ, Blocks.stone, 0, 2);
-			worldObj.setBlock(var5.posX + 1, var5.posY + 1, var5.posZ, Blocks.glass, 0, 2);
-			worldObj.setBlock(var5.posX + 1, var5.posY + 2, var5.posZ, Blocks.glass, 0, 2);
-			worldObj.setBlock(var5.posX - 1, var5.posY + 1, var5.posZ, Blocks.glass, 0, 2);
-			worldObj.setBlock(var5.posX - 1, var5.posY + 2, var5.posZ, Blocks.glass, 0, 2);
-			worldObj.setBlock(var5.posX, var5.posY + 1, var5.posZ + 1, Blocks.glass, 0, 2);
-			worldObj.setBlock(var5.posX, var5.posY + 2, var5.posZ + 1, Blocks.glass, 0, 2);
-			worldObj.setBlock(var5.posX, var5.posY + 1, var5.posZ - 1, Blocks.glass, 0, 2);
-			worldObj.setBlock(var5.posX, var5.posY + 2, var5.posZ - 1, Blocks.glass, 0, 2);
-			worldObj.setBlock(var5.posX, var5.posY + 3, var5.posZ, Blocks.glass, 0, 2);
-			worldObj.setBlock(var5.posX, var5.posY, var5.posZ, WarpDrive.blockAir, 15, 2);
-			worldObj.setBlock(var5.posX, var5.posY + 1, var5.posZ, WarpDrive.blockAir, 15, 2);
+		if (worldObj.isAirBlock(blockPos)) {
+			worldObj.setBlockState(blockPos, Blocks.STONE.getDefaultState(), 2);
+			worldObj.setBlockState(blockPos.add( 1, 1,  0), Blocks.GLASS.getDefaultState(), 2);
+			worldObj.setBlockState(blockPos.add( 1, 2,  0), Blocks.GLASS.getDefaultState(), 2);
+			worldObj.setBlockState(blockPos.add(-1, 1,  0), Blocks.GLASS.getDefaultState(), 2);
+			worldObj.setBlockState(blockPos.add(-1, 2,  0), Blocks.GLASS.getDefaultState(), 2);
+			worldObj.setBlockState(blockPos.add( 0, 1,  1), Blocks.GLASS.getDefaultState(), 2);
+			worldObj.setBlockState(blockPos.add( 0, 2,  1), Blocks.GLASS.getDefaultState(), 2);
+			worldObj.setBlockState(blockPos.add( 0, 1, -1), Blocks.GLASS.getDefaultState(), 2);
+			worldObj.setBlockState(blockPos.add( 0, 2, -1), Blocks.GLASS.getDefaultState(), 2);
+			worldObj.setBlockState(blockPos.add( 0, 3,  0), Blocks.GLASS.getDefaultState(), 2);
+			worldObj.setBlockState(blockPos.add( 0, 0,  0), WarpDrive.blockAir.getStateFromMeta(15), 2);
+			worldObj.setBlockState(blockPos.add( 0, 1,  0), WarpDrive.blockAir.getStateFromMeta(15), 2);
 		}
 		
-		return var5;
-	}
-	
-	@Override
-	public boolean getWorldHasVoidParticles() {
-		return false;
+		return blockPos;
 	}
 	
 	@Override
 	public boolean isDaytime() {
-		return true;
+		return false;
 	}
 	
 	@Override

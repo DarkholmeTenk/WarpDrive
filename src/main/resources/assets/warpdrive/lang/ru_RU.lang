@@ -1,45 +1,120 @@
-death.attack.warpdrive.asphyxia=%s умер от удушья
+﻿
+death.attack.warpdrive.asphyxia=%1$s умер от удушья
 death.attack.warpdrive.asphyxia.player=%2$s убил %1$s с помощью удушья
-death.attack.warpdrive.cold=%s died from cold
+death.attack.warpdrive.cold=%1$s died from cold
 death.attack.warpdrive.cold.player=%1$s was frozen to death by %2$s 
-death.attack.warpdrive.laser=%s died from crossing the beam
+death.attack.warpdrive.laser=%1$s died from crossing the beam
 death.attack.warpdrive.laser.player=%1$s was laserified by %2$s
-death.attack.warpdrive.shock=%s was electrocuted
+death.attack.warpdrive.shock=%1$s was electrocuted
 death.attack.warpdrive.shock.player=%1$s was electrocuted by %2$s
-death.attack.warpdrive.teleportation=%s не пережил рематериализацию
+death.attack.warpdrive.teleportation=%1$s не пережил рематериализацию
 death.attack.warpdrive.teleportation.player=%2$s убил %1$s телепортацией
-death.attack.warpdrive.warm=%s died from excessive temperature
+death.attack.warpdrive.warm=%1$s died from excessive temperature
 death.attack.warpdrive.warm.player=%1$s was cooked by %2$s
 
-item.warpdrive.crafting.Malformed.name=Поврежденный предмет
-item.warpdrive.crafting.EmeraldCrystal.name=Изумрудный настраиваемый кристалл
-item.warpdrive.crafting.EnderCrystal.name=Настраиваемый кристалл Края
-item.warpdrive.crafting.DiamondCrystal.name=Алмазный настраиваемый кристалл
-item.warpdrive.crafting.DiffractionGrating.name=Дифракционная решетка
-item.warpdrive.crafting.ReactorCore.name=Ядро реактора
-item.warpdrive.crafting.ComputerInterface.name=Компьютерный интерфейс
-item.warpdrive.crafting.PowerInterface.name=Интерфейс питания
-item.warpdrive.crafting.CapacitiveCrystal.name=Емкостный кристалл
-item.warpdrive.crafting.AirCanisterEmpty.name=Пустой баллон для воздуха
-item.warpdrive.crafting.AirCanisterEmpty.tooltip=Используйте на генераторе воздуха, чтобы наполнить
-item.warpdrive.crafting.Lens.name=Линза
-item.warpdrive.crafting.Zoom.name=Оптика
-item.warpdrive.crafting.GlassTank.name=Стеклянный бак
-item.warpdrive.crafting.FlatScreen.name=Плоский экран
-item.warpdrive.crafting.MemoryCrystal.name=Кристалл памяти
-item.warpdrive.crafting.Motor.name=Мотор
-item.warpdrive.crafting.BoneCharcoal.name=Костяной уголь
-item.warpdrive.crafting.ActivatedCarbon.name=Активированный уголь
-item.warpdrive.crafting.LaserMediumEmpty.name=Лазерный излучатель (Пустой)
+item.warpdrive.component.malformed.name=Поврежденный предмет
+item.warpdrive.component.emeraldCrystal.name=Изумрудный настраиваемый кристалл
+item.warpdrive.component.enderCrystal.name=Настраиваемый кристалл Края
+item.warpdrive.component.diamondCrystal.name=Алмазный настраиваемый кристалл
+item.warpdrive.component.diffractionGrating.name=Дифракционная решетка
+item.warpdrive.component.reactorCore.name=Ядро реактора
+item.warpdrive.component.computerInterface.name=Компьютерный интерфейс
+item.warpdrive.component.powerInterface.name=Интерфейс питания
+item.warpdrive.component.capacitiveCrystal.name=Емкостный кристалл
+item.warpdrive.component.airCanisterEmpty.name=Пустой баллон для воздуха
+item.warpdrive.component.airCanisterEmpty.tooltip=Используйте на генераторе воздуха, чтобы наполнить
+item.warpdrive.component.lens.name=Линза
+item.warpdrive.component.zoom.name=Оптика
+item.warpdrive.component.glassTank.name=Стеклянный бак
+item.warpdrive.component.flatScreen.name=Плоский экран
+item.warpdrive.component.memoryCrystal.name=Кристалл памяти
+item.warpdrive.component.motor.name=Мотор
+item.warpdrive.component.boneCharcoal.name=Костяной уголь
+item.warpdrive.component.activatedCarbon.name=Активированный уголь
+item.warpdrive.component.laserMediumEmpty.name=Лазерный излучатель (Пустой)
+item.warpdrive.component.electromagneticProjector.name=Electromagnetic Projector
+item.warpdrive.component.coilCrystal.name=Coil Crystal
 
-item.warpdrive.energy.IC2reactorLaserFocus.name=Фокусировщик лазера реактора IC2
 item.warpdrive.armor.AirCanisterFull.name=Баллон с воздухом
 item.warpdrive.armor.Helmet.name=Космический шлем
+
+item.warpdrive.energy.IC2reactorLaserFocus.name=Фокусировщик лазера реактора IC2
+
+item.warpdrive.forcefield.shape.none.name=No shape
+item.warpdrive.forcefield.shape.none.tooltip=§4Invalid item
+item.warpdrive.forcefield.shape.sphere.name=Sphere shape
+item.warpdrive.forcefield.shape.sphere.tooltip=
+item.warpdrive.forcefield.shape.cylinder_h.name=Horizontal cylinder shape
+item.warpdrive.forcefield.shape.cylinder_h.tooltip=
+item.warpdrive.forcefield.shape.cylinder_v.name=Vertical cylinder shape
+item.warpdrive.forcefield.shape.cylinder_v.tooltip=
+item.warpdrive.forcefield.shape.cube.name=Cube shape
+item.warpdrive.forcefield.shape.cube.tooltip=
+item.warpdrive.forcefield.shape.plane.name=Plane shape
+item.warpdrive.forcefield.shape.plane.tooltip=
+item.warpdrive.forcefield.shape.tube.name=Tube shape
+item.warpdrive.forcefield.shape.tube.tooltip=
+item.warpdrive.forcefield.shape.tunnel.name=Tunnel shape
+item.warpdrive.forcefield.shape.tunnel.tooltip=
+item.warpdrive.forcefield.shape.tooltip.usage=§bRight click a projector§7 to upgrade it\n§bSneak-right click§7 to downgrade
+
+item.warpdrive.forcefield.upgrade.none.name=No upgrade
+item.warpdrive.forcefield.upgrade.none.tooltip=§4Invalid item
+item.warpdrive.forcefield.upgrade.attraction.name=Attraction upgrade
+item.warpdrive.forcefield.upgrade.attraction.tooltip=Pull block breaker drops for storage. Add more Attraction upgrades to affect items, passive entities, monsters and eventually players. Add an Inversion for an area/terraforming effect.
+item.warpdrive.forcefield.upgrade.breaking.name=Block breaker upgrade
+item.warpdrive.forcefield.upgrade.breaking.tooltip=Break blocks instead of projecting a force field. Add more Block breaker upgrades to increase mining level.
+item.warpdrive.forcefield.upgrade.camouflage.name=Camouflage upgrade
+item.warpdrive.forcefield.upgrade.camouflage.tooltip=Disguise force field into a custom block. Place a block on top of the upgraded relay to define the camouflage block. Add more camouflage upgrades to increase speed.
+item.warpdrive.forcefield.upgrade.cooling.name=Cooling upgrade
+item.warpdrive.forcefield.upgrade.cooling.tooltip=Freeze blocks and entities. Add more Cooling upgrades to boost effect. Add an Inversion for an area/terraforming effect.
+item.warpdrive.forcefield.upgrade.fusion.name=Fusion upgrade
+item.warpdrive.forcefield.upgrade.fusion.tooltip=Merge overlapping force fields sharing the same beam frequency network
+item.warpdrive.forcefield.upgrade.heating.name=Heating upgrade
+item.warpdrive.forcefield.upgrade.heating.tooltip=Heat up blocks and entities. Add more Heating upgrades to boost effect. Add an Inversion for an area/terraforming effect.
+item.warpdrive.forcefield.upgrade.inversion.name=Inversion upgrade
+item.warpdrive.forcefield.upgrade.inversion.tooltip=§4Work in progress\nChange from surface to volume effect area. Use this for entity targeting or terraforming.
+item.warpdrive.forcefield.upgrade.item_port.name=Item port upgrade
+item.warpdrive.forcefield.upgrade.item_port.tooltip=Interface with attached containers. Add an Attraction upgrade to collect Block breaker drops. Add a Repulsion upgrade to provide blocks to place using a Stabilization upgrade.
+item.warpdrive.forcefield.upgrade.pumping.name=Pumping upgrade
+item.warpdrive.forcefield.upgrade.pumping.tooltip=§4Work in progress\nPump fluids at the force field location. Add more Pump upgrades to pull fluid with higher viscosity fluids like lava.
+item.warpdrive.forcefield.upgrade.range.name=Range upgrade
+item.warpdrive.forcefield.upgrade.range.tooltip=Increase the projector maximum range
+item.warpdrive.forcefield.upgrade.repulsion.name=Repulsion upgrade
+item.warpdrive.forcefield.upgrade.repulsion.tooltip=Push stored items to be placed by stabilisation upgrade. Add more Repulsion upgrades to affect passive entities, monsters and eventually players. Add an Inversion for an area/terraforming effect.
+item.warpdrive.forcefield.upgrade.rotation.name=Rotation upgrade
+item.warpdrive.forcefield.upgrade.rotation.tooltip=Enable force field rotation
+item.warpdrive.forcefield.upgrade.shock.name=Shock upgrade
+item.warpdrive.forcefield.upgrade.shock.tooltip=Electrify blocks and entities. Add more Shock upgrades to boost effect. Add an Inversion for an area/terraforming effect.
+item.warpdrive.forcefield.upgrade.silencer.name=Silencer upgrade
+item.warpdrive.forcefield.upgrade.silencer.tooltip=Silence the attached block
+item.warpdrive.forcefield.upgrade.speed.name=Speed upgrade
+item.warpdrive.forcefield.upgrade.speed.tooltip=Increase force field projection speed
+item.warpdrive.forcefield.upgrade.stabilization.name=Stabilization upgrade
+item.warpdrive.forcefield.upgrade.stabilization.tooltip=Place blocks instead of projecting a force field
+item.warpdrive.forcefield.upgrade.thickness.name=Thickness upgrade
+item.warpdrive.forcefield.upgrade.thickness.tooltip=Increase force field thickness. Add more Thickness upgrades to increase effect, up to doubling.
+item.warpdrive.forcefield.upgrade.translation.name=Translation upgrade
+item.warpdrive.forcefield.upgrade.translation.tooltip=Enable force field translation
+item.warpdrive.forcefield.upgrade.tooltip.usage.projector=§bRight click a projector§7 to upgrade it
+item.warpdrive.forcefield.upgrade.tooltip.usage.relay=§bRight click a relay§7 to upgrade it
+item.warpdrive.forcefield.upgrade.tooltip.usage.dismount=§bSneak-right click§7 to downgrade
 
 item.warpdrive.upgrade.Power.name=Улучшение - Питание
 item.warpdrive.upgrade.Speed.name=Улучшение - Скорость
 item.warpdrive.upgrade.Range.name=Улучшение - Радиус
 item.warpdrive.upgrade.Energy.name=Улучшение - Хранилище энергии
+
+
+item.warpdrive.tool.crystalToken.name=Crystal token
+item.warpdrive.tool.crystalToken.tooltip=Crystal encapsulation of ship '%1$s'\n§bEnter the scanner field§7 to build your ship
+item.warpdrive.tool.crystalToken0.name=Crystal token #0
+item.warpdrive.tool.crystalToken1.name=Crystal token #1
+item.warpdrive.tool.crystalToken2.name=Crystal token #2
+item.warpdrive.tool.crystalToken3.name=Crystal token #3
+item.warpdrive.tool.crystalToken4.name=Crystal token #4
+item.warpdrive.tool.crystalToken5.name=Crystal token #5
+
 
 item.warpdrive.tool.TuningFork.name=Камертон
 item.warpdrive.tool.TuningFork.white.name=Белый камертон
@@ -58,9 +133,10 @@ item.warpdrive.tool.TuningFork.brown.name=Коричневый камертон
 item.warpdrive.tool.TuningFork.green.name=Зеленый камертон
 item.warpdrive.tool.TuningFork.red.name=Красный камертон
 item.warpdrive.tool.TuningFork.black.name=Черный камертон
+
 item.warpdrive.tool.TuningFork.tooltip.videoChannel=Видеоканал установлен на %1$d
 item.warpdrive.tool.TuningFork.tooltip.beamFrequency=Частота луча установлена на %1$d
-item.warpdrive.tool.TuningFork.tooltip.usage=\n\n§bИспользуйте на блоке§7, чтобы настроить его кристаллы\n§bПрисядьте§7, чтобы настроить вторичные кристаллы
+item.warpdrive.tool.TuningFork.tooltip.usage=§bИспользуйте на блоке§7, чтобы настроить его кристаллы\n§bПрисядьте§7, чтобы настроить вторичные кристаллы
 item.warpdrive.tool.TuningFork.use.setVideoChannel=%1$s настроен на видеоканал %2$d
 item.warpdrive.tool.TuningFork.use.setBeamFrequency=%1$s настроен на частоту луча %2$d
 
@@ -72,6 +148,9 @@ tile.warpdrive.passive.IridiumBlock.name=Блок иридия
 tile.warpdrive.passive.HighlyAdvancedMachine.name=Высокотехнологичный корпус механизма
 tile.warpdrive.passive.Network.name=Сетевой блок
 tile.warpdrive.passive.Plain.name=Простой блок
+tile.warpdrive.passive.lamp_bubble.name=Bubble Lamp
+tile.warpdrive.passive.lamp_flat.name=Flat Lamp
+tile.warpdrive.passive.lamp_long.name=Long Lamp
 tile.warpdrive.passive.TransportBeacon.name=Маяк для транспортера
 
 tile.warpdrive.machines.AirGenerator.name=Генератор воздуха
@@ -95,6 +174,26 @@ tile.warpdrive.energy.EnanReactorCore.name=Ядро энантиоморфног
 tile.warpdrive.energy.EnanReactorLaser.name=Лазер стабилизации энантиоморфного реактора
 tile.warpdrive.energy.EnergyBank.name=Хранилище энергии Ану
 tile.warpdrive.energy.IC2ReactorLaserMonitor.name=Лазерный монитор реактора IC2
+
+tile.warpdrive.forcefield.block1.name=Basic Force Field Block
+tile.warpdrive.forcefield.block2.name=Advanced Force Field Block
+tile.warpdrive.forcefield.block3.name=Superior Force Field Block
+tile.warpdrive.forcefield.projector1.name=Basic Force Field Projector
+tile.warpdrive.forcefield.projector1.single.name=Basic Force Field Half Projector
+tile.warpdrive.forcefield.projector1.double.name=Basic Force Field Full Projector
+tile.warpdrive.forcefield.projector2.name=Advanced Force Field Projector
+tile.warpdrive.forcefield.projector2.single.name=Advanced Force Field Half Projector
+tile.warpdrive.forcefield.projector2.double.name=Advanced Force Field Full Projector
+tile.warpdrive.forcefield.projector3.name=Superior Force Field Projector
+tile.warpdrive.forcefield.projector3.single.name=Superior Force Field Half Projector
+tile.warpdrive.forcefield.projector3.double.name=Superior Force Field Full Projector
+
+tile.warpdrive.forcefield.relay1.name=Basic Force Field Relay
+tile.warpdrive.forcefield.relay1.tooltip=Supports up to 1 force field upgrade shared within its network
+tile.warpdrive.forcefield.relay2.name=Advanced Force Field Relay
+tile.warpdrive.forcefield.relay2.tooltip=Supports up to 1 force field upgrade shared within its network
+tile.warpdrive.forcefield.relay3.name=Superior Force Field Relay
+tile.warpdrive.forcefield.relay3.tooltip=Supports up to 1 force field upgrade shared within its network
 
 tile.warpdrive.movement.Lift.name=Лифт
 tile.warpdrive.movement.ShipController.name=Контроллер корабля
@@ -140,6 +239,23 @@ tile.warpdrive.hull1.glass.green.name=Зеленое базовое корабе
 tile.warpdrive.hull1.glass.red.name=Красное базовое корабельное стекло
 tile.warpdrive.hull1.glass.black.name=Черное базовое корабельное стекло
 
+tile.warpdrive.hull1.stairs.white.name=White Stained Basic Hull Stairs
+tile.warpdrive.hull1.stairs.orange.name=Orange Stained Basic Hull Stairs
+tile.warpdrive.hull1.stairs.magenta.name=Magenta Stained Basic Hull Stairs
+tile.warpdrive.hull1.stairs.lightBlue.name=Light Blue Stained Basic Hull Stairs
+tile.warpdrive.hull1.stairs.yellow.name=Yellow Stained Basic Hull Stairs
+tile.warpdrive.hull1.stairs.lime.name=Lime Stained Basic Hull Stairs
+tile.warpdrive.hull1.stairs.pink.name=Pink Stained Basic Hull Stairs
+tile.warpdrive.hull1.stairs.gray.name=Gray Stained Basic Hull Stairs
+tile.warpdrive.hull1.stairs.silver.name=Silver Stained Basic Hull Stairs
+tile.warpdrive.hull1.stairs.cyan.name=Cyan Stained Basic Hull Stairs
+tile.warpdrive.hull1.stairs.purple.name=Purple Stained Basic Hull Stairs
+tile.warpdrive.hull1.stairs.blue.name=Blue Stained Basic Hull Stairs
+tile.warpdrive.hull1.stairs.brown.name=Brown Stained Basic Hull Stairs
+tile.warpdrive.hull1.stairs.green.name=Green Stained Basic Hull Stairs
+tile.warpdrive.hull1.stairs.red.name=Red Stained Basic Hull Stairs
+tile.warpdrive.hull1.stairs.black.name=Black Stained Basic Hull Stairs
+
 tile.warpdrive.hull2.plain.white.name=Белый улучшенный корабельный корпус
 tile.warpdrive.hull2.plain.orange.name=Оранжевый улучшенный корабельный корпус
 tile.warpdrive.hull2.plain.magenta.name=Пурпурный улучшенный корабельный корпус
@@ -173,6 +289,23 @@ tile.warpdrive.hull2.glass.brown.name=Коричневое улучшенное 
 tile.warpdrive.hull2.glass.green.name=Зеленое улучшенное корабельное стекло
 tile.warpdrive.hull2.glass.red.name=Красное улучшенное корабельное стекло
 tile.warpdrive.hull2.glass.black.name=Черное улучшенное корабельное стекло
+
+tile.warpdrive.hull2.stairs.white.name=White Stained Advanced Hull Stairs
+tile.warpdrive.hull2.stairs.orange.name=Orange Stained Advanced Hull Stairs
+tile.warpdrive.hull2.stairs.magenta.name=Magenta Stained Advanced Hull Stairs
+tile.warpdrive.hull2.stairs.lightBlue.name=Light Blue Stained Advanced Hull Stairs
+tile.warpdrive.hull2.stairs.yellow.name=Yellow Stained Advanced Hull Stairs
+tile.warpdrive.hull2.stairs.lime.name=Lime Stained Advanced Hull Stairs
+tile.warpdrive.hull2.stairs.pink.name=Pink Stained Advanced Hull Stairs
+tile.warpdrive.hull2.stairs.gray.name=Gray Stained Advanced Hull Stairs
+tile.warpdrive.hull2.stairs.silver.name=Silver Stained Advanced Hull Stairs
+tile.warpdrive.hull2.stairs.cyan.name=Cyan Stained Advanced Hull Stairs
+tile.warpdrive.hull2.stairs.purple.name=Purple Stained Advanced Hull Stairs
+tile.warpdrive.hull2.stairs.blue.name=Blue Stained Advanced Hull Stairs
+tile.warpdrive.hull2.stairs.brown.name=Brown Stained Advanced Hull Stairs
+tile.warpdrive.hull2.stairs.green.name=Green Stained Advanced Hull Stairs
+tile.warpdrive.hull2.stairs.red.name=Red Stained Advanced Hull Stairs
+tile.warpdrive.hull2.stairs.black.name=Black Stained Advanced Hull Stairs
 
 tile.warpdrive.hull3.plain.white.name=Белый высококачественный корабельный корпус
 tile.warpdrive.hull3.plain.orange.name=Оранжевый высококачественный корабельный корпус
@@ -208,9 +341,26 @@ tile.warpdrive.hull3.glass.green.name=Зеленое высококачеств�
 tile.warpdrive.hull3.glass.red.name=Красное высококачественное корабельное стекло
 tile.warpdrive.hull3.glass.black.name=Черное высококачественное корабельное стекло
 
+tile.warpdrive.hull3.stairs.white.name=White Stained Superior Hull Stairs
+tile.warpdrive.hull3.stairs.orange.name=Orange Stained Superior Hull Stairs
+tile.warpdrive.hull3.stairs.magenta.name=Magenta Stained Superior Hull Stairs
+tile.warpdrive.hull3.stairs.lightBlue.name=Light Blue Stained Superior Hull Stairs
+tile.warpdrive.hull3.stairs.yellow.name=Yellow Stained Superior Hull Stairs
+tile.warpdrive.hull3.stairs.lime.name=Lime Stained Superior Hull Stairs
+tile.warpdrive.hull3.stairs.pink.name=Pink Stained Superior Hull Stairs
+tile.warpdrive.hull3.stairs.gray.name=Gray Stained Superior Hull Stairs
+tile.warpdrive.hull3.stairs.silver.name=Silver Stained Superior Hull Stairs
+tile.warpdrive.hull3.stairs.cyan.name=Cyan Stained Superior Hull Stairs
+tile.warpdrive.hull3.stairs.purple.name=Purple Stained Superior Hull Stairs
+tile.warpdrive.hull3.stairs.blue.name=Blue Stained Superior Hull Stairs
+tile.warpdrive.hull3.stairs.brown.name=Brown Stained Superior Hull Stairs
+tile.warpdrive.hull3.stairs.green.name=Green Stained Superior Hull Stairs
+tile.warpdrive.hull3.stairs.red.name=Red Stained Superior Hull Stairs
+tile.warpdrive.hull3.stairs.black.name=Black Stained Superior Hull Stairs
 
-warpdrive.guide.prefix=%1$s: 
-warpdrive.error.badTileEntity=§cэтот блок нужно сломать и поставить заново. 
+
+warpdrive.guide.prefix=§6%1$s:§r 
+warpdrive.error.badTileEntity=§cэтот блок нужно сломать и поставить заново.
 warpdrive.monitor.viewingCamera=Просмотр камеры на %2$d, %3$d, %4$d через канал %1$d
 warpdrive.ship.attachedPlayers=Прирепленные игроки: %1$s
 warpdrive.ship.playerAttached=Вы были прикреплены к кораблю %1$s.\nПрикрепленные игроки: %2$s
@@ -218,12 +368,64 @@ warpdrive.ship.playerDetached=Вы были откреплены от кораб
 warpdrive.ship.statusLine.cooling=Осталось %1$d с до остывания.
 warpdrive.ship.statusLine.isolation=%1$d активных блоков изоляции предоставляют %2$2.1f%% поглощения.
 warpdrive.energy.statusLine=Содержит энергии: %1$s/%2$s EU.
-warpdrive.beamFrequency.statusLine.valid=Частота луча %1$d действительна. 
+warpdrive.beamFrequency.statusLine.valid=Частота луча %1$d действительна.
 warpdrive.beamFrequency.statusLine.invalid=§cЧастота луча %1$d недействительна.
-warpdrive.videoChannel.statusLine.valid=Видеоканал %1$d действителен. 
-warpdrive.videoChannel.statusLine.validCamera=Видеоканал %1$d действителен для камеры на %2$d, %3$d, %4$d. 
+warpdrive.beamFrequency.statusLine.undefined=§7Undefined beam frequency.\n§bUse a Tuning fork§r to set Beam frequency.
+
+warpdrive.forcefield.guide.lowPower=We're running out of power captain, reduce our consumption or get that scottish engineer to boost our power!
+
+warpdrive.forcefield.shape.result.wrongSide=§cThere's no Electromagnetic projector on this side.
+warpdrive.forcefield.shape.result.noShapeToDismount=§cNo shape to dismount.
+warpdrive.forcefield.shape.result.notEnoughShapes.double=§cYou need at least 2 items to set the shape of a double sided projector.
+warpdrive.forcefield.shape.result.notEnoughShapes.single=§cYou need at least 1 item to set the shape of a single sided projector.
+warpdrive.forcefield.shape.result.dismounted=Shape dismounted successfully.
+warpdrive.forcefield.shape.result.mounted=Shape mounted successfully.
+
+warpdrive.forcefield.shape.statusLine.none=§cShape isn't defined.
+warpdrive.forcefield.shape.statusLine.double=Shape is a full %1$s
+warpdrive.forcefield.shape.statusLine.single=Shape is an half %1$s
+warpdrive.forcefield.shape.statusLine.sphere=sphere
+warpdrive.forcefield.shape.statusLine.cylinder_h=horizontal cylinder
+warpdrive.forcefield.shape.statusLine.cylinder_v=vertical cylinder
+warpdrive.forcefield.shape.statusLine.cube=cube
+warpdrive.forcefield.shape.statusLine.plane=plane
+warpdrive.forcefield.shape.statusLine.tube=tube
+warpdrive.forcefield.shape.statusLine.tunnel=tunnel
+
+warpdrive.forcefield.upgrade.result.noUpgradeToDismount=§cNo upgrade to dismount.
+warpdrive.forcefield.upgrade.result.notEnoughUpgrades=§cYou need at least 1 item to upgrade this block.
+warpdrive.forcefield.upgrade.result.invalidProjectorUpgrade=§cThis upgrade is too big for a projector, use a relay instead.
+warpdrive.forcefield.upgrade.result.invalidRelayUpgrade=§cThis upgrade only applies to projectors.
+warpdrive.forcefield.upgrade.result.tooManyUpgrades=§cThere's already %1$s upgrades installed, use a relay to add more.
+warpdrive.forcefield.upgrade.result.dismounted=Upgrade dismounted successfully.
+warpdrive.forcefield.upgrade.result.mounted=Upgrade mounted successfully.
+
+warpdrive.forcefield.upgrade.statusLine.none=§7No upgrade installed.
+warpdrive.forcefield.upgrade.statusLine.valid=Upgraded with %1$s
+warpdrive.forcefield.upgrade.statusLine.attraction=attraction
+warpdrive.forcefield.upgrade.statusLine.breaking=block breaking
+warpdrive.forcefield.upgrade.statusLine.camouflage=camouflage
+warpdrive.forcefield.upgrade.statusLine.cooling=cooling
+warpdrive.forcefield.upgrade.statusLine.fusion=fusion
+warpdrive.forcefield.upgrade.statusLine.heating=heating
+warpdrive.forcefield.upgrade.statusLine.inversion=inversion
+warpdrive.forcefield.upgrade.statusLine.item_port=item port
+warpdrive.forcefield.upgrade.statusLine.pumping=pumping
+warpdrive.forcefield.upgrade.statusLine.range=increased range
+warpdrive.forcefield.upgrade.statusLine.repulsion=repulsion
+warpdrive.forcefield.upgrade.statusLine.rotation=rotation
+warpdrive.forcefield.upgrade.statusLine.shock=shock
+warpdrive.forcefield.upgrade.statusLine.silencer=silencer
+warpdrive.forcefield.upgrade.statusLine.speed=speed
+warpdrive.forcefield.upgrade.statusLine.stabilization=stabilization
+warpdrive.forcefield.upgrade.statusLine.thickness=thickness
+warpdrive.forcefield.upgrade.statusLine.translation=translation
+
+warpdrive.videoChannel.statusLine.valid=Видеоканал %1$d действителен.
+warpdrive.videoChannel.statusLine.validCamera=Видеоканал %1$d действителен для камеры на %2$d, %3$d, %4$d.
 warpdrive.videoChannel.statusLine.invalid=§cВидеоканал %1$d недействителен.
 warpdrive.videoChannel.statusLine.invalidOrNotLoaded=§cВидеоканал %1$d недействителен или камера слишком далеко.
+warpdrive.videoChannel.statusLine.undefined=§7Undefined Video channel.\n§bUse a Tuning fork§r to set it.
 warpdrive.cloakingCore.invalidAssembly=§cНеверная структура.
 warpdrive.cloakingCore.disabled=Маскировка выключена
 warpdrive.cloakingCore.lowPower=§cМаскировка выключилась, нужно больше энергии, капитан!
@@ -232,6 +434,6 @@ warpdrive.IC2reactorLaserMonitor.noReactor=Реактор не найден!
 warpdrive.IC2reactorLaserMonitor.multipleReactors=%1$d реактор(ов) подключено.
 warpdrive.transporter.status=Из %1$.0f %2$.0f %3$.0f в %4$.0f %5$.0f %6$.0f
 
-
-
-
+warpdrive.tooltip.itemTag.breathingIC2=§bSpace breathing§r consuming IC2 Compressed air cells from your inventory.
+warpdrive.tooltip.itemTag.flyInSpace=§bSpace compatible jetpack§r.
+warpdrive.tooltip.itemTag.noFallDamage=§bAbsorbs fall damage§r.

@@ -1,6 +1,9 @@
 package cr0s.warpdrive.block.forcefield;
 
-import cpw.mods.fml.common.Optional;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraftforge.fml.common.Optional;
 import cr0s.warpdrive.WarpDrive;
 import cr0s.warpdrive.api.IBeamFrequency;
 import cr0s.warpdrive.block.TileEntityAbstractEnergy;
@@ -12,17 +15,16 @@ import dan200.computercraft.api.peripheral.IComputerAccess;
 import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
+import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.Packet;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
-import net.minecraft.util.StatCollector;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 
-/**
- * Created by LemADEC on 16/05/2016.
- */
+import javax.annotation.Nonnull;
+
 public class TileEntityAbstractForceField extends TileEntityAbstractEnergy implements IBeamFrequency {
 	// persistent properties
+	protected byte tier = -1;
 	protected int beamFrequency = -1;
 	public boolean isEnabled = true;
 	
@@ -32,7 +34,7 @@ public class TileEntityAbstractForceField extends TileEntityAbstractEnergy imple
 	
 	public TileEntityAbstractForceField() {
 		super();
-		
+
 		addMethods(new String[]{
 			"enable",
 			"beamFrequency"
@@ -41,17 +43,31 @@ public class TileEntityAbstractForceField extends TileEntityAbstractEnergy imple
 	
 	@Override
 	protected void onFirstUpdateTick() {
+		Block block = getBlockType();
+		if (block instanceof BlockAbstractForceField) {
+			tier = ((BlockAbstractForceField) block).tier;
+		} else {
+			WarpDrive.logger.error("Missing block for " + this + " at " + worldObj + " " + pos.getX() + " " + pos.getY() + " " + pos.getZ());
+		}
 		if (beamFrequency >= 0 && beamFrequency <= IBeamFrequency.BEAM_FREQUENCY_MAX) {
 			ForceFieldRegistry.updateInRegistry(this);
 		}
 	}
 	
 	@Override
-	public void updateEntity() {
-		super.updateEntity();
+	public void update() {
+		super.update();
+		
+		if (worldObj.isRemote) {
+			return;
+		}
 		
 		// Frequency is not set
+		boolean legacy_isConnected = isConnected; 
 		isConnected = beamFrequency > 0 && beamFrequency <= IBeamFrequency.BEAM_FREQUENCY_MAX;
+		if (legacy_isConnected != isConnected) {
+			markDirty();
+		}
 	}
 	
 	@Override
@@ -63,7 +79,7 @@ public class TileEntityAbstractForceField extends TileEntityAbstractEnergy imple
 	@Override
 	public void onChunkUnload() {
 		super.onChunkUnload();
-		// reload chunks as needed?
+		// reload chunks as needed
 		// ForceFieldRegistry.removeFromRegistry(this);
 	}
 	
@@ -84,53 +100,59 @@ public class TileEntityAbstractForceField extends TileEntityAbstractEnergy imple
 			beamFrequency = parBeamFrequency;
 			vRGB = IBeamFrequency.getBeamColor(beamFrequency);
 		}
+		markDirty();
 		if (worldObj != null) {
 			ForceFieldRegistry.updateInRegistry(this);
-			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 		}
 	}
-	
-	protected String getBeamFrequencyStatus() {
-		if (beamFrequency < 0) {
-			return StatCollector.translateToLocalFormatted("warpdrive.beamFrequency.statusLine.invalid",
-				beamFrequency);
+
+	private ITextComponent getBeamFrequencyStatus() {
+		if (beamFrequency == -1) {
+			return new TextComponentTranslation("warpdrive.beamFrequency.statusLine.undefined");
+		} else if (beamFrequency < 0) {
+			return new TextComponentTranslation("warpdrive.beamFrequency.statusLine.invalid", beamFrequency);
 		} else {
-			return StatCollector.translateToLocalFormatted("warpdrive.beamFrequency.statusLine.valid",
-				beamFrequency);
+			return new TextComponentTranslation("warpdrive.beamFrequency.statusLine.valid", beamFrequency);
 		}
 	}
 	
-	public String getStatus() {
-		return StatCollector.translateToLocalFormatted("warpdrive.guide.prefix",
-			getBlockType().getLocalizedName())
-			+ getBeamFrequencyStatus();
+	@Override
+	public ITextComponent getStatus() {
+		ITextComponent energyStatus = getEnergyStatus();
+		return super.getStatus()
+	        .appendSibling(energyStatus.toString().isEmpty() ? new TextComponentString("") : new TextComponentString("\n").appendSibling(energyStatus))
+			.appendSibling(new TextComponentString("\n")).appendSibling(getBeamFrequencyStatus());
 	}
 	
 	@Override
 	public void readFromNBT(NBTTagCompound tag) {
 		super.readFromNBT(tag);
+		tier = tag.getByte("tier");
 		setBeamFrequency(tag.getInteger("beamFrequency"));
-		isEnabled = tag.getBoolean("isEnabled");
+		isEnabled = !tag.hasKey("isEnabled") || tag.getBoolean("isEnabled"); 
 	}
 	
 	@Override
-	public void writeToNBT(NBTTagCompound tag) {
-		super.writeToNBT(tag);
+	public NBTTagCompound writeToNBT(NBTTagCompound tag) {
+		tag = super.writeToNBT(tag);
+		tag.setByte("tier", tier);
 		tag.setInteger("beamFrequency", beamFrequency);
 		tag.setBoolean("isEnabled", isEnabled);
+		return tag;
 	}
 	
+	@Nonnull
 	@Override
-	public Packet getDescriptionPacket() {
+	public NBTTagCompound getUpdateTag() {
 		NBTTagCompound tagCompound = new NBTTagCompound();
 		writeToNBT(tagCompound);
 		tagCompound.setBoolean("isConnected", isConnected);
-		return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 1, tagCompound);
+		return tagCompound;
 	}
 	
 	@Override
-	public void onDataPacket(NetworkManager networkManager, S35PacketUpdateTileEntity packet) {
-		NBTTagCompound tagCompound = packet.func_148857_g();
+	public void onDataPacket(NetworkManager networkManager, SPacketUpdateTileEntity packet) {
+		NBTTagCompound tagCompound = packet.getNbtCompound();
 		readFromNBT(tagCompound);
 		isConnected = tagCompound.getBoolean("isConnected");
 	}
@@ -191,6 +213,6 @@ public class TileEntityAbstractForceField extends TileEntityAbstractEnergy imple
 	@Override
 	public String toString() {
 		return String.format("%s Beam \'%d\' @ \'%s\' (%d %d %d)", getClass().getSimpleName(),
-			beamFrequency, worldObj == null ? "~NULL~" : worldObj.getWorldInfo().getWorldName(), xCoord, yCoord, zCoord);
+			beamFrequency, worldObj == null ? "~NULL~" : worldObj.getWorldInfo().getWorldName(), pos.getX(), pos.getY(), pos.getZ());
 	}
 }

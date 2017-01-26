@@ -1,0 +1,45 @@
+# Blender v2.76 (sub 0) OBJ File: 'projectorV2.blend' by Mouse961 for WarpDrive mod
+# All rights reserved
+# Material Count: 3
+
+newmtl m_core
+Ka 1.000000 1.000000 1.000000
+Kd 1.0 1.0 1.0
+d 1
+map_Kd warpdrive:blocks/forcefield/projector-core
+
+newmtl m_leg
+Kd 1.0 1.0 1.0
+d 1
+map_Kd warpdrive:blocks/forcefield/projector-leg
+
+newmtl m_shape
+Kd 1.0 1.0 1.0
+d 1
+map_Kd warpdrive:blocks/forcefield/projector-shape_none
+
+# preloading shape textures
+newmtl m_shape_cube
+map_Kd warpdrive:blocks/forcefield/projector-shape_cube
+newmtl m_shape_cylinder_h
+map_Kd warpdrive:blocks/forcefield/projector-shape_cylinder_h
+newmtl m_shape_cylinder_v
+map_Kd warpdrive:blocks/forcefield/projector-shape_cylinder_v
+newmtl m_shape_plane
+map_Kd warpdrive:blocks/forcefield/projector-shape_plane
+newmtl m_shape_sphere
+map_Kd warpdrive:blocks/forcefield/projector-shape_sphere
+newmtl m_shape_tube
+map_Kd warpdrive:blocks/forcefield/projector-shape_tube
+newmtl m_shape_tunnel
+map_Kd warpdrive:blocks/forcefield/projector-shape_tunnel
+
+# preloading ring textures
+newmtl m_ring_online
+map_Kd warpdrive:blocks/forcefield/projector-ring_online
+
+newmtl m_ring_offline
+map_Kd warpdrive:blocks/forcefield/projector-ring_offline
+
+newmtl m_ring_error
+map_Kd warpdrive:blocks/forcefield/projector-ring_error

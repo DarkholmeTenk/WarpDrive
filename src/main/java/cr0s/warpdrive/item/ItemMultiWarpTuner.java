@@ -2,64 +2,41 @@ package cr0s.warpdrive.item;
 
 import java.util.List;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
+import cr0s.warpdrive.data.SoundEvents;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemDye;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.*;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import cr0s.warpdrive.WarpDrive;
 import cr0s.warpdrive.api.IBeamFrequency;
 import cr0s.warpdrive.api.IVideoChannel;
 
-public class ItemMultiWarpTuner extends Item {
-	static final int MODE_VIDEO_CHANNEL = 0;
-	static final int MODE_BEAM_FREQUENCY = 1;
-	static final String TAG_VIDEO_CHANNEL = "videoChannel";
-	static final String TAG_BEAM_FREQUENCY = "beamFrequency";
+import javax.annotation.Nonnull;
+
+public class ItemMultiWarpTuner extends ItemAbstractBase {
+	static final private int MODE_VIDEO_CHANNEL = 0;
+	static final private int MODE_BEAM_FREQUENCY = 1;
+	static final private String TAG_VIDEO_CHANNEL = "videoChannel";
+	static final private String TAG_BEAM_FREQUENCY = "beamFrequency";
 	
-	private IIcon icons[];
-	
-	public ItemMultiWarpTuner() {
-		super();
+	public ItemMultiWarpTuner(final String registryName) {
+		super(registryName);
 		setMaxDamage(0);
-		setCreativeTab(WarpDrive.creativeTabWarpDrive);
 		setMaxStackSize(1);
 		setUnlocalizedName("warpdrive.tool.MultiWarpTuner");
 		setFull3D();
 	}
 	
 	@Override
-	public void registerIcons(IIconRegister iconRegister) {
-		icons = new IIcon[16];
-		
-		for (int i = 0; i < 16; ++i) {
-			icons[i] = iconRegister.registerIcon("warpdrive:toolMultiWarpTuner_" + getDyeColorName(i));
-		}
-	}
-	
-	public static String getDyeColorName(int metadata) {
-		return ItemDye.field_150921_b[metadata];
-	}
-
-	@Override
-	public IIcon getIconFromDamage(int damage) {
-		if (damage < icons.length) {
-			return icons[damage];
-		}
-		return Blocks.fire.getFireIcon(0);
-	}
-	
-	@Override
-	public void getSubItems(Item item, CreativeTabs creativeTab, List list) {
+	public void getSubItems(@Nonnull Item item, @Nonnull CreativeTabs creativeTabs, @Nonnull List<ItemStack> subItems) {
 		for(int dyeColor = 0; dyeColor < 16; dyeColor++) {
-			list.add(new ItemStack(item, 1, dyeColor));
+			subItems.add(new ItemStack(item, 1, dyeColor));
 		}
 	}
 	
@@ -117,58 +94,60 @@ public class ItemMultiWarpTuner extends Item {
 		return itemStack;
 	}
 	
+	@Nonnull
 	@Override
-	public ItemStack onItemRightClick(ItemStack itemStack, World world, EntityPlayer entityPlayer) {
+	public ActionResult<ItemStack> onItemRightClick(@Nonnull ItemStack itemStack, World world, EntityPlayer entityPlayer, EnumHand hand) {
 		if (world.isRemote || !(itemStack.getItem() instanceof ItemMultiWarpTuner)) {
-			return itemStack;
+			return new ActionResult<>(EnumActionResult.PASS, itemStack);
 		}
 		if (entityPlayer.isSneaking()) {
 			switch (itemStack.getItemDamage()) {
 			case MODE_VIDEO_CHANNEL:
 				setVideoChannel(itemStack, world.rand.nextInt(32768));
-				WarpDrive.addChatMessage(entityPlayer, StatCollector.translateToLocalFormatted("item.warpdrive.tool.MultiWarpTuner.use.getVideoChannel",
+				WarpDrive.addChatMessage(entityPlayer, new TextComponentTranslation("item.warpdrive.tool.MultiWarpTuner.use.getVideoChannel",
 						getVideoChannel(itemStack)));
-				return itemStack;
+				return new ActionResult<>(EnumActionResult.SUCCESS, itemStack);
 				
 			case MODE_BEAM_FREQUENCY:
 				setBeamFrequency(itemStack, world.rand.nextInt(65000));
-				WarpDrive.addChatMessage(entityPlayer, StatCollector.translateToLocalFormatted("item.warpdrive.tool.MultiWarpTuner.use.getBeamFrequency",
+				WarpDrive.addChatMessage(entityPlayer, new TextComponentTranslation("item.warpdrive.tool.MultiWarpTuner.use.getBeamFrequency",
 						getBeamFrequency(itemStack)));
-				return itemStack;
+				return new ActionResult<>(EnumActionResult.SUCCESS, itemStack);
 				
 			default:
-				return itemStack;
+				return new ActionResult<>(EnumActionResult.PASS, itemStack);
 			}
 			
 		} else {
 			switch (itemStack.getItemDamage()) {
 			case MODE_VIDEO_CHANNEL:
 				itemStack.setItemDamage(MODE_BEAM_FREQUENCY);
-				entityPlayer.setCurrentItemOrArmor(0, itemStack);
+				entityPlayer.setHeldItem(hand, itemStack);
 				break;
 				
 			case MODE_BEAM_FREQUENCY:
 				itemStack.setItemDamage(MODE_VIDEO_CHANNEL);
-				entityPlayer.setCurrentItemOrArmor(0, itemStack);
+				entityPlayer.setHeldItem(hand, itemStack);
 				break;
 				
 			default:
 				itemStack.setItemDamage(MODE_VIDEO_CHANNEL);
 				break;
 			}
-			world.playSoundAtEntity(entityPlayer, "WarpDrive:ding", 0.1F, 1F);
-			return itemStack;
+			world.playSound(entityPlayer.posX, entityPlayer.posY, entityPlayer.posZ, SoundEvents.DING, SoundCategory.PLAYERS, 0.1F, 1F, false);
+			return new ActionResult<>(EnumActionResult.SUCCESS, itemStack);
 		}
 	}
 	
+	@Nonnull
 	@Override
-	public boolean onItemUse(ItemStack itemStack, EntityPlayer entityPlayer, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
+	public EnumActionResult onItemUse(ItemStack itemStack, EntityPlayer entityPlayer, World world, BlockPos blockPos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		if (world.isRemote) {
-			return false;
+			return EnumActionResult.PASS;
 		}
-		TileEntity tileEntity = world.getTileEntity(x, y, z);
+		TileEntity tileEntity = world.getTileEntity(blockPos);
 		if (tileEntity == null) {
-			return false;
+			return EnumActionResult.PASS;
 		}
 		
 		switch (itemStack.getItemDamage()) {
@@ -176,51 +155,51 @@ public class ItemMultiWarpTuner extends Item {
 			if (tileEntity instanceof IVideoChannel) {
 				if (entityPlayer.isSneaking()) {
 					setVideoChannel(itemStack, ((IVideoChannel)tileEntity).getVideoChannel());
-					WarpDrive.addChatMessage(entityPlayer, StatCollector.translateToLocalFormatted("item.warpdrive.tool.MultiWarpTuner.use.getVideoChannel",
+					WarpDrive.addChatMessage(entityPlayer, new TextComponentTranslation("item.warpdrive.tool.MultiWarpTuner.use.getVideoChannel",
 							getVideoChannel(itemStack)));
 				} else {
 					((IVideoChannel)tileEntity).setVideoChannel(getVideoChannel(itemStack));
-					WarpDrive.addChatMessage(entityPlayer, StatCollector.translateToLocalFormatted("item.warpdrive.tool.MultiWarpTuner.use.setVideoChannel",
+					WarpDrive.addChatMessage(entityPlayer, new TextComponentTranslation("item.warpdrive.tool.MultiWarpTuner.use.setVideoChannel",
 							tileEntity.getBlockType().getLocalizedName(),
 							getVideoChannel(itemStack)));
 				}
-				return true;
+				return EnumActionResult.SUCCESS;
 			}
-			return false;
+			return EnumActionResult.PASS;
 			
 		case MODE_BEAM_FREQUENCY:
 			if (tileEntity instanceof IBeamFrequency) {
 				if (entityPlayer.isSneaking()) {
 					setBeamFrequency(itemStack, ((IBeamFrequency)tileEntity).getBeamFrequency());
-					WarpDrive.addChatMessage(entityPlayer, StatCollector.translateToLocalFormatted("item.warpdrive.tool.MultiWarpTuner.use.getBeamFrequency",
+					WarpDrive.addChatMessage(entityPlayer, new TextComponentTranslation("item.warpdrive.tool.MultiWarpTuner.use.getBeamFrequency",
 							getBeamFrequency(itemStack)));
 				} else {
 					((IBeamFrequency)tileEntity).setBeamFrequency(getBeamFrequency(itemStack));
-					WarpDrive.addChatMessage(entityPlayer, StatCollector.translateToLocalFormatted("item.warpdrive.tool.MultiWarpTuner.use.setBeamFrequency",
+					WarpDrive.addChatMessage(entityPlayer, new TextComponentTranslation("item.warpdrive.tool.MultiWarpTuner.use.setBeamFrequency",
 							tileEntity.getBlockType().getLocalizedName(),
 							getBeamFrequency(itemStack)));
 				}
-				return false;
+				return EnumActionResult.SUCCESS;
 			}
-			return false;
+			return EnumActionResult.PASS;
 			
 		default:
-			return false;
+			return EnumActionResult.PASS;
 		}
 	}
 	
 	@Override
-	public void addInformation(ItemStack itemStack, EntityPlayer entityPlayer, List list, boolean advancedItemTooltips) {
+	public void addInformation(ItemStack itemStack, EntityPlayer entityPlayer, List<String> list, boolean advancedItemTooltips) {
 		super.addInformation(itemStack, entityPlayer, list, advancedItemTooltips);
 		
 		String tooltip = "";
 		switch (itemStack.getItemDamage()) {
 		case MODE_VIDEO_CHANNEL:
-			tooltip += StatCollector.translateToLocalFormatted("item.warpdrive.tool.MultiWarpTuner.tooltip.videoChannel", getVideoChannel(itemStack));
+			tooltip += new TextComponentTranslation("item.warpdrive.tool.MultiWarpTuner.tooltip.videoChannel", getVideoChannel(itemStack)).getFormattedText();
 			// String.format("Video channel set to %1$d", getVideoChannel(itemStack));
 			break;
 		case MODE_BEAM_FREQUENCY:
-			tooltip += StatCollector.translateToLocalFormatted("item.warpdrive.tool.MultiWarpTuner.tooltip.beamFrequency", getBeamFrequency(itemStack));
+			tooltip += new TextComponentTranslation("item.warpdrive.tool.MultiWarpTuner.tooltip.beamFrequency", getBeamFrequency(itemStack)).getFormattedText();
 			// tooltip = String.format("Laser frequency set to %{0}i", getBeamFrequency(itemStack));
 			break;
 		default:
@@ -228,7 +207,7 @@ public class ItemMultiWarpTuner extends Item {
 			break;
 		}
 		
-		tooltip += StatCollector.translateToLocal("item.warpdrive.tool.MultiWarpTuner.tooltip.usage");
+		tooltip += new TextComponentTranslation("item.warpdrive.tool.MultiWarpTuner.tooltip.usage").getFormattedText();
 		
 		WarpDrive.addTooltip(list, tooltip);
 	}

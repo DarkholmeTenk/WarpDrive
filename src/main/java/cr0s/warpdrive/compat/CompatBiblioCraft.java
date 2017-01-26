@@ -25,7 +25,11 @@ public class CompatBiblioCraft implements IBlockTransformer {
 	
 	@Override
 	public boolean isApplicable(final Block block, final int metadata, final TileEntity tileEntity) {
-		return block != null && block.getClass().getCanonicalName().startsWith("jds.bibliocraft.");
+		if (block == null) {
+			return false;
+		}
+		String canonicalName = block.getClass().getCanonicalName();
+		return canonicalName != null && canonicalName.startsWith("jds.bibliocraft.");
 	}
 	
 	@Override

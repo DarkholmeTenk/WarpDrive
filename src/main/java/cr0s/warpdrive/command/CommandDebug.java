@@ -1,13 +1,18 @@
 package cr0s.warpdrive.command;
 
+import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.block.Block;
 import net.minecraft.command.CommandBase;
+import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
-import cpw.mods.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import cr0s.warpdrive.WarpDrive;
 import cr0s.warpdrive.config.WarpDriveConfig;
 
@@ -15,8 +20,9 @@ import cr0s.warpdrive.config.WarpDriveConfig;
  *   /wdebug <dimension> <coordinates> <blockId> <Metadata> <actions>
  */
 
-public class CommandDebug extends CommandBase
-{
+@MethodsReturnNonnullByDefault
+public class CommandDebug extends CommandBase {
+	
 	@Override
 	public String getCommandName()
 	{
@@ -37,19 +43,18 @@ public class CommandDebug extends CommandBase
 				+ "coordinates: x,y,z\n"
 				+ "action: I(nvalidate), V(alidate), A(set air), R(emoveEntity), P(setBlock), S(etEntity)";
 	}
-
+	
 	@Override
-	public void processCommand(ICommandSender icommandsender, String[] params)
-	{
-		EntityPlayerMP player = (EntityPlayerMP)icommandsender;
-		if(params.length > 6 )
+	public void execute(MinecraftServer server, ICommandSender commandSender, String[] args) throws CommandException {
+		EntityPlayerMP player = (EntityPlayerMP)commandSender;
+		if(args.length > 6 )
 		{
 			int dim, x, y, z, metadata;
 			int block;
 			String actions;
 			try
 			{
-				String par = params[0].toLowerCase();
+				String par = args[0].toLowerCase();
 				switch (par) {
 					case "world":
 					case "overworld":
@@ -75,25 +80,26 @@ public class CommandDebug extends CommandBase
 						break;
 				}
 
-				x = Integer.parseInt(params[1]);
-				y = Integer.parseInt(params[2]);
-				z = Integer.parseInt(params[3]);
-				block = Integer.parseInt(params[4]);
-				metadata = Integer.parseInt(params[5]);
-				actions = params[6];
+				x = Integer.parseInt(args[1]);
+				y = Integer.parseInt(args[2]);
+				z = Integer.parseInt(args[3]);
+				block = Integer.parseInt(args[4]);
+				metadata = Integer.parseInt(args[5]);
+				actions = args[6];
 			}
 			catch (Exception exception)
 			{
 				exception.printStackTrace();
-				WarpDrive.addChatMessage(player, getCommandUsage(icommandsender));
+				WarpDrive.addChatMessage(player, new TextComponentString(getCommandUsage(commandSender)));
 				return;
 			}
 
 			WarpDrive.logger.info("/" + getCommandName() + " " + dim + " " + x + "," + y + "," + z + " " + block + ":" + metadata + " " + actions);
 			World worldObj = DimensionManager.getWorld(dim);
-			TileEntity te = worldObj.getTileEntity(x, y, z);
-			WarpDrive.logger.info("[" + getCommandName() + "] In dimension " + worldObj.getProviderName() + " - " + worldObj.getWorldInfo().getWorldName() + ", Current block is "
-					+ worldObj.getBlock(x, y, z) + ":" + worldObj.getBlockMetadata(x, y, z) + ", tile entity is " + ((te == null) ? "undefined" : "defined"));
+			BlockPos blockPos = new BlockPos(x, y, z);
+			TileEntity tileEntity = worldObj.getTileEntity(blockPos);
+			WarpDrive.logger.info("[" + getCommandName() + "] In dimension " + worldObj.getProviderName() + " - " + worldObj.getWorldInfo().getWorldName()
+			                     + ", Current block is " + worldObj.getBlockState(blockPos) + ", tile entity is " + ((tileEntity == null) ? "undefined" : "defined"));
 			String side = FMLCommonHandler.instance().getEffectiveSide().isClient() ? "Client":"Server";
 
 			// I(nvalidate), V(alidate), A(set air), R(emoveEntity), P(setBlock), S(etEntity)
@@ -102,24 +108,24 @@ public class CommandDebug extends CommandBase
 				switch (ch) {
 				case 'I':
 					WarpDrive.logger.info("[" + getCommandName() + "] " + side + ": invalidating");
-					if (te != null) {
-						te.invalidate();
+					if (tileEntity != null) {
+						tileEntity.invalidate();
 					}
 					break;
 				case 'V':
 					WarpDrive.logger.info("[" + getCommandName() + "] " + side + ": validating");
-					if (te != null) {
-						te.validate();
+					if (tileEntity != null) {
+						tileEntity.validate();
 					}
 					break;
 				case 'A':
 					WarpDrive.logger.info("[" + getCommandName() + "] " + side + ": setting to Air");
-					bReturn = worldObj.setBlockToAir(x, y, z);
+					bReturn = worldObj.setBlockToAir(blockPos);
 					WarpDrive.logger.info("[" + getCommandName() + "] " + side + ": returned " + bReturn);
 					break;
 				case 'R':
 					WarpDrive.logger.info("[" + getCommandName() + "] " + side + ": remove entity");
-					worldObj.removeTileEntity(x, y, z);
+					worldObj.removeTileEntity(blockPos);
 					break;
 				case '0':
 				case '1':
@@ -130,22 +136,22 @@ public class CommandDebug extends CommandBase
 				case '6':
 				case '7':
 					WarpDrive.logger.info("[" + getCommandName() + "] " + side + ": set block " + x + ", " + y + ", " + z + " to " + block + ":" + metadata);
-					bReturn = worldObj.setBlock(x, y, z, Block.getBlockById(block), metadata, ch - '0');
+					bReturn = worldObj.setBlockState(blockPos, Block.getBlockById(block).getStateFromMeta(metadata), ch - '0');
 					WarpDrive.logger.info("[" + getCommandName() + "] " + side + ": returned " + bReturn);
 					break;
 				case 'P':
 					WarpDrive.logger.info("[" + getCommandName() + "] " + side + ": set block " + x + ", " + y + ", " + z + " to " + block + ":" + metadata);
-					bReturn = worldObj.setBlock(x, y, z, Block.getBlockById(block), metadata, 2);
+					bReturn = worldObj.setBlockState(blockPos, Block.getBlockById(block).getStateFromMeta(metadata), 2);
 					WarpDrive.logger.info("[" + getCommandName() + "] " + side + ": returned " + bReturn);
 					break;
 				case 'S':
 					WarpDrive.logger.info("[" + getCommandName() + "] " + side + ": set entity");
-					worldObj.setTileEntity(x, y, z, te);
+					worldObj.setTileEntity(blockPos, tileEntity);
 					break;
 				case 'C':
 					WarpDrive.logger.info("[" + getCommandName() + "] " + side + ": update containing block info");
-					if (te != null) {
-						te.updateContainingBlockInfo();
+					if (tileEntity != null) {
+						tileEntity.updateContainingBlockInfo();
 					}
 					break;
 				default:
@@ -156,7 +162,7 @@ public class CommandDebug extends CommandBase
 		}
 		else
 		{
-			WarpDrive.addChatMessage(player, getCommandUsage(icommandsender));
+			WarpDrive.addChatMessage(player,  new TextComponentString(getCommandUsage(commandSender)));
 		}
 	}
 

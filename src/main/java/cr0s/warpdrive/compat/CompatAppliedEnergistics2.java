@@ -149,7 +149,7 @@ public class CompatAppliedEnergistics2 implements IBlockTransformer {
 		} else if (classBlockCableBus.isInstance(block)) {
 			HashMap<String, NBTTagCompound> tagsRotated = new HashMap<>(7);
 			ArrayList<String> keys = new ArrayList<>();
-			keys.addAll(nbtTileEntity.func_150296_c());
+			keys.addAll(nbtTileEntity.getKeySet());
 			for (String key : keys) {
 				if ( (key.startsWith("def:") && !key.equals("def:6"))
 				  || (key.startsWith("extra:") && !key.equals("extra:6"))) {

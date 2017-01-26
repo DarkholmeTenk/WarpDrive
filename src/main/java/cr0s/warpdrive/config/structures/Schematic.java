@@ -2,6 +2,7 @@ package cr0s.warpdrive.config.structures;
 
 import java.util.Random;
 
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class Schematic extends AbstractStructure {
@@ -11,7 +12,7 @@ public class Schematic extends AbstractStructure {
 	}
 	
 	@Override
-	public boolean generate(World p_76484_1_, Random p_76484_2_, int p_76484_3_, int p_76484_4_, int p_76484_5_) {
+	public boolean generate(World p_76484_1_, Random p_76484_2_, BlockPos blockPos) {
 		// TODO Auto-generated method stub
 		return false;
 	}

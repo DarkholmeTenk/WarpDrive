@@ -374,6 +374,7 @@ function data_read()
       data = serialization.unserialize(rawData)
     end
     file:close()
+	if data == nil then data = {}; end
   end
   if data.core_summon == nil then data.core_summon = false; end
 end
@@ -562,28 +563,36 @@ function core_page_setMovement()
   SetColorDefault()
   SetCursorPos(1, 3)
   
-  core_movement[1] = core_page_setDistanceAxis(2, "Front", core_movement[1], math.abs(core_front + core_back + 1))
-  core_movement[2] = core_page_setDistanceAxis(3, "Up"   , core_movement[2], math.abs(core_up + core_down + 1))
-  core_movement[3] = core_page_setDistanceAxis(4, "Right", core_movement[3], math.abs(core_left + core_right + 1))
+  core_movement[1] = core_page_setDistanceAxis(2, "Forward" , "Front", "Back", core_movement[1], math.abs(core_front + core_back + 1))
+  core_movement[2] = core_page_setDistanceAxis(4, "Vertical", "Up"   , "Down", core_movement[2], math.abs(core_up + core_down + 1))
+  core_movement[3] = core_page_setDistanceAxis(6, "Lateral" , "Right", "Left", core_movement[3], math.abs(core_left + core_right + 1))
   core_movement = { ship.movement(core_movement[1], core_movement[2], core_movement[3]) }
 end
 
-function core_page_setDistanceAxis(line, axis, userEntry, shipLength)
+function core_page_setDistanceAxis(line, axis, positive, negative, userEntry, shipLength)
   local maximumDistance = shipLength + 127
   if core_isInHyper and line ~= 3 then
     maximumDistance = shipLength + 127 * 100
   end
+  SetColorDisabled()
+  SetCursorPos(3, line + 1)
+  Write(positive .. " is " .. ( shipLength + 1) .. ", maximum is " ..  maximumDistance .. "      ")
+  SetCursorPos(3, line + 2)
+  Write(negative .. " is " .. (-shipLength - 1) .. ", maximum is " .. -maximumDistance .. "      ")
+  
+  SetColorDefault()
   repeat
     SetCursorPos(1, line)
-    Write(axis .. " (min " .. (shipLength + 1) .. ", max " .. maximumDistance .. "): ")
+    Write(axis .. " movement: ")
     userEntry = readInputNumber(userEntry)
-    if userEntry == 0 then
-      return userEntry
-    end
-    if math.abs(userEntry) <= shipLength or math.abs(userEntry) > maximumDistance then
+    if userEntry ~= 0 and (math.abs(userEntry) <= shipLength or math.abs(userEntry) > maximumDistance) then
       ShowWarning("Wrong distance. Try again.")
     end
-  until math.abs(userEntry) > shipLength and math.abs(userEntry) <= maximumDistance
+  until userEntry == 0 or (math.abs(userEntry) > shipLength and math.abs(userEntry) <= maximumDistance)
+  SetCursorPos(1, line + 1)
+  ClearLine()
+  SetCursorPos(1, line + 2)
+  ClearLine()
   
   return userEntry
 end
@@ -843,6 +852,11 @@ function connections_page()
     SetColorSuccess()
     WriteLn("Ship controller detected")
   end
+  
+  WriteLn("")
+  SetColorTitle()
+  WriteLn("Please refer to below menu for keyboard controls")
+  WriteLn("For example, press 1 to access Ship core page")
 end
 
 -- peripheral boot up
@@ -920,4 +934,5 @@ end
 SetMonitorColorFrontBack(0xFFFFFF, 0x000000)
 term.clear()
 SetCursorPos(1, 1)
-Write("")
+WriteLn("Program terminated")
+WriteLn("Type reboot to restart it")

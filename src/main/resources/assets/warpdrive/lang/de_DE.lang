@@ -1,0 +1,438 @@
+﻿
+death.attack.warpdrive.asphyxia=%1$s ging die Luft aus
+death.attack.warpdrive.asphyxia.player=%1$s wurde von %2$s erstickt
+death.attack.warpdrive.cold=%1$s erfror
+death.attack.warpdrive.cold.player=%1$s wurde von %2$s zu Tode gefroren
+death.attack.warpdrive.laser=%1$s verbruzelte im Laser
+death.attack.warpdrive.laser.player=%1$s wurde von %2$s zu Tode gelasert
+death.attack.warpdrive.shock=%1$s starb an einen Stromschlag
+death.attack.warpdrive.shock.player=%1$s wurde von %2$s zu Tode geschockt
+death.attack.warpdrive.teleportation=%1$s wurde in seine Atome zerlegt
+death.attack.warpdrive.teleportation.player=%1$s wurde durch %2$s beim teleportieren getötet
+death.attack.warpdrive.warm=%1$s verglühte
+death.attack.warpdrive.warm.player=%1$s wurde von %2$s gebruzelt
+
+item.warpdrive.component.malformed.name=Korruptes Item
+item.warpdrive.component.emeraldCrystal.name=Smaragdkristall
+item.warpdrive.component.enderCrystal.name=Enderkristall
+item.warpdrive.component.diamondCrystal.name=Diamantkristall
+item.warpdrive.component.diffractionGrating.name=Beugungsgitter
+item.warpdrive.component.reactorCore.name=Reaktorkern
+item.warpdrive.component.computerInterface.name=Computer Schnittstelle
+item.warpdrive.component.powerInterface.name=Power Schnittstelle
+item.warpdrive.component.capacitiveCrystal.name=Kapazitätskristall
+item.warpdrive.component.airCanisterEmpty.name=Leerer Luftkanister
+item.warpdrive.component.airCanisterEmpty.tooltip=§bRechtsklicke einen Luftgenerator um mich zu füllen
+item.warpdrive.component.lens.name=Linse
+item.warpdrive.component.zoom.name=Zoom
+item.warpdrive.component.glassTank.name=Glas Tank
+item.warpdrive.component.flatScreen.name=Flat Screen
+item.warpdrive.component.memoryCrystal.name=Speicherkristall
+item.warpdrive.component.motor.name=Motor
+item.warpdrive.component.boneCharcoal.name=Knochenkohle
+item.warpdrive.component.activatedCarbon.name=Aktivkohle
+item.warpdrive.component.laserMediumEmpty.name=Medium Laser (leer)
+item.warpdrive.component.electromagneticProjector.name=Elektromagnetischer Projektor
+item.warpdrive.component.coilCrystal.name=Spulenkristall
+
+item.warpdrive.armor.AirCanisterFull.name=Luftkanister
+item.warpdrive.armor.Helmet.name=Warp Helm
+
+item.warpdrive.energy.IC2reactorLaserFocus.name=IC2 Reaktor-Laser-Fokus
+
+item.warpdrive.forcefield.shape.none.name=Keine Form
+item.warpdrive.forcefield.shape.none.tooltip=§4Ungültiges Item
+item.warpdrive.forcefield.shape.sphere.name=Kugel Form
+item.warpdrive.forcefield.shape.sphere.tooltip=
+item.warpdrive.forcefield.shape.cylinder_h.name=Horizontaler Zylinder Form
+item.warpdrive.forcefield.shape.cylinder_h.tooltip=
+item.warpdrive.forcefield.shape.cylinder_v.name=Vertikaler Zylinder Form
+item.warpdrive.forcefield.shape.cylinder_v.tooltip=
+item.warpdrive.forcefield.shape.cube.name=Würfel Form
+item.warpdrive.forcefield.shape.cube.tooltip=
+item.warpdrive.forcefield.shape.plane.name=Ebenen Form
+item.warpdrive.forcefield.shape.plane.tooltip=
+item.warpdrive.forcefield.shape.tube.name=Röhren Form
+item.warpdrive.forcefield.shape.tube.tooltip=
+item.warpdrive.forcefield.shape.tunnel.name=Tunnel Form
+item.warpdrive.forcefield.shape.tunnel.tooltip=
+item.warpdrive.forcefield.shape.tooltip.usage=§bRechtsklicke einen Projektor§7 um ihn aufzuwerten\n§bSchleich-Rechtsklicke§7 zum abwerten
+
+item.warpdrive.forcefield.upgrade.none.name=Kein Upgrade
+item.warpdrive.forcefield.upgrade.none.tooltip=§4Ungültiges Item
+item.warpdrive.forcefield.upgrade.attraction.name=Anziehungs Upgrade
+item.warpdrive.forcefield.upgrade.attraction.tooltip=Zieht Block Brecher Drops in einen Stauraum. Füge mehr Anzeihungs Upgrades hinzu, um Items, passive Entities, Monster und Spieler anzuziehen. Nutze ein Inversions Upgrade für einen Terraform Effekt.
+item.warpdrive.forcefield.upgrade.breaking.name=Block Brecher Upgrade
+item.warpdrive.forcefield.upgrade.breaking.tooltip=Zerstört Blöcke anstatt ein Kraftfeld zu projizieren. Füge Block Brecher Upgrades hinzu um den Efffekt zu verstärken.
+item.warpdrive.forcefield.upgrade.camouflage.name=Camouflage Upgrade
+item.warpdrive.forcefield.upgrade.camouflage.tooltip=Tarnt das Kraftfeld. Platziere den Block, den du als Tarnung benutzen willst, auf dem Relais. 
+item.warpdrive.forcefield.upgrade.cooling.name=Kühler Upgrade
+item.warpdrive.forcefield.upgrade.cooling.tooltip=Friere Blöcke und Entities ein. Je mehr Upgrades desto größer der Effekt. Inversions Upgrade für Terraforming Effekt.
+item.warpdrive.forcefield.upgrade.fusion.name=Fusions Upgrade
+item.warpdrive.forcefield.upgrade.fusion.tooltip=Verschmelze zwei Kraftfelder, die dieselbe Strahlfrequenz haben.
+item.warpdrive.forcefield.upgrade.heating.name=Heizungs Upgrade
+item.warpdrive.forcefield.upgrade.heating.tooltip=Erhitze Blöcke und Entities. Mehr Upgrades verstärken den Effekt. Nutze ein Inversions Upgrade für Terraforming Effekt.
+item.warpdrive.forcefield.upgrade.inversion.name=Inversions Upgrade
+item.warpdrive.forcefield.upgrade.inversion.tooltip=§4Work in progress\nOberflächen Effekt zu Raum Effekt. Für Entity Zielerfassung oder Terraforming.
+item.warpdrive.forcefield.upgrade.item_port.name=Item Anschluss Upgrade
+item.warpdrive.forcefield.upgrade.item_port.tooltip=Interagiere mit angeschlossenen Stauräumen. Nutze ein Anziehungs Upgrade, um Block Brecher Drops anzuziehen. Nutze ein Rückstoß Upgrade, um mit einem Stabilisations Upgrade Blöcke zu setzen.
+item.warpdrive.forcefield.upgrade.pumping.name=Pumpen Upgrade
+item.warpdrive.forcefield.upgrade.pumping.tooltip=§4Work in progress\nPumpe Flüssigkeiten im Einflussbereich. Um dickflüssigeres zu pumpen füge mehr  Pumpen Upgrades hinzu.
+item.warpdrive.forcefield.upgrade.range.name=Reichweiten Upgrade
+item.warpdrive.forcefield.upgrade.range.tooltip=Vergrößere den maximalen Einflussbereich
+item.warpdrive.forcefield.upgrade.repulsion.name=Rückstoß Upgrade
+item.warpdrive.forcefield.upgrade.repulsion.tooltip=Verschiebe gelagerte Items, um sie mit einem Stabilisations Upgrade zu setzen. Füge mehr Rückstoß Upgrades hinzu, um Items, passive Entities, Monster und Spieler zu beeinflussen. Nutze ein Inversions Upgrade für einen Terraform Effekt.
+item.warpdrive.forcefield.upgrade.rotation.name=Rotations Upgrade
+item.warpdrive.forcefield.upgrade.rotation.tooltip=Aktiviert Kraftfeld Roatation
+item.warpdrive.forcefield.upgrade.shock.name=Shock Upgrade
+item.warpdrive.forcefield.upgrade.shock.tooltip=Schocke Blocks und Entities. Mehr Upgrades verstärken den Effekt. Inversions Upgrade für Terraforming Effekt.
+item.warpdrive.forcefield.upgrade.silencer.name=Schalldämpfer Upgrade
+item.warpdrive.forcefield.upgrade.silencer.tooltip=Dämpft die Geräusche verbundener Maschinen.
+item.warpdrive.forcefield.upgrade.speed.name=Geschwindigkeits Upgrade
+item.warpdrive.forcefield.upgrade.speed.tooltip=Erhöhe die Kraftfeld Projektions Geschwindigkeit.
+item.warpdrive.forcefield.upgrade.stabilization.name=Stabilisations Upgrade
+item.warpdrive.forcefield.upgrade.stabilization.tooltip=Platziert Blöcke anstatt ein Kraftfeld zu projizieren.
+item.warpdrive.forcefield.upgrade.thickness.name=Stärke Upgrade
+item.warpdrive.forcefield.upgrade.thickness.tooltip=Erhöhe die Dicke des Kraftfelds. Mehr Upgrades verstärken den Effekt (bis zu 2x).
+item.warpdrive.forcefield.upgrade.translation.name=Translations Upgrade
+item.warpdrive.forcefield.upgrade.translation.tooltip=Aktiviert Kraftfeld Translation.
+item.warpdrive.forcefield.upgrade.tooltip.usage.projector=§bRechtsklicke einen Projektor§7 um ihn aufzuwerten
+item.warpdrive.forcefield.upgrade.tooltip.usage.relay=§bRechtsklicke ein Realais§7 um es aufzuwerten
+item.warpdrive.forcefield.upgrade.tooltip.usage.dismount=§bSchleich-Rechtsklicke§7 zum abwerten
+
+item.warpdrive.upgrade.Power.name=Power Upgrade
+item.warpdrive.upgrade.Speed.name=Geschwindigkeits Upgrade
+item.warpdrive.upgrade.Range.name=Reichweiten Upgrade
+item.warpdrive.upgrade.Energy.name=Energie Upgrade
+
+
+item.warpdrive.tool.crystalToken.name=Crystal token !!!
+item.warpdrive.tool.crystalToken.tooltip=Crystal encapsulation of ship '%1$s'\n§bEnter the scanner field§7 to build your ship !!!
+item.warpdrive.tool.crystalToken0.name=Crystal token #0 !!!
+item.warpdrive.tool.crystalToken1.name=Crystal token #1 !!!
+item.warpdrive.tool.crystalToken2.name=Crystal token #2 !!!
+item.warpdrive.tool.crystalToken3.name=Crystal token #3 !!!
+item.warpdrive.tool.crystalToken4.name=Crystal token #4 !!!
+item.warpdrive.tool.crystalToken5.name=Crystal token #5 !!!
+
+
+item.warpdrive.tool.TuningFork.name=Stimmgabel
+item.warpdrive.tool.TuningFork.white.name=Weiße Stimmgabel
+item.warpdrive.tool.TuningFork.orange.name=Orange Stimmgabel
+item.warpdrive.tool.TuningFork.magenta.name=Magenta Stimmgabel
+item.warpdrive.tool.TuningFork.lightBlue.name=Hellblaue Stimmgabel
+item.warpdrive.tool.TuningFork.yellow.name=Gelbe Stimmgabel
+item.warpdrive.tool.TuningFork.lime.name=Hellgrüne Stimmgabel
+item.warpdrive.tool.TuningFork.pink.name=Rosa Stimmgabel
+item.warpdrive.tool.TuningFork.gray.name=Graue Stimmgabel
+item.warpdrive.tool.TuningFork.silver.name=Silberne Stimmgabel
+item.warpdrive.tool.TuningFork.cyan.name=Cyan Stimmgabel
+item.warpdrive.tool.TuningFork.purple.name=Lila Stimmgabel
+item.warpdrive.tool.TuningFork.blue.name=Blaue Stimmgabel
+item.warpdrive.tool.TuningFork.brown.name=Braune Stimmgabel
+item.warpdrive.tool.TuningFork.green.name=Grüne Stimmgabel
+item.warpdrive.tool.TuningFork.red.name=Rote Stimmgabel
+item.warpdrive.tool.TuningFork.black.name=Schwarze Stimmgabel
+
+item.warpdrive.tool.TuningFork.tooltip.videoChannel=Videokanal auf %1$d gestellt 
+item.warpdrive.tool.TuningFork.tooltip.beamFrequency=Strahlfrequenz auf %1$d gestellt
+item.warpdrive.tool.TuningFork.tooltip.usage=§bRecktsklicke einen Block§7 um seine Kristalle einzustellen\n§bSschleiche§7 um alternative Kristalle einzustellen
+item.warpdrive.tool.TuningFork.use.setVideoChannel=%1$s ist jetzt auf Videokanal %2$d gestellt
+item.warpdrive.tool.TuningFork.use.setBeamFrequency=%1$s ist jetzt mit Strahlfrequenz %2$d verknüpft
+
+
+tile.warpdrive.passive.Air.name=Luft Block
+tile.warpdrive.passive.Energized.name=Energiegeladener Block
+tile.warpdrive.passive.Gas.name=Gas Block
+tile.warpdrive.passive.IridiumBlock.name=Iridium Block
+tile.warpdrive.passive.HighlyAdvancedMachine.name=Stark weiterentwickelter Maschinen Block
+tile.warpdrive.passive.Network.name=Netzwerk Block
+tile.warpdrive.passive.Plain.name=Ebenen Block
+tile.warpdrive.passive.lamp_bubble.name=Bubble Lamp **
+tile.warpdrive.passive.lamp_flat.name=Flat Lamp **
+tile.warpdrive.passive.lamp_long.name=Long Lamp **
+tile.warpdrive.passive.TransportBeacon.name=Transport Leuchtfeuer
+
+tile.warpdrive.machines.AirGenerator.name=Luftgenerator
+tile.warpdrive.machines.ChunkLoader.name=Chunk Loader
+tile.warpdrive.machines.Laser.name=Laser
+tile.warpdrive.machines.LaserMedium.name=Medium Laser (Partikel Beschleuniger)
+
+tile.warpdrive.building.ShipScanner.name=Raumschiff Scanner
+
+tile.warpdrive.collection.LaserTreeFarm.name=Laser Baumfarm
+tile.warpdrive.collection.MiningLaser.name=Bergbau Laser
+
+tile.warpdrive.detection.Camera.name=Kamera
+tile.warpdrive.detection.CloakingCoil.name=Tarnfeld Spule
+tile.warpdrive.detection.CloakingCore.name=Tarnfeld Kern
+tile.warpdrive.detection.Monitor.name=Monitor
+tile.warpdrive.detection.Radar.name=Radar
+tile.warpdrive.detection.WarpIsolation.name=Warp-Feld Isolations Block
+
+tile.warpdrive.energy.EnanReactorCore.name=Enantiomorpher Reaktorkern
+tile.warpdrive.energy.EnanReactorLaser.name=Enantiomorper Reaktor Stabilisierungs Laser
+tile.warpdrive.energy.EnergyBank.name=Anuic Energie Speicher
+tile.warpdrive.energy.IC2ReactorLaserMonitor.name=IC2 Reaktor Laser Monitor
+
+tile.warpdrive.forcefield.block1.name=Standard Kraftfeld
+tile.warpdrive.forcefield.block2.name=Weiterentwickeltes Kraftfeld
+tile.warpdrive.forcefield.block3.name=Überlegenes Kraftfeld
+tile.warpdrive.forcefield.projector1.name=Standard Kraftfeld Projektor
+tile.warpdrive.forcefield.projector1.single.name=Standard Kraftfeld Halb Projektor
+tile.warpdrive.forcefield.projector1.double.name=Standard Kraftfeld Voll Projektor
+tile.warpdrive.forcefield.projector2.name=Weiterentwickelter Kraftfeld Projektor
+tile.warpdrive.forcefield.projector2.single.name=Weiterentwickelter Kraftfeld Halb Projektor
+tile.warpdrive.forcefield.projector2.double.name=Weiterentwickelter Kraftfeld Voll Projektor
+tile.warpdrive.forcefield.projector3.name=Überlegener Kraftfeld Projektor
+tile.warpdrive.forcefield.projector3.single.name=Überlegener Kraftfeld Halb Projektor
+tile.warpdrive.forcefield.projector3.double.name=Überlegener Kraftfeld Voll Projektor
+
+tile.warpdrive.forcefield.relay1.name=Standard Kraftfeld Relais
+tile.warpdrive.forcefield.relay1.tooltip=Unterstützt bis zu 1 Upgrade im Netzwerk
+tile.warpdrive.forcefield.relay2.name=Weiterentwickeltes Kraftfeld Relais
+tile.warpdrive.forcefield.relay2.tooltip=Unterstützt bis zu 1 Upgrade im Netzwerk
+tile.warpdrive.forcefield.relay3.name=Überlegenes Kraftfeld Relais
+tile.warpdrive.forcefield.relay3.tooltip=Unterstützt bis zu 1 Upgrade im Netzwerk
+
+tile.warpdrive.movement.Lift.name=Lift
+tile.warpdrive.movement.ShipController.name=Raumschiff Steuerung
+tile.warpdrive.movement.ShipCore.name=Raumschiff Kern
+tile.warpdrive.movement.Transporter.name=Transporter
+
+tile.warpdrive.weapon.LaserCamera.name=Laser und Kamera
+tile.warpdrive.weapon.WeaponController.name=Waffen Steuerung
+
+
+
+tile.warpdrive.hull1.plain.white.name=Weißer Standard Rumpf
+tile.warpdrive.hull1.plain.orange.name=Oranger Standard Rumpf
+tile.warpdrive.hull1.plain.magenta.name=Magenta Standard Rumpf
+tile.warpdrive.hull1.plain.lightBlue.name=Hellblauer Standard Rumpf
+tile.warpdrive.hull1.plain.yellow.name=Gelber Standard Rumpf
+tile.warpdrive.hull1.plain.lime.name=Hellgrüner Standard Rumpf
+tile.warpdrive.hull1.plain.pink.name=Rosa Standard Rumpf
+tile.warpdrive.hull1.plain.gray.name=Grauer Standard Rumpf
+tile.warpdrive.hull1.plain.silver.name=Silberner Standard Rumpf
+tile.warpdrive.hull1.plain.cyan.name=Cyan Standard Rumpf
+tile.warpdrive.hull1.plain.purple.name=Lila Standard Rumpf
+tile.warpdrive.hull1.plain.blue.name=Blauer Standard Rumpf
+tile.warpdrive.hull1.plain.brown.name=Brauner Standard Rumpf
+tile.warpdrive.hull1.plain.green.name=Grüner Standard Rumpf
+tile.warpdrive.hull1.plain.red.name=Roter Standard Rumpf
+tile.warpdrive.hull1.plain.black.name=Schwarzer Standard Rumpf
+
+tile.warpdrive.hull1.glass.white.name=Weißer Standard Glasrumpf
+tile.warpdrive.hull1.glass.orange.name=Oranger Standard Glasrumpf
+tile.warpdrive.hull1.glass.magenta.name=Magenta Standard Glasrumpf
+tile.warpdrive.hull1.glass.lightBlue.name=Hellblauer Standard Glasrumpf
+tile.warpdrive.hull1.glass.yellow.name=Gelber Standard Glasrumpf
+tile.warpdrive.hull1.glass.lime.name=Hellgrüner Standard Glasrumpf
+tile.warpdrive.hull1.glass.pink.name=Rosa Standard Glasrumpf
+tile.warpdrive.hull1.glass.gray.name=Grauer Standard Glasrumpf
+tile.warpdrive.hull1.glass.silver.name=Silberner Standard Glasrumpf
+tile.warpdrive.hull1.glass.cyan.name=Cyan Standard Glasrumpf
+tile.warpdrive.hull1.glass.purple.name=Lila Standard Glasrumpf
+tile.warpdrive.hull1.glass.blue.name=Blauer Standard Glasrumpf
+tile.warpdrive.hull1.glass.brown.name=Brauner Standard Glasrumpf
+tile.warpdrive.hull1.glass.green.name=Grüner Standard Glasrumpf
+tile.warpdrive.hull1.glass.red.name=Roter Standard Glasrumpf
+tile.warpdrive.hull1.glass.black.name=Schwarzer Standard Glasrumpf
+
+tile.warpdrive.hull1.stairs.white.name=Weißer Standard Treppe!!!
+tile.warpdrive.hull1.stairs.orange.name=Oranger Standard Treppe!!!
+tile.warpdrive.hull1.stairs.magenta.name=Magenta Standard Treppe!!!
+tile.warpdrive.hull1.stairs.lightBlue.name=Hellblauer Standard Treppe!!!
+tile.warpdrive.hull1.stairs.yellow.name=Gelber Standard Treppe!!!
+tile.warpdrive.hull1.stairs.lime.name=Hellgrüner Standard Treppe!!!
+tile.warpdrive.hull1.stairs.pink.name=Rosa Standard Treppe!!!
+tile.warpdrive.hull1.stairs.gray.name=Grauer Standard Treppe!!!
+tile.warpdrive.hull1.stairs.silver.name=Silberner Standard Treppe!!!
+tile.warpdrive.hull1.stairs.cyan.name=Cyan Standard Treppe!!!
+tile.warpdrive.hull1.stairs.purple.name=Lila Standard Treppe!!!
+tile.warpdrive.hull1.stairs.blue.name=Blauer Standard Treppe!!!
+tile.warpdrive.hull1.stairs.brown.name=Brauner Standard Treppe!!!
+tile.warpdrive.hull1.stairs.green.name=Grüner Standard Treppe!!!
+tile.warpdrive.hull1.stairs.red.name=Roter Standard Treppe!!!
+tile.warpdrive.hull1.stairs.black.name=Schwarzer Standard Treppe!!!
+
+tile.warpdrive.hull2.plain.white.name=Weißer weiterentwickelter Rumpf
+tile.warpdrive.hull2.plain.orange.name=Oranger weiterentwickelter Rumpf
+tile.warpdrive.hull2.plain.magenta.name=Magenta weiterentwickelter Rumpf
+tile.warpdrive.hull2.plain.lightBlue.name=Hellblauer weiterentwickelter Rumpf
+tile.warpdrive.hull2.plain.yellow.name=Gelber weiterentwickelter Rumpf
+tile.warpdrive.hull2.plain.lime.name=Hellgrüner weiterentwickelter Rumpf
+tile.warpdrive.hull2.plain.pink.name=Rosa weiterentwickelter Rumpf
+tile.warpdrive.hull2.plain.gray.name=Grauer weiterentwickelter Rumpf
+tile.warpdrive.hull2.plain.silver.name=Silberner weiterentwickelter Rumpf
+tile.warpdrive.hull2.plain.cyan.name=Cyan weiterentwickelter Rumpf
+tile.warpdrive.hull2.plain.purple.name=Lila weiterentwickelter Rumpf
+tile.warpdrive.hull2.plain.blue.name=Blauer weiterentwickelter Rumpf
+tile.warpdrive.hull2.plain.brown.name=Brauner weiterentwickelter Rumpf
+tile.warpdrive.hull2.plain.green.name=Grüner weiterentwickelter Rumpf
+tile.warpdrive.hull2.plain.red.name=Roter weiterentwickelter Rumpf
+tile.warpdrive.hull2.plain.black.name=Schwarzer weiterentwickelter Rumpf
+
+tile.warpdrive.hull2.glass.white.name=Weißer weiterentwickelter Glasrumpf
+tile.warpdrive.hull2.glass.orange.name=Oranger weiterentwickelter Glasrumpf
+tile.warpdrive.hull2.glass.magenta.name=Magenta weiterentwickelter Glasrumpf
+tile.warpdrive.hull2.glass.lightBlue.name=Hellblauer weiterentwickelter Glasrumpf
+tile.warpdrive.hull2.glass.yellow.name=Gelber weiterentwickelter Glasrumpf
+tile.warpdrive.hull2.glass.lime.name=Lime weiterentwickelter Glasrumpf
+tile.warpdrive.hull2.glass.pink.name=Rosa weiterentwickelter Glasrumpf
+tile.warpdrive.hull2.glass.gray.name=Grauer weiterentwickelter Glasrumpf
+tile.warpdrive.hull2.glass.silver.name=Silberner weiterentwickelter Glasrumpf
+tile.warpdrive.hull2.glass.cyan.name=Cyan weiterentwickelter Glasrumpf
+tile.warpdrive.hull2.glass.purple.name=Lila weiterentwickelter Glasrumpf
+tile.warpdrive.hull2.glass.blue.name=Blauer weiterentwickelter Glasrumpf
+tile.warpdrive.hull2.glass.brown.name=Brauner weiterentwickelter Glasrumpf
+tile.warpdrive.hull2.glass.green.name=Grüner weiterentwickelter Glasrumpf
+tile.warpdrive.hull2.glass.red.name=Roter weiterentwickelter Glasrumpf
+tile.warpdrive.hull2.glass.black.name=Schwarzer weiterentwickelter Glasrumpf
+
+tile.warpdrive.hull2.stairs.white.name=Weißer weiterentwickelter Treppe!!!
+tile.warpdrive.hull2.stairs.orange.name=Oranger weiterentwickelter Treppe!!!
+tile.warpdrive.hull2.stairs.magenta.name=Magenta weiterentwickelter Treppe!!!
+tile.warpdrive.hull2.stairs.lightBlue.name=Hellblauer weiterentwickelter Treppe!!!
+tile.warpdrive.hull2.stairs.yellow.name=Gelber weiterentwickelter Treppe!!!
+tile.warpdrive.hull2.stairs.lime.name=Lime weiterentwickelter Treppe!!!
+tile.warpdrive.hull2.stairs.pink.name=Rosa weiterentwickelter Treppe!!!
+tile.warpdrive.hull2.stairs.gray.name=Grauer weiterentwickelter Treppe!!!
+tile.warpdrive.hull2.stairs.silver.name=Silberner weiterentwickelter Treppe!!!
+tile.warpdrive.hull2.stairs.cyan.name=Cyan weiterentwickelter Treppe!!!
+tile.warpdrive.hull2.stairs.purple.name=Lila weiterentwickelter Treppe!!!
+tile.warpdrive.hull2.stairs.blue.name=Blauer weiterentwickelter Treppe!!!
+tile.warpdrive.hull2.stairs.brown.name=Brauner weiterentwickelter Treppe!!!
+tile.warpdrive.hull2.stairs.green.name=Grüner weiterentwickelter Treppe!!!
+tile.warpdrive.hull2.stairs.red.name=Roter weiterentwickelter Treppe!!!
+tile.warpdrive.hull2.stairs.black.name=Schwarzer weiterentwickelter Treppe!!!
+
+tile.warpdrive.hull3.plain.white.name=Weißer überlegener Rumpf
+tile.warpdrive.hull3.plain.orange.name=Oranger überlegener Rumpf
+tile.warpdrive.hull3.plain.magenta.name=Magenta überlegener Rumpf
+tile.warpdrive.hull3.plain.lightBlue.name=Hellblauer überlegener Rumpf
+tile.warpdrive.hull3.plain.yellow.name=Gelber überlegener Rumpf
+tile.warpdrive.hull3.plain.lime.name=Lime überlegener Rumpf
+tile.warpdrive.hull3.plain.pink.name=Rosa überlegener Rumpf
+tile.warpdrive.hull3.plain.gray.name=Grauer überlegener Rumpf
+tile.warpdrive.hull3.plain.silver.name=Silberner überlegener Rumpf
+tile.warpdrive.hull3.plain.cyan.name=Cyan überlegener Rumpf
+tile.warpdrive.hull3.plain.purple.name=Lila überlegener Rumpf
+tile.warpdrive.hull3.plain.blue.name=Blauer überlegener Rumpf
+tile.warpdrive.hull3.plain.brown.name=Brauner überlegener Rumpf
+tile.warpdrive.hull3.plain.green.name=Grüner überlegener Rumpf
+tile.warpdrive.hull3.plain.red.name=Roter überlegener Rumpf
+tile.warpdrive.hull3.plain.black.name=Schwarzer überlegener Rumpf
+
+tile.warpdrive.hull3.glass.white.name=Weißer überlegener Glasrumpf
+tile.warpdrive.hull3.glass.orange.name=Oranger überlegener Glasrumpf
+tile.warpdrive.hull3.glass.magenta.name=Magenta überlegener Glasrumpf
+tile.warpdrive.hull3.glass.lightBlue.name=Hellblauer überlegener Glasrumpf
+tile.warpdrive.hull3.glass.yellow.name=Gelber überlegener Glasrumpf
+tile.warpdrive.hull3.glass.lime.name=Lime überlegener Glasrumpf
+tile.warpdrive.hull3.glass.pink.name=Rosa überlegener Glasrumpf
+tile.warpdrive.hull3.glass.gray.name=Grauer überlegener Glasrumpf
+tile.warpdrive.hull3.glass.silver.name=Silberner überlegener Glasrumpf
+tile.warpdrive.hull3.glass.cyan.name=Cyan überlegener Glasrumpf
+tile.warpdrive.hull3.glass.purple.name=Lila überlegener Glasrumpf
+tile.warpdrive.hull3.glass.blue.name=Blauer überlegener Glasrumpf
+tile.warpdrive.hull3.glass.brown.name=Brauner überlegener Glasrumpf
+tile.warpdrive.hull3.glass.green.name=Grüner überlegener Glasrumpf
+tile.warpdrive.hull3.glass.red.name=Roter überlegener Glasrumpf
+tile.warpdrive.hull3.glass.black.name=Schwarzer überlegener Glasrumpf
+
+tile.warpdrive.hull3.stairs.white.name=Weißer überlegener Treppe!!!
+tile.warpdrive.hull3.stairs.orange.name=Oranger überlegener Treppe!!!
+tile.warpdrive.hull3.stairs.magenta.name=Magenta überlegener Treppe!!!
+tile.warpdrive.hull3.stairs.lightBlue.name=Hellblauer überlegener Treppe!!!
+tile.warpdrive.hull3.stairs.yellow.name=Gelber überlegener Treppe!!!
+tile.warpdrive.hull3.stairs.lime.name=Lime überlegener Treppe!!!
+tile.warpdrive.hull3.stairs.pink.name=Rosa überlegener Treppe!!!
+tile.warpdrive.hull3.stairs.gray.name=Grauer überlegener Treppe!!!
+tile.warpdrive.hull3.stairs.silver.name=Silberner überlegener Treppe!!!
+tile.warpdrive.hull3.stairs.cyan.name=Cyan überlegener Treppe!!!
+tile.warpdrive.hull3.stairs.purple.name=Lila überlegener Treppe!!!
+tile.warpdrive.hull3.stairs.blue.name=Blauer überlegener Treppe!!!
+tile.warpdrive.hull3.stairs.brown.name=Brauner überlegener Treppe!!!
+tile.warpdrive.hull3.stairs.green.name=Grüner überlegener Treppe!!!
+tile.warpdrive.hull3.stairs.red.name=Roter überlegener Treppe!!!
+tile.warpdrive.hull3.stairs.black.name=Schwarzer überlegener Treppe!!!
+
+
+warpdrive.guide.prefix=§6%1$s:§r
+warpdrive.error.badTileEntity=§cDieser Block benötigt ein Update, durch zerstören und neu setzen.
+warpdrive.monitor.viewingCamera=Kamera bei %2$d, %3$d, %4$d läuft auf Videokanal %1$d
+warpdrive.ship.attachedPlayers=Verbundene Spieler: %1$s
+warpdrive.ship.playerAttached=Du bist jetzt mit dem Schiff %1$s verbunden.\nVerbundene Spieler sind %2$s
+warpdrive.ship.playerDetached=Du wurdest vom Schiff %1$s getrennt.\nVerbundene Spieler sind %2$s
+warpdrive.ship.statusLine.cooling=%1$d s Abklingzeit verbleibend.
+warpdrive.ship.statusLine.isolation=%1$d aktive Isolations Blöcke bieten %2$2.1f%% Absorption.
+warpdrive.energy.statusLine=Das Energie Level ist %1$s/%2$s EU.
+warpdrive.beamFrequency.statusLine.valid=Strahlfrequenz %1$d ist gültig.
+warpdrive.beamFrequency.statusLine.invalid=§cStrahlfrequenz %1$d ist ungültig.
+warpdrive.beamFrequency.statusLine.undefined=§7Undefinierte Strahlfrequenz.\n§bNutze eine Stimmgabel§f um die Strahlfrequenz festzulegen.
+
+warpdrive.forcefield.guide.lowPower=Uns geht die Energie aus, Captain. Verringere unseren Energieverbrauch oder hol den schottischen Ingenieur!
+
+warpdrive.forcefield.shape.result.wrongSide=§cAuf dieser Seite gibt es keinen Elektromagnetischen Projektor.
+warpdrive.forcefield.shape.result.noShapeToDismount=§cKeine Form zum deinstallieren vorhanden.
+warpdrive.forcefield.shape.result.notEnoughShapes.double=§cDu brauchst mindestens 2 Items um einen doppelseitigen Projektor einzustellen.
+warpdrive.forcefield.shape.result.notEnoughShapes.single=§cDu brauchst mindestens 1 Item um einen einseitigen Projektor einzustellen.
+warpdrive.forcefield.shape.result.dismounted=Form erfolgreich deinstalliert.
+warpdrive.forcefield.shape.result.mounted=Form erfolgreich installiert.
+
+warpdrive.forcefield.shape.statusLine.none=§cForm ist nicht definiert
+warpdrive.forcefield.shape.statusLine.double=Die Form ist ein(e) volle(r) %1$s
+warpdrive.forcefield.shape.statusLine.single=Die Form ist ein(e) halbe(r) %1$s
+warpdrive.forcefield.shape.statusLine.sphere=Kugel
+warpdrive.forcefield.shape.statusLine.cylinder_h=Horizontaler Zylinder
+warpdrive.forcefield.shape.statusLine.cylinder_v=Vertikaler Zylinder
+warpdrive.forcefield.shape.statusLine.cube=Würfel
+warpdrive.forcefield.shape.statusLine.plane=Ebene
+warpdrive.forcefield.shape.statusLine.tube=Röhre
+warpdrive.forcefield.shape.statusLine.tunnel=Tunnel
+
+warpdrive.forcefield.upgrade.result.noUpgradeToDismount=§cKein Upgrade zum deinstallieren vorhanden.
+warpdrive.forcefield.upgrade.result.notEnoughUpgrades=§cDu brauchst mindestens 1 Item um diesen Block aufzuwerten.
+warpdrive.forcefield.upgrade.result.invalidProjectorUpgrade=§cDieses Upgrade ist zu groß für einen Projektor. Nutze ein Relais.
+warpdrive.forcefield.upgrade.result.invalidRelayUpgrade=§cDieses Upgrade funktioniert nur bei Projektoren!
+warpdrive.forcefield.upgrade.result.dismounted=Upgrade erfolgreich deinstalliert.
+warpdrive.forcefield.upgrade.result.mounted=Upgrade erfolgreich installiert.
+
+warpdrive.forcefield.upgrade.statusLine.none=§7Kein Upgrade installiert.
+warpdrive.forcefield.upgrade.statusLine.valid=%1$s Upgrade installiert
+warpdrive.forcefield.upgrade.statusLine.attraction=Anziehung
+warpdrive.forcefield.upgrade.statusLine.breaking=Block Brecher
+warpdrive.forcefield.upgrade.statusLine.camouflage=Camouflage
+warpdrive.forcefield.upgrade.statusLine.cooling=Kühler
+warpdrive.forcefield.upgrade.statusLine.fusion=Fusions
+warpdrive.forcefield.upgrade.statusLine.heating=Heizungs
+warpdrive.forcefield.upgrade.statusLine.inversion=Inversions
+warpdrive.forcefield.upgrade.statusLine.item_port=Item Anschluss
+warpdrive.forcefield.upgrade.statusLine.pump=Pumpen
+warpdrive.forcefield.upgrade.statusLine.range=Reichweiten
+warpdrive.forcefield.upgrade.statusLine.repulsion=Rückstoß
+warpdrive.forcefield.upgrade.statusLine.rotation=Rotations
+warpdrive.forcefield.upgrade.statusLine.shock=Schock
+warpdrive.forcefield.upgrade.statusLine.silencer=Schalldämpfer
+warpdrive.forcefield.upgrade.statusLine.speed=Geschwindigkeits
+warpdrive.forcefield.upgrade.statusLine.stabilization=Stabilisations
+warpdrive.forcefield.upgrade.statusLine.thickness=Stärke
+warpdrive.forcefield.upgrade.statusLine.translation=Translations
+
+warpdrive.videoChannel.statusLine.valid=Videokanal %1$d ist gültig.
+warpdrive.videoChannel.statusLine.validCamera=Videokanal %1$d ist gültig für die Kamera bei %2$d, %3$d, %4$d.
+warpdrive.videoChannel.statusLine.invalid=§cVideokanal %1$d ist ungültig.
+warpdrive.videoChannel.statusLine.invalidOrNotLoaded=§cVideokanal %1$d ist ungültig oder die Kamera ist zu weit weg!
+warpdrive.videoChannel.statusLine.undefined=§7Undefined Video channel.\n§bUse a Tuning fork§r to set it.
+warpdrive.cloakingCore.invalidAssembly=§Konstruktion ungültig!
+warpdrive.cloakingCore.disabled=Tarnfeld ist deaktiviert!
+warpdrive.cloakingCore.lowPower=§cTarnfeld ist ausgefallen, wir brauchen mehr Energie, Captain!
+warpdrive.cloakingCore.cloaking=Ein Stufe %1$d Tarnfeld überdeckt jetzt %2$d Blöcke!
+warpdrive.IC2reactorLaserMonitor.noReactor=Kein Reaktor gefunden!
+warpdrive.IC2reactorLaserMonitor.multipleReactors=%1$d Reaktor(en) verbunden.
+warpdrive.transporter.status=Von %1$.0f %2$.0f %3$.0f zu %4$.0f %5$.0f %6$.0f
+
+warpdrive.tooltip.itemTag.breathingIC2=§bSpace breathing§r consuming IC2 Compressed air cells from your inventory. !!!
+warpdrive.tooltip.itemTag.flyInSpace=§bSpace compatible jetpack§r. !!!
+warpdrive.tooltip.itemTag.noFallDamage=§bAbsorbs fall damage§r. !!!

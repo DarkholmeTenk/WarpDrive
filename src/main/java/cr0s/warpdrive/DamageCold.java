@@ -5,7 +5,7 @@ import net.minecraft.util.DamageSource;
 public class DamageCold extends DamageSource {
 
 	public DamageCold() {
-		super("warpdrive.cool");
+		super("warpdrive.cold");
 		setDamageBypassesArmor();
 		setDamageIsAbsolute();
 	}

@@ -51,7 +51,7 @@ public class FillerSet implements IXmlRepresentable, Comparable {
 		if (filler == null) {
 			WarpDrive.logger.error("null filler encountered in FillerSet " + getFullName());
 			filler = new Filler();
-			filler.block = Blocks.glass;
+			filler.block = Blocks.GLASS;
 		}
 		return filler;
 	}

@@ -28,7 +28,7 @@ end
 
 noExit = true
 layerOffset = 1
-onlyOres = true
+onlyOres = false
 silktouch = false
 args = {...}
 if #args > 0 then

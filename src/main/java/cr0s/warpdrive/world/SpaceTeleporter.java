@@ -22,14 +22,14 @@ public class SpaceTeleporter extends Teleporter {
 	}
 	
 	@Override
-	public void placeInPortal(Entity par1Entity, double par2, double par4, double par6, float par8) {
+	public void placeInPortal(Entity entityIn, float rotationYaw) {
 		//EntityPlayer player = (EntityPlayer) par1Entity;
 		//player.setWorld(world);
 		//player.setPositionAndUpdate(x, y, z);
 	}
 	
 	@Override
-	public boolean placeInExistingPortal(Entity par1Entity, double par2, double par4, double par6, float par8) {
+	public boolean placeInExistingPortal(Entity entityIn, float rotationYaw) {
 		return true;
 	}
 	

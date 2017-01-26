@@ -2,72 +2,58 @@ package cr0s.warpdrive.block.collection;
 
 import java.util.Random;
 
+import cr0s.warpdrive.data.EnumMiningLaserMode;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.properties.PropertyEnum;
+import net.minecraft.block.state.BlockStateContainer;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import cr0s.warpdrive.WarpDrive;
 import cr0s.warpdrive.block.BlockAbstractContainer;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class BlockMiningLaser extends BlockAbstractContainer {
-	private IIcon[] iconBuffer;
-	public final static int ICON_IDLE = 0;
-	public final static int ICON_MINING_LOW_POWER = 1;
-	public final static int ICON_MINING_POWERED = 2;
-	public final static int ICON_SCANNING_LOW_POWER = 3;
-	public final static int ICON_SCANNING_POWERED = 4;
-	private final static int ICON_BOTTOM = 5;
-	private final static int ICON_TOP = 6;
+	public static final PropertyEnum<EnumMiningLaserMode> MODE = PropertyEnum.create("mode", EnumMiningLaserMode.class);
 	
-	public BlockMiningLaser() {
-		super(Material.iron);
-		setBlockName("warpdrive.collection.MiningLaser");
+	public BlockMiningLaser(final String registryName) {
+		super(registryName, Material.IRON);
+		setUnlocalizedName("warpdrive.collection.MiningLaser");
+		GameRegistry.registerTileEntity(TileEntityMiningLaser.class, WarpDrive.PREFIX + registryName);
+
+		setDefaultState(getDefaultState().withProperty(MODE, EnumMiningLaserMode.INACTIVE));
+	}
+	
+	@Nonnull
+	@Override
+	protected BlockStateContainer createBlockState() {
+		return new BlockStateContainer(this, MODE);
+	}
+	
+	@SuppressWarnings("deprecation")
+	@Nonnull
+	@Override
+	public IBlockState getStateFromMeta(int metadata) {
+		return getDefaultState()
+				.withProperty(MODE, EnumMiningLaserMode.get(metadata));
 	}
 	
 	@Override
-	public void registerBlockIcons(IIconRegister par1IconRegister) {
-		iconBuffer = new IIcon[16];
-		iconBuffer[ICON_IDLE            ] = par1IconRegister.registerIcon("warpdrive:collection/miningLaserSide_idle");
-		iconBuffer[ICON_MINING_LOW_POWER] = par1IconRegister.registerIcon("warpdrive:collection/miningLaserSide_miningLowPower");
-		iconBuffer[ICON_MINING_POWERED] = par1IconRegister.registerIcon("warpdrive:collection/miningLaserSide_miningPowered");
-		iconBuffer[ICON_SCANNING_LOW_POWER] = par1IconRegister.registerIcon("warpdrive:collection/miningLaserSide_scanningLowPower");
-		iconBuffer[ICON_SCANNING_POWERED] = par1IconRegister.registerIcon("warpdrive:collection/miningLaserSide_scanningPowered");
-		iconBuffer[ICON_BOTTOM          ] = par1IconRegister.registerIcon("warpdrive:collection/miningLaserBottom");
-		iconBuffer[ICON_TOP             ] = par1IconRegister.registerIcon("warpdrive:collection/miningLaserTop");
+	public int getMetaFromState(IBlockState blockState) {
+		return blockState.getValue(MODE).ordinal();
 	}
 	
+	@Nonnull
 	@Override
-	public IIcon getIcon(IBlockAccess world, int x, int y, int z, int side) {
-		int metadata  = world.getBlockMetadata(x, y, z);
-		if (side == 0) {
-			return iconBuffer[ICON_BOTTOM];
-		}
-		if (side == 1) {
-			return iconBuffer[ICON_TOP];
-		}
-		if (metadata < iconBuffer.length) {
-			return iconBuffer[metadata];
-		}
-		return null;
-	}
-	
-	@Override
-	public IIcon getIcon(int side, int metadata) {
-		if (side == 0) {
-			return iconBuffer[ICON_BOTTOM];
-		}
-		if (side == 1) {
-			return iconBuffer[ICON_TOP];
-		}
-		return iconBuffer[ICON_SCANNING_LOW_POWER];
-	}
-	
-	@Override
-	public TileEntity createNewTileEntity(World world, int i) {
+	public TileEntity createNewTileEntity(@Nonnull World world, int metadata) {
 		return new TileEntityMiningLaser();
 	}
 	
@@ -76,22 +62,14 @@ public class BlockMiningLaser extends BlockAbstractContainer {
 		return 1;
 	}
 	
-	/**
-	 * Returns the item to drop on destruction.
-	 */
 	@Override
-	public Item getItemDropped(int par1, Random random, int par3) {
-		return Item.getItemFromBlock(this);
-	}
-	
-	@Override
-	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityPlayer, int side, float hitX, float hitY, float hitZ) {
+	public boolean onBlockActivated(World world, BlockPos blockPos, IBlockState blockState, EntityPlayer entityPlayer, EnumHand hand, @Nullable ItemStack itemStackHeld, EnumFacing side, float hitX, float hitY, float hitZ) {
 		if (world.isRemote) {
 			return false;
 		}
 		
-		if (entityPlayer.getHeldItem() == null) {
-			TileEntity tileEntity = world.getTileEntity(x, y, z);
+		if (itemStackHeld == null) {
+			TileEntity tileEntity = world.getTileEntity(blockPos);
 			if (tileEntity instanceof TileEntityMiningLaser) {
 				WarpDrive.addChatMessage(entityPlayer, ((TileEntityMiningLaser)tileEntity).getStatus());
 				return true;

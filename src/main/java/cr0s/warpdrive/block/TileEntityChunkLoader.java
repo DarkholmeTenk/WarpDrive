@@ -2,9 +2,9 @@ package cr0s.warpdrive.block;
 
 import java.util.Map;
 
-import cpw.mods.fml.common.Optional;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.chunk.Chunk;
 import cr0s.warpdrive.api.IUpgradable;
 import cr0s.warpdrive.config.WarpDriveConfig;
@@ -12,17 +12,17 @@ import cr0s.warpdrive.data.UpgradeType;
 import dan200.computercraft.api.lua.ILuaContext;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 
-public class TileEntityChunkLoader extends TileEntityAbstractChunkLoading implements IUpgradable
-{
+public class TileEntityChunkLoader extends TileEntityAbstractChunkLoading implements IUpgradable {
+	
 	private boolean canLoad = false;
 	private boolean shouldLoad = false;
-
+	
 	private boolean initialised = false;
-	private ChunkCoordIntPair myChunk;
-
+	private ChunkPos myChunk;
+	
 	int negDX, posDX, negDZ, posDZ;
 	int area = 1;
-
+	
 	public TileEntityChunkLoader() {
 		super();
 		IC2_sinkTier = 2;
@@ -39,30 +39,30 @@ public class TileEntityChunkLoader extends TileEntityAbstractChunkLoading implem
 				"upgrades"
 		});
 	}
-
+	
 	@Override
 	public int getMaxEnergyStored() {
 		return WarpDriveConfig.CL_MAX_ENERGY;
 	}
-
+	
 	@Override
 	public boolean shouldChunkLoad()
 	{
 		return shouldLoad && canLoad;
 	}
-
+	
 	@Override
-	public void updateEntity()
+	public void update()
 	{
-		super.updateEntity();
-
+		super.update();
+		
 		if(!initialised)
 		{
 			initialised = true;
-			myChunk = worldObj.getChunkFromBlockCoords(xCoord, zCoord).getChunkCoordIntPair();
+			myChunk = worldObj.getChunkFromBlockCoords(pos).getChunkCoordIntPair();
 			changedDistance();
 		}
-
+		
 		if(shouldLoad)
 		{
 			canLoad = consumeEnergy(area * WarpDriveConfig.CL_RF_PER_CHUNKTICK, false);
@@ -79,19 +79,15 @@ public class TileEntityChunkLoader extends TileEntityAbstractChunkLoading implem
 			return;
 		}
 		if (myChunk == null) {
-			Chunk aChunk = worldObj.getChunkFromBlockCoords(xCoord, zCoord);
-			if (aChunk != null) {
-				myChunk = aChunk.getChunkCoordIntPair();
-			} else {
-				return;
-			}
+			Chunk aChunk = worldObj.getChunkFromBlockCoords(pos);
+			myChunk = aChunk.getChunkCoordIntPair();
 		}
 		negDX = - clamp(0, WarpDriveConfig.CL_MAX_DISTANCE, negDX);
 		posDX =   clamp(0, WarpDriveConfig.CL_MAX_DISTANCE, posDX);
 		negDZ = - clamp(0, WarpDriveConfig.CL_MAX_DISTANCE, negDZ);
 		posDZ =   clamp(0, WarpDriveConfig.CL_MAX_DISTANCE, posDZ);
-		minChunk = new ChunkCoordIntPair(myChunk.chunkXPos+negDX,myChunk.chunkZPos+negDZ);
-		maxChunk = new ChunkCoordIntPair(myChunk.chunkXPos+posDX,myChunk.chunkZPos+posDZ);
+		minChunk = new ChunkPos(myChunk.chunkXPos + negDX, myChunk.chunkZPos + negDZ);
+		maxChunk = new ChunkPos(myChunk.chunkXPos + posDX, myChunk.chunkZPos + posDZ);
 		area = (posDX - negDX + 1) * (posDZ - negDZ + 1);
 		refreshLoading(true);
 	}
@@ -109,13 +105,13 @@ public class TileEntityChunkLoader extends TileEntityAbstractChunkLoading implem
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound nbt)
-	{
-		super.writeToNBT(nbt);
-		nbt.setInteger("negDX", negDX);
-		nbt.setInteger("negDZ", negDZ);
-		nbt.setInteger("posDX", posDX);
-		nbt.setInteger("posDZ", posDZ);
+	public NBTTagCompound writeToNBT(NBTTagCompound tag) {
+		tag = super.writeToNBT(tag);
+		tag.setInteger("negDX", negDX);
+		tag.setInteger("negDZ", negDZ);
+		tag.setInteger("posDX", posDX);
+		tag.setInteger("posDZ", posDZ);
+		return tag;
 	}
 
 	// OpenComputer callback methods
@@ -152,7 +148,7 @@ public class TileEntityChunkLoader extends TileEntityAbstractChunkLoading implem
 					shouldLoad = toBool(arguments[0]);
 				return new Object[]{shouldChunkLoad()};
 			case "upgrades":
-				return getUpgrades();
+				return getUpgrades_deprecated();
 		}
 		
 		return super.callMethod(computer, context, method, arguments);
@@ -170,16 +166,16 @@ public class TileEntityChunkLoader extends TileEntityAbstractChunkLoading implem
 		if(max == 0)
 			return false;
 
-		if(upgrades.containsKey(upgradeType))
-			if(upgrades.get(upgradeType) >= max)
+		if(deprecated_upgrades.containsKey(upgradeType))
+			if(deprecated_upgrades.get(upgradeType) >= max)
 				return false;
 
 		if(!simulate)
 		{
 			int c = 0;
-			if(upgrades.containsKey(upgradeType))
-				c = upgrades.get(upgradeType);
-			upgrades.put(upgradeType, c+1);
+			if(deprecated_upgrades.containsKey(upgradeType))
+				c = deprecated_upgrades.get(upgradeType);
+			deprecated_upgrades.put(upgradeType, c+1);
 		}
 		return true;
 	}
@@ -187,6 +183,6 @@ public class TileEntityChunkLoader extends TileEntityAbstractChunkLoading implem
 	@Override
 	public Map<UpgradeType, Integer> getInstalledUpgrades()
 	{
-		return upgrades;
+		return deprecated_upgrades;
 	}
 }

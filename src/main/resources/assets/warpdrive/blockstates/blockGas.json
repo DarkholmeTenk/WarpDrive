@@ -1,0 +1,28 @@
+{
+	"forge_marker": 1,
+	"defaults": {
+		"model": "minecraft:cube_all",
+		"textures": {
+			"all": "warpdrive:blocks/decoration/gas-red"
+		},
+		"transform": "forge:default-block"
+	},
+	"variants": {
+		"normal": [{}],
+		"inventory": [{}],
+		"color": {
+			"white"   : { "textures": { "all": "warpdrive:blocks/decoration/gas-white"		} },
+			"yellow"  : { "textures": { "all": "warpdrive:blocks/decoration/gas-yellow"		} },
+			"blue"    : { "textures": { "all": "warpdrive:blocks/decoration/gas-blue"		} },
+			"dark"    : { "textures": { "all": "warpdrive:blocks/decoration/gas-dark"		} },
+			"darkness": { "textures": { "all": "warpdrive:blocks/decoration/gas-darkness"	} },
+			"gray"    : { "textures": { "all": "warpdrive:blocks/decoration/gas-gray"		} },
+			"green"   : { "textures": { "all": "warpdrive:blocks/decoration/gas-green"		} },
+			"milk"    : { "textures": { "all": "warpdrive:blocks/decoration/gas-milk"		} },
+			"orange"  : { "textures": { "all": "warpdrive:blocks/decoration/gas-orange"		} },
+			"red"     : { "textures": { "all": "warpdrive:blocks/decoration/gas-red"		} },
+			"siren"   : { "textures": { "all": "warpdrive:blocks/decoration/gas-siren"		} },
+			"violet"  : { "textures": { "all": "warpdrive:blocks/decoration/gas-violet"		} }
+		}
+	}
+}

@@ -11,10 +11,11 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChunkCoordinates;
 import cr0s.warpdrive.api.IBlockTransformer;
 import cr0s.warpdrive.api.ITransformation;
 import cr0s.warpdrive.config.WarpDriveConfig;
+import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.util.Constants;
 
 public class CompatEnderIO implements IBlockTransformer {
 	
@@ -53,9 +54,6 @@ public class CompatEnderIO implements IBlockTransformer {
 	}
 	
 	private static final short[] mrot = {  0,  1,  5,  4,  2,  3,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15 };
-	private static final byte NBTTagByteArrayId = 7; // new NBTTagByteArray(null).getId();
-	private static final byte NBTTagCompoundId = 10; // new NBTTagCompound().getId();
-	private static final byte NBTTagIntArrayId = 11; // new NBTTagIntArray(null).getId();
 	private static final Map<String, String> rotSideNames;
 	private static final Map<String, String> rotFaceNames;
 	static {
@@ -101,11 +99,11 @@ public class CompatEnderIO implements IBlockTransformer {
 	}
 	private NBTTagCompound rotate_conduit(final byte rotationSteps, NBTTagCompound nbtConduit) {
 		NBTTagCompound nbtNewConduit = new NBTTagCompound();
-		Set<String> keys = nbtConduit.func_150296_c();
+		Set<String> keys = nbtConduit.getKeySet();
 		for (String key : keys) {
 			NBTBase base = nbtConduit.getTag(key);
 			switch(base.getId()) {
-			case NBTTagIntArrayId:	// "connections", "externalConnections"
+			case Constants.NBT.TAG_INT_ARRAY:	// "connections", "externalConnections"
 				int[] data = nbtConduit.getIntArray(key);
 				int[] newData = data.clone();
 				for (int index = 0; index < data.length; index++) {
@@ -126,7 +124,7 @@ public class CompatEnderIO implements IBlockTransformer {
 				nbtNewConduit.setIntArray(key, newData);
 				break;
 				
-			case NBTTagByteArrayId:	// "conModes", "signalColors", "forcedConnections", "signalStrengths"
+			case Constants.NBT.TAG_BYTE_ARRAY:	// "conModes", "signalColors", "forcedConnections", "signalStrengths"
 				nbtNewConduit.setByteArray(key, rotate_byteArray(rotationSteps, nbtConduit.getByteArray(key)));
 				break;
 				
@@ -156,7 +154,7 @@ public class CompatEnderIO implements IBlockTransformer {
 		return nbtNewConduit;
 	}
 	
-	public void rotateReservoir(NBTTagCompound nbtTileEntity, final ITransformation transformation, final byte rotationSteps) {
+	private void rotateReservoir(NBTTagCompound nbtTileEntity, final ITransformation transformation, final byte rotationSteps) {
 		if (nbtTileEntity.hasKey("front")) {
 			short front = nbtTileEntity.getShort("front");
 			switch (rotationSteps) {
@@ -193,11 +191,11 @@ public class CompatEnderIO implements IBlockTransformer {
 		// Multiblock
 		if (nbtTileEntity.hasKey("multiblock") && nbtTileEntity.hasKey("pos")) {
 			int[] oldCoords = nbtTileEntity.getIntArray("multiblock");
-			ChunkCoordinates[] targets = new ChunkCoordinates[oldCoords.length / 3];
+			BlockPos[] targets = new BlockPos[oldCoords.length / 3];
 			for (int index = 0; index < oldCoords.length / 3; index++) {
 				targets[index] = transformation.apply(oldCoords[3 * index], oldCoords[3 * index + 1], oldCoords[3 * index + 2]);
 			}
-			if (targets[0].posY == targets[1].posY && targets[1].posY == targets[2].posY && targets[2].posY == targets[3].posY) {
+			if (targets[0].getY() == targets[1].getY() && targets[1].getY() == targets[2].getY() && targets[2].getY() == targets[3].getY()) {
 				short pos = nbtTileEntity.getShort("pos");
 				switch (rotationSteps) {
 				case 1:
@@ -213,23 +211,23 @@ public class CompatEnderIO implements IBlockTransformer {
 					break;
 				}
 			} else {
-				ChunkCoordinates newPos = transformation.apply(nbtTileEntity.getInteger("x"), nbtTileEntity.getInteger("y"), nbtTileEntity.getInteger("z"));
-				if (targets[0].posX == targets[1].posX && targets[1].posX == targets[2].posX && targets[2].posX == targets[3].posX) {
-					int minZ = Math.min(targets[0].posZ, Math.min(targets[1].posZ, targets[2].posZ));
-					short pos = (short) ((nbtTileEntity.getShort("pos") & 2) + (newPos.posZ == minZ ? 1 : 0));	// 2 & 3 are for bottom
+				BlockPos newPos = transformation.apply(nbtTileEntity.getInteger("x"), nbtTileEntity.getInteger("y"), nbtTileEntity.getInteger("z"));
+				if (targets[0].getX() == targets[1].getX() && targets[1].getX() == targets[2].getX() && targets[2].getX() == targets[3].getX()) {
+					int minZ = Math.min(targets[0].getZ(), Math.min(targets[1].getZ(), targets[2].getZ()));
+					short pos = (short) ((nbtTileEntity.getShort("pos") & 2) + (newPos.getZ() == minZ ? 1 : 0));	// 2 & 3 are for bottom
 					nbtTileEntity.setShort("pos", pos);
 				} else {
-					int minX = Math.min(targets[0].posX, Math.min(targets[1].posX, targets[2].posX));
-					short pos = (short) ((nbtTileEntity.getShort("pos") & 2) + (newPos.posX == minX ? 1 : 0));	// 2 & 3 are for bottom
+					int minX = Math.min(targets[0].getX(), Math.min(targets[1].getX(), targets[2].getX()));
+					short pos = (short) ((nbtTileEntity.getShort("pos") & 2) + (newPos.getZ() == minX ? 1 : 0));	// 2 & 3 are for bottom
 					nbtTileEntity.setShort("pos", pos);
 				}
 			}
 			
 			int[] newCoords = new int[oldCoords.length];
 			for (int index = 0; index < oldCoords.length / 3; index++) {
-				newCoords[3 * index    ] = targets[index].posX;
-				newCoords[3 * index + 1] = targets[index].posY;
-				newCoords[3 * index + 2] = targets[index].posZ;
+				newCoords[3 * index    ] = targets[index].getX();
+				newCoords[3 * index + 1] = targets[index].getY();
+				newCoords[3 * index + 2] = targets[index].getZ();
 			}
 			nbtTileEntity.setIntArray("multiblock", newCoords);
 		}
@@ -291,7 +289,7 @@ public class CompatEnderIO implements IBlockTransformer {
 		
 		// Conduits
 		if (nbtTileEntity.hasKey("conduits")) {
-			NBTTagList nbtConduits = nbtTileEntity.getTagList("conduits", NBTTagCompoundId);
+			NBTTagList nbtConduits = nbtTileEntity.getTagList("conduits", Constants.NBT.TAG_COMPOUND);
 			NBTTagList nbtNewConduits = new NBTTagList(); 
 			for (int index = 0; index < nbtConduits.tagCount(); index++) {
 				NBTTagCompound conduitTypeAndContent = nbtConduits.getCompoundTagAt(index);

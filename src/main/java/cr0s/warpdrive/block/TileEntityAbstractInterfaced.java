@@ -15,7 +15,7 @@ import li.cil.oc.api.network.Message;
 import li.cil.oc.api.network.Node;
 import li.cil.oc.api.network.Visibility;
 import net.minecraft.nbt.NBTTagCompound;
-import cpw.mods.fml.common.Optional;
+import net.minecraftforge.fml.common.Optional;
 import cr0s.warpdrive.WarpDrive;
 import cr0s.warpdrive.config.WarpDriveConfig;
 import dan200.computercraft.api.ComputerCraftAPI;
@@ -83,10 +83,9 @@ public abstract class TileEntityAbstractInterfaced extends TileEntityAbstractBas
 		return (url != null);
 	}
 	
-	// TileEntity overrides, notably for OpenComputer
 	@Override
- 	public void updateEntity() {
-		super.updateEntity();
+ 	public void update() {
+		super.update();
 		
 		if (WarpDriveConfig.isOpenComputersLoaded) {
 			if (!OC_addedToNetwork && OC_enable) {
@@ -155,8 +154,8 @@ public abstract class TileEntityAbstractInterfaced extends TileEntityAbstractBas
 	}
 	
 	@Override
-	public void writeToNBT(NBTTagCompound tag) {
-		super.writeToNBT(tag);
+	public NBTTagCompound writeToNBT(NBTTagCompound tag) {
+		tag = super.writeToNBT(tag);
 		if (WarpDriveConfig.isOpenComputersLoaded) {
 			if (OC_node != null && OC_node.host() == this) {
 				final NBTTagCompound nbtNode = new NBTTagCompound();
@@ -169,11 +168,20 @@ public abstract class TileEntityAbstractInterfaced extends TileEntityAbstractBas
 				tag.setTag("oc:fs", nbtFileSystem);
 			}
 		}
+		return tag;
+	}
+	
+	@Override
+	public NBTTagCompound writeItemDropNBT(NBTTagCompound nbtTagCompound) {
+		nbtTagCompound = super.writeItemDropNBT(nbtTagCompound);
+		nbtTagCompound.removeTag("oc:node");
+		nbtTagCompound.removeTag("oc:fs");
+		return nbtTagCompound;
 	}
 	
 	@Override
 	public int hashCode() {
-		return (((((super.hashCode() + (worldObj == null ? 0 : worldObj.provider.dimensionId) << 4) + xCoord) << 4) + yCoord) << 4) + zCoord;
+		return (((((super.hashCode() + (worldObj == null ? 0 : worldObj.provider.getDimension()) << 4) + pos.getX()) << 4) + pos.getY()) << 4) + pos.getZ();
 	}
 	
 	// Dirty cheap conversion methods
@@ -199,7 +207,7 @@ public abstract class TileEntityAbstractInterfaced extends TileEntityAbstractBas
 	
 	// Return block coordinates
 	public Object[] position() {
-		return new Integer[] { xCoord, yCoord, zCoord };
+		return new Integer[] { pos.getX(), pos.getY(), pos.getZ() };
 	}
 	
 	// Return version
@@ -257,12 +265,17 @@ public abstract class TileEntityAbstractInterfaced extends TileEntityAbstractBas
 		int id = computer.getID();
 		connectedComputers.put(id, computer);
 		if (CC_hasResource && WarpDriveConfig.G_LUA_SCRIPTS != WarpDriveConfig.LUA_SCRIPTS_NONE) {
-			computer.mount("/" + peripheralName, ComputerCraftAPI.createResourceMount(WarpDrive.class, WarpDrive.MODID.toLowerCase(), "lua.ComputerCraft/" + peripheralName));
-			computer.mount("/warpupdater", ComputerCraftAPI.createResourceMount(WarpDrive.class, WarpDrive.MODID.toLowerCase(), "lua.ComputerCraft/common/updater"));
-			if (WarpDriveConfig.G_LUA_SCRIPTS == WarpDriveConfig.LUA_SCRIPTS_ALL) {
-				for(String script : CC_scripts) {
-					computer.mount("/" + script, ComputerCraftAPI.createResourceMount(WarpDrive.class, WarpDrive.MODID.toLowerCase(), "lua.ComputerCraft/" + peripheralName + "/" + script));
+			try {
+				computer.mount("/" + peripheralName, ComputerCraftAPI.createResourceMount(WarpDrive.class, WarpDrive.MODID.toLowerCase(), "lua.ComputerCraft/" + peripheralName));
+				computer.mount("/warpupdater", ComputerCraftAPI.createResourceMount(WarpDrive.class, WarpDrive.MODID.toLowerCase(), "lua.ComputerCraft/common/updater"));
+				if (WarpDriveConfig.G_LUA_SCRIPTS == WarpDriveConfig.LUA_SCRIPTS_ALL) {
+					for (String script : CC_scripts) {
+						computer.mount("/" + script, ComputerCraftAPI.createResourceMount(WarpDrive.class, WarpDrive.MODID.toLowerCase(), "lua.ComputerCraft/" + peripheralName + "/" + script));
+					}
 				}
+			} catch (Exception exception) {
+				exception.printStackTrace();
+				WarpDrive.logger.error("Failed to mount ComputerCraft scripts for " + peripheralName);
 			}
 		}
 	}
@@ -279,7 +292,6 @@ public abstract class TileEntityAbstractInterfaced extends TileEntityAbstractBas
 	@Override
 	@Optional.Method(modid = "ComputerCraft")
 	public boolean equals(IPeripheral other) {
-		// WarpDrive.debugPrint("WarpInterfacedTE.equals");
 		return other.hashCode() == hashCode();
 	}
 	

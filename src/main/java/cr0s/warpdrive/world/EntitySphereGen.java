@@ -2,9 +2,11 @@ package cr0s.warpdrive.world;
 
 import java.util.ArrayList;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import cr0s.warpdrive.LocalProfiler;
 import cr0s.warpdrive.WarpDrive;
@@ -95,8 +97,10 @@ public final class EntitySphereGen extends Entity {
 		for (int x = xCoord - radius; x <= xCoord + radius; x++) {
 			for (int z = zCoord - radius; z <= zCoord + radius; z++) {
 				for (int y = minY_clamped; y <= maxY_clamped; y++) {
-					if (worldObj.getBlock(x, y, z) != Blocks.air) {
-						worldObj.markBlockForUpdate(x, y, z);
+					BlockPos blockPos = new BlockPos(x, y, z);
+					IBlockState blockState = worldObj.getBlockState(blockPos);
+					if (blockState.getBlock() != Blocks.AIR) {
+						worldObj.notifyBlockUpdate(blockPos, blockState, blockState, 3);
 					}
 				}
 			}
@@ -150,7 +154,7 @@ public final class EntitySphereGen extends Entity {
 				break;
 			notifyFlag = (currentIndex % 1000 == 0 ? 2 : 2);
 			JumpBlock jb = blocks.get(currentIndex);
-			JumpBlock.setBlockNoLight(worldObj, jb.x, jb.y, jb.z, jb.block, jb.blockMeta, notifyFlag);
+			JumpBlock.setBlockNoLight(worldObj, new BlockPos(jb.x, jb.y, jb.z), jb.block.getStateFromMeta(jb.blockMeta), notifyFlag);
 			// worldObj.setBlock(jb.x, jb.y, jb.z, jb.block, jb.blockMeta, notifyFlag);
 			currentIndex++;
 		}
@@ -205,7 +209,7 @@ public final class EntitySphereGen extends Entity {
 			return;
 		}
 		// Replace water with random gas (ship in moon)
-		if (worldObj.getBlock(jb.x, jb.y, jb.z).isAssociatedBlock(Blocks.water)) {
+		if (worldObj.getBlockState(new BlockPos(jb.x, jb.y, jb.z)).getBlock().isAssociatedBlock(Blocks.WATER)) {
 			if (worldObj.rand.nextInt(50) != 1) {
 				jb.block = WarpDrive.blockGas;
 				jb.blockMeta = gasColor;
@@ -214,7 +218,7 @@ public final class EntitySphereGen extends Entity {
 			return;
 		}
 		// Do not replace existing blocks if fillingSphere is true
-		if (!replace && !worldObj.isAirBlock(jb.x, jb.y, jb.z)) {
+		if (!replace && !worldObj.isAirBlock(new BlockPos(jb.x, jb.y, jb.z))) {
 			return;
 		}
 		blocks.add(jb);

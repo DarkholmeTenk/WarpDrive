@@ -1,11 +1,12 @@
 package cr0s.warpdrive.network;
 
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import io.netty.buffer.ByteBuf;
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
-import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import cr0s.warpdrive.WarpDrive;
 import cr0s.warpdrive.block.TileEntityLaser;
 import cr0s.warpdrive.config.WarpDriveConfig;
@@ -17,7 +18,8 @@ public class MessageTargeting implements IMessage, IMessageHandler<MessageTarget
 	private int z;
 	private float yaw;
 	private float pitch;
-	
+
+	@SuppressWarnings("unused")
 	public MessageTargeting() {
 		// required on receiving side
 	}
@@ -49,9 +51,9 @@ public class MessageTargeting implements IMessage, IMessageHandler<MessageTarget
 	}
 	
 	private void handle(World worldObj) {
-		TileEntity te = worldObj.getTileEntity(x, y, z);
-		if (te != null && te instanceof TileEntityLaser) {
-			TileEntityLaser laser = (TileEntityLaser) te;
+		TileEntity tileEntity = worldObj.getTileEntity(new BlockPos(x, y, z));
+		if (tileEntity != null && tileEntity instanceof TileEntityLaser) {
+			TileEntityLaser laser = (TileEntityLaser) tileEntity;
 			laser.initiateBeamEmission(yaw, pitch);
 		}
 	}

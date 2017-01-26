@@ -1,0 +1,8 @@
+# Blender MTL File: 'projector_ring.blend'
+# Material Count: 1
+
+newmtl m_ring
+# Ka 0.000000 1.000000 0.000000
+Kd 1.0 1.0 1.0
+d 1
+map_Kd warpdrive:blocks/forcefield/projector-ring_error

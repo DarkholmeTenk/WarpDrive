@@ -1,0 +1,27 @@
+{
+	"forge_marker": 1,
+	"defaults": {
+		"model": "minecraft:cube_column",
+		"textures": {
+			"side": "warpdrive:blocks/laser_medium-side0",
+			"end" : "warpdrive:blocks/laser_medium-top_bottom"
+		},
+		"transform": "forge:default-block"
+	},
+	"variants": {
+		"normal": [{}],
+		"inventory": [{
+			"textures": { "side": "warpdrive:blocks/laser_medium-side6" }
+		}],
+		"level": {
+			"0": { "textures": { "side": "warpdrive:blocks/laser_medium-side0" } },
+			"1": { "textures": { "side": "warpdrive:blocks/laser_medium-side1" } },
+			"2": { "textures": { "side": "warpdrive:blocks/laser_medium-side2" } },
+			"3": { "textures": { "side": "warpdrive:blocks/laser_medium-side3" } },
+			"4": { "textures": { "side": "warpdrive:blocks/laser_medium-side4" } },
+			"5": { "textures": { "side": "warpdrive:blocks/laser_medium-side5" } },
+			"6": { "textures": { "side": "warpdrive:blocks/laser_medium-side6" } },
+			"7": { "textures": { "side": "warpdrive:blocks/laser_medium-side7" } }
+		}
+	}
+}

@@ -9,19 +9,21 @@ import java.util.Set;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.Packet;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.util.StatCollector;
-import net.minecraftforge.common.util.ForgeDirection;
-import cpw.mods.fml.common.Optional;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraftforge.fml.common.Optional;
 import cr0s.warpdrive.WarpDrive;
 import cr0s.warpdrive.block.TileEntityAbstractEnergy;
 import cr0s.warpdrive.config.WarpDriveConfig;
 import cr0s.warpdrive.data.Vector3;
 import cr0s.warpdrive.item.ItemIC2reactorLaserFocus;
 import cr0s.warpdrive.network.PacketHandler;
+
+import javax.annotation.Nonnull;
 
 public class TileEntityIC2reactorLaserMonitor extends TileEntityAbstractEnergy {
 	private int ticks = WarpDriveConfig.IC2_REACTOR_COOLING_INTERVAL_TICKS;
@@ -59,7 +61,7 @@ public class TileEntityIC2reactorLaserMonitor extends TileEntityAbstractEnergy {
 		
 		byte newActiveSides = 0;
 		for(int i = 0; i < deltaX.length; i++) {
-			TileEntity tileEntity = worldObj.getTileEntity(xCoord + deltaX[i], yCoord + deltaY[i], zCoord + deltaZ[i]);
+			TileEntity tileEntity = worldObj.getTileEntity(pos.add(deltaX[i], deltaY[i], deltaZ[i]));
 			if (tileEntity == null) {
 				continue;
 			}
@@ -69,16 +71,16 @@ public class TileEntityIC2reactorLaserMonitor extends TileEntityAbstractEnergy {
 				output.add((IReactor)tileEntity);
 				
 			} else if (tileEntity instanceof IReactorChamber) {
-				IReactor reactor = ((IReactorChamber)tileEntity).getReactor();
+				IReactor reactor = ((IReactorChamber)tileEntity).getReactorInstance();
 				if (reactor == null) {
 					continue;
 				}
 				
 				// ignore if we're right next to the reactor
-				ChunkCoordinates coords = reactor.getPosition();
-				if ( Math.abs(coords.posX - xCoord) == 1
-				  || Math.abs(coords.posY - yCoord) == 1
-				  || Math.abs(coords.posZ - zCoord) == 1) {
+				BlockPos blockPos = reactor.getReactorPos();
+				if ( Math.abs(blockPos.getX() - pos.getX()) == 1
+				  || Math.abs(blockPos.getY() - pos.getY()) == 1
+				  || Math.abs(blockPos.getZ() - pos.getZ()) == 1) {
 					continue;
 				}
 				
@@ -118,8 +120,8 @@ public class TileEntityIC2reactorLaserMonitor extends TileEntityAbstractEnergy {
 	
 	@Override
 	@Optional.Method(modid = "IC2")
-	public void updateEntity() {
-		super.updateEntity();
+	public void update() {
+		super.update();
 		
 		if (worldObj.isRemote) {
 			return;
@@ -143,7 +145,7 @@ public class TileEntityIC2reactorLaserMonitor extends TileEntityAbstractEnergy {
 			
 			for(IReactor reactor : reactors) {
 				if (coolReactor(reactor)) {
-					PacketHandler.sendBeamPacket(worldObj, myPos, new Vector3(reactor.getPosition()).translate(0.5D), 0.0f, 0.8f, 1.0f, 20, 0, 20);
+					PacketHandler.sendBeamPacket(worldObj, myPos, new Vector3(reactor.getReactorPos()).translate(0.5D), 0.0f, 0.8f, 1.0f, 20, 0, 20);
 				}
 			}
 		}
@@ -155,14 +157,15 @@ public class TileEntityIC2reactorLaserMonitor extends TileEntityAbstractEnergy {
 			metadata |= 8;
 		}
 		if (getBlockMetadata() != metadata) {
-			worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, metadata, 3);
+			updateMetadata(metadata);
 		}
 	}
 	
 	@Override
-	public void writeToNBT(NBTTagCompound tag) {
-		super.writeToNBT(tag);
+	public NBTTagCompound writeToNBT(NBTTagCompound tag) {
+		tag = super.writeToNBT(tag);
 		tag.setByte("activeSides", activeSides);
+		return tag;
 	}
 	
 	@Override
@@ -171,32 +174,35 @@ public class TileEntityIC2reactorLaserMonitor extends TileEntityAbstractEnergy {
 		activeSides = tag.getByte("activeSides");
 	}
 	
+	@Nonnull
 	@Override
-	public Packet getDescriptionPacket() {
+	public NBTTagCompound getUpdateTag() {
 		NBTTagCompound tagCompound = new NBTTagCompound();
 		writeToNBT(tagCompound);
-		return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 1, tagCompound);
+		return tagCompound;
 	}
 	
 	@Override
-	public void onDataPacket(NetworkManager networkManager, S35PacketUpdateTileEntity packet) {
-		NBTTagCompound tagCompound = packet.func_148857_g();
+	public void onDataPacket(NetworkManager networkManager, SPacketUpdateTileEntity packet) {
+		NBTTagCompound tagCompound = packet.getNbtCompound();
 		readFromNBT(tagCompound);
 	}
 	
 	@Override
 	@Optional.Method(modid = "IC2")
-	public String getStatus() {
+	public ITextComponent getStatus() {
+		if (worldObj == null) {
+			return super.getStatus();
+		}
+		
 		Set<IReactor> reactors = findReactors();
 		if (reactors != null && !reactors.isEmpty()) {
-			return StatCollector.translateToLocalFormatted("warpdrive.guide.prefix",
-					getBlockType().getLocalizedName())
-					+ StatCollector.translateToLocalFormatted("warpdrive.IC2reactorLaserMonitor.multipleReactors",
-							reactors.size());
+			return super.getStatus()
+					.appendSibling(new TextComponentTranslation("warpdrive.IC2reactorLaserMonitor.multipleReactors",
+			        reactors.size()));
 		} else {
-			return StatCollector.translateToLocalFormatted("warpdrive.guide.prefix",
-					getBlockType().getLocalizedName())
-					+ StatCollector.translateToLocalFormatted("warpdrive.IC2reactorLaserMonitor.noReactor");
+			return super.getStatus()
+					.appendSibling(new TextComponentTranslation("warpdrive.IC2reactorLaserMonitor.noReactor"));
 		}
 	}
 	
@@ -206,7 +212,7 @@ public class TileEntityIC2reactorLaserMonitor extends TileEntityAbstractEnergy {
 	}
 	
 	@Override
-	public boolean canInputEnergy(ForgeDirection from) {
+	public boolean canInputEnergy(EnumFacing from) {
 		return true;
 	}
 }

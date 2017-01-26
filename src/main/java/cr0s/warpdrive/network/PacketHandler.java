@@ -8,14 +8,14 @@ import net.minecraft.entity.EntityTrackerEntry;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.Packet;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.network.NetworkRegistry.TargetPoint;
-import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import cpw.mods.fml.relauncher.Side;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
+import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
+import net.minecraftforge.fml.relauncher.Side;
 import cr0s.warpdrive.WarpDrive;
 import cr0s.warpdrive.config.WarpDriveConfig;
 import cr0s.warpdrive.data.CloakedArea;
@@ -36,8 +36,8 @@ public class PacketHandler {
 		
 		// Entity packets for 'uncloaking' entities
 		try {
-			EntityTrackerEntry_getPacketForThisEntity = Class.forName("net.minecraft.entity.EntityTrackerEntry").getDeclaredMethod("func_151260_c"); 
-			EntityTrackerEntry_getPacketForThisEntity.setAccessible(true);
+			EntityTrackerEntry_getPacketForThisEntity = ReflectionHelper.findMethod(
+				EntityTrackerEntry.class, null, new String[] { "createSpawnPacket", "func_151260_c" } );
 		} catch (Exception exception) {
 			throw new RuntimeException(exception);
 		}
@@ -52,11 +52,11 @@ public class PacketHandler {
 		// small beam are sent relative to beam center
 		if (source.distanceTo_square(target) < 3600 /* 60 * 60 */) {
 			simpleNetworkManager.sendToAllAround(messageBeamEffect, new TargetPoint(
-					worldObj.provider.dimensionId, (source.x + target.x) / 2, (source.y + target.y) / 2, (source.z + target.z) / 2, radius));
+					worldObj.provider.getDimension(), (source.x + target.x) / 2, (source.y + target.y) / 2, (source.z + target.z) / 2, radius));
 		} else {// large beam are sent from both ends
 			if (true) {
-				List<EntityPlayerMP> playerEntityList = MinecraftServer.getServer().getConfigurationManager().playerEntityList;
-				int dimensionId = worldObj.provider.dimensionId;
+				List<EntityPlayerMP> playerEntityList = worldObj.getMinecraftServer().getPlayerList().getPlayerList();
+				int dimensionId = worldObj.provider.getDimension();
 				int radius_square = radius * radius;
 				for (int index = 0; index < playerEntityList.size(); index++) {
 					EntityPlayerMP entityplayermp = playerEntityList.get(index);
@@ -70,9 +70,9 @@ public class PacketHandler {
 				}
 			} else {
 				simpleNetworkManager.sendToAllAround(messageBeamEffect, new TargetPoint(
-						worldObj.provider.dimensionId, source.x, source.y, source.z, radius));
+						worldObj.provider.getDimension(), source.x, source.y, source.z, radius));
 				simpleNetworkManager.sendToAllAround(messageBeamEffect, new TargetPoint(
-						worldObj.provider.dimensionId, target.x, target.y, target.z, radius));
+						worldObj.provider.getDimension(), target.x, target.y, target.z, radius));
 			}
 		}
 	}
@@ -91,27 +91,29 @@ public class PacketHandler {
 	}
 	
 	// Forced particle effect sent to client side
-	public static void sendSpawnParticlePacket(World worldObj, final String type, Vector3 origin, Vector3 direction, float red, float green, float blue, int radius) {
+	public static void sendSpawnParticlePacket(World worldObj, final String type, final Vector3 origin, final Vector3 direction,
+	                                           final float baseRed, final float baseGreen, final float baseBlue,
+	                                           final float fadeRed, final float fadeGreen, final float fadeBlue, final int radius) {
 		assert(!worldObj.isRemote);
 		
-		MessageSpawnParticle messageSpawnParticle = new MessageSpawnParticle(type, origin, direction, red, green, blue);
+		MessageSpawnParticle messageSpawnParticle = new MessageSpawnParticle(type, origin, direction, baseRed, baseGreen, baseBlue, fadeRed, fadeGreen, fadeBlue);
 		
 		// small beam are sent relative to beam center
 		simpleNetworkManager.sendToAllAround(messageSpawnParticle, new TargetPoint(
-				worldObj.provider.dimensionId, origin.x, origin.y, origin.z, radius));
+				worldObj.provider.getDimension(), origin.x, origin.y, origin.z, radius));
 		
 		if (WarpDriveConfig.LOGGING_EFFECTS) {
 			WarpDrive.logger.info("Sent particle effect '" + type + "' from " + origin + " toward " + direction
-				+ " as RGB " + red + " " + green + " " + blue);
+				+ " as RGB " + baseRed + " " + baseGreen + " " + baseBlue + " fading to " + fadeRed + " " + fadeGreen + " " + fadeBlue);
 		}
 	}
 	
 	// Monitor/Laser/Camera updating its video channel to client side
-	public static void sendVideoChannelPacket(int dimensionId, int xCoord, int yCoord, int zCoord, int videoChannel) {
-		MessageVideoChannel messageVideoChannel = new MessageVideoChannel(xCoord, yCoord, zCoord, videoChannel);
-		simpleNetworkManager.sendToAllAround(messageVideoChannel, new TargetPoint(dimensionId, xCoord, yCoord, zCoord, 100));
+	public static void sendVideoChannelPacket(int dimensionId, BlockPos blockPos, int videoChannel) {
+		MessageVideoChannel messageVideoChannel = new MessageVideoChannel(blockPos, videoChannel);
+		simpleNetworkManager.sendToAllAround(messageVideoChannel, new TargetPoint(dimensionId, blockPos.getX(),blockPos.getY(), blockPos.getZ(), 100));
 		if (WarpDriveConfig.LOGGING_VIDEO_CHANNEL) {
-			WarpDrive.logger.info("Sent video channel packet (" + xCoord + " " + yCoord + " " + zCoord + ") video channel " + videoChannel);
+			WarpDrive.logger.info("Sent video channel packet (" + blockPos.getX() + " " + blockPos.getY() + " " + blockPos.getZ() + ") video channel " + videoChannel);
 		}
 	}
 	
@@ -134,17 +136,12 @@ public class PacketHandler {
 	}
 	
 	public static Packet getPacketForThisEntity(Entity entity) {
-		EntityTrackerEntry entry = new EntityTrackerEntry(entity, 0, 0, false);
+		EntityTrackerEntry entry = new EntityTrackerEntry(entity, 0, 0, 0, false);
 		try {
 			return (Packet) EntityTrackerEntry_getPacketForThisEntity.invoke(entry);
 		} catch (Exception exception) {
 			exception.printStackTrace();
 		}
 		return null;
-	}
-	
-	@Deprecated
-	public static void sendTileEntityUpdate(TileEntity tileEntity) {
-		tileEntity.getWorldObj().markBlockForUpdate(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord);
 	}
 }

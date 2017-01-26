@@ -1,0 +1,35 @@
+{
+	"forge_marker": 1,
+	"defaults": {
+		"model": "minecraft:cube_column",
+		"textures": {
+			"side": "warpdrive:blocks/detection/cloaking_coil-side_inactive",
+			"end" : "warpdrive:blocks/detection/cloaking_coil-top"
+		},
+		"transform": "forge:default-block"
+	},
+	"variants": {
+		"normal": [{}],
+		"inventory": [{}],
+		"active": {
+			"false": {},
+			"true": {
+				"textures": {
+					"side": "warpdrive:blocks/detection/cloaking_coil-side_active"
+				}
+			}
+		},
+		"outer": {
+			"false": {},
+			"true": {}
+		},
+		"facing": {
+			"north": {},
+			"south": {},
+			"west" : {},
+			"east" : {},
+			"up"   : {},
+			"down" : {}
+		}
+	}
+}

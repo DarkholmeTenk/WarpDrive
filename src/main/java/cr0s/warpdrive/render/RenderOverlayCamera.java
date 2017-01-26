@@ -2,20 +2,22 @@ package cr0s.warpdrive.render;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 
 import org.lwjgl.opengl.GL11;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import cr0s.warpdrive.config.WarpDriveConfig;
-import cr0s.warpdrive.data.CameraType;
+import cr0s.warpdrive.data.EnumCameraType;
 
 public class RenderOverlayCamera {
 	private Minecraft mc;
 	private int frameCount = 0;
-	private static int ANIMATION_FRAMES = 200;
+	private static final int ANIMATION_FRAMES = 200;
 	
 	public RenderOverlayCamera(Minecraft parMinecraft) {
 		mc = parMinecraft;
@@ -25,7 +27,7 @@ public class RenderOverlayCamera {
 		return Math.max(0, Math.min(255, start + Math.round(gradient * (end - start))));
 	}
 	
-	protected void renderOverlay(int scaledWidth, int scaledHeight) {
+	private void renderOverlay(int scaledWidth, int scaledHeight) {
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		GL11.glDepthMask(false);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -34,20 +36,22 @@ public class RenderOverlayCamera {
 		
 		try {
 			String strHelp;
-			if (ClientCameraHandler.overlayType == CameraType.SIMPLE_CAMERA) {
+			if (ClientCameraHandler.overlayType == EnumCameraType.SIMPLE_CAMERA) {
 				mc.getTextureManager().bindTexture(new ResourceLocation("warpdrive", "textures/blocks/detection/cameraOverlay.png"));
 				strHelp = "Left click to zoom / Right click to exit";
 			} else {
 				mc.getTextureManager().bindTexture(new ResourceLocation("warpdrive", "textures/blocks/weapon/laserCameraOverlay.png"));
 				strHelp = "Left click to zoom / Right click to exit / Space to fire";
 			}
-
-			Tessellator tessellator = Tessellator.instance;
-			tessellator.startDrawingQuads();
-			tessellator.addVertexWithUV(       0.0D, scaledHeight, -90.0D, 0.0D, 1.0D);
-			tessellator.addVertexWithUV(scaledWidth, scaledHeight, -90.0D, 1.0D, 1.0D);
-			tessellator.addVertexWithUV(scaledWidth,         0.0D, -90.0D, 1.0D, 0.0D);
-			tessellator.addVertexWithUV(       0.0D,         0.0D, -90.0D, 0.0D, 0.0D);
+			
+			Tessellator tessellator = Tessellator.getInstance();
+			VertexBuffer vertexBuffer = tessellator.getBuffer();
+			
+			vertexBuffer.begin(7, DefaultVertexFormats.POSITION_TEX);
+			vertexBuffer.pos(       0.0D, scaledHeight, -90.0D).tex(0.0D, 1.0D).endVertex();
+			vertexBuffer.pos(scaledWidth, scaledHeight, -90.0D).tex(1.0D, 1.0D).endVertex();
+			vertexBuffer.pos(scaledWidth,         0.0D, -90.0D).tex(1.0D, 0.0D).endVertex();
+			vertexBuffer.pos(       0.0D,         0.0D, -90.0D).tex(0.0D, 0.0D).endVertex();
 			tessellator.draw();
 			
 			frameCount++;
@@ -56,20 +60,20 @@ public class RenderOverlayCamera {
 			}
 			float time = Math.abs(frameCount * 2.0F / ANIMATION_FRAMES - 1.0F);
 			int color = (colorGradient(time, 0x40, 0xA0) << 16) + (colorGradient(time, 0x80, 0x00) << 8) + colorGradient(time, 0x80, 0xFF);
-			mc.fontRenderer.drawString(strHelp,
-					(scaledWidth - mc.fontRenderer.getStringWidth(strHelp)) / 2,
-					(int)(scaledHeight * 0.19) - mc.fontRenderer.FONT_HEIGHT,
+			mc.fontRendererObj.drawString(strHelp,
+					(scaledWidth - mc.fontRendererObj.getStringWidth(strHelp)) / 2,
+					(int)(scaledHeight * 0.19) - mc.fontRendererObj.FONT_HEIGHT,
 					color, true);
 			
 			String strZoom = "Zoom " + (ClientCameraHandler.originalFOV / mc.gameSettings.fovSetting) + "x";
-			mc.fontRenderer.drawString(strZoom,
-					(int) (scaledWidth * 0.91) - mc.fontRenderer.getStringWidth(strZoom),
+			mc.fontRendererObj.drawString(strZoom,
+					(int) (scaledWidth * 0.91) - mc.fontRendererObj.getStringWidth(strZoom),
 					(int) (scaledHeight * 0.81),
 					0x40A080, true);
 			
 			if (WarpDriveConfig.LOGGING_CAMERA) {
-				mc.fontRenderer.drawString(ClientCameraHandler.overlayLoggingMessage,
-					(scaledWidth - mc.fontRenderer.getStringWidth(ClientCameraHandler.overlayLoggingMessage)) / 2,
+				mc.fontRendererObj.drawString(ClientCameraHandler.overlayLoggingMessage,
+					(scaledWidth - mc.fontRendererObj.getStringWidth(ClientCameraHandler.overlayLoggingMessage)) / 2,
 					(int)(scaledHeight * 0.19),
 					0xFF008F, true);
 			}
@@ -86,18 +90,18 @@ public class RenderOverlayCamera {
 	@SubscribeEvent
 	public void onRender(RenderGameOverlayEvent.Pre event) {
 		if (ClientCameraHandler.isOverlayEnabled) {
-			if (event.type == ElementType.HELMET) {
-				renderOverlay(event.resolution.getScaledWidth(), event.resolution.getScaledHeight());
-			} else if (event.type == ElementType.AIR
-					|| event.type == ElementType.ARMOR
-					|| event.type == ElementType.BOSSHEALTH
-					|| event.type == ElementType.CROSSHAIRS
-					|| event.type == ElementType.EXPERIENCE
-					|| event.type == ElementType.FOOD
-					|| event.type == ElementType.HEALTH
-					|| event.type == ElementType.HEALTHMOUNT
-					|| event.type == ElementType.HOTBAR
-					|| event.type == ElementType.TEXT) {
+			if (event.getType() == ElementType.HELMET) {
+				renderOverlay(event.getResolution().getScaledWidth(), event.getResolution().getScaledHeight());
+			} else if (event.getType() == ElementType.AIR
+					|| event.getType() == ElementType.ARMOR
+					|| event.getType() == ElementType.BOSSHEALTH
+					|| event.getType() == ElementType.CROSSHAIRS
+					|| event.getType() == ElementType.EXPERIENCE
+					|| event.getType() == ElementType.FOOD
+					|| event.getType() == ElementType.HEALTH
+					|| event.getType() == ElementType.HEALTHMOUNT
+					|| event.getType() == ElementType.HOTBAR
+					|| event.getType() == ElementType.TEXT) {
 				// Don't render other GUI parts
 				if (event.isCancelable()) {
 					event.setCanceled(true);

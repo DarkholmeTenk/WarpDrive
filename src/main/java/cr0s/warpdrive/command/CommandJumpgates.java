@@ -1,10 +1,15 @@
 package cr0s.warpdrive.command;
 
+import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.command.CommandBase;
+import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import cr0s.warpdrive.WarpDrive;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.text.TextComponentString;
 
+@MethodsReturnNonnullByDefault
 public class CommandJumpgates extends CommandBase {
 	@Override
 	public int getRequiredPermissionLevel() {
@@ -20,10 +25,10 @@ public class CommandJumpgates extends CommandBase {
 	public String getCommandUsage(ICommandSender commandSender) {
 		return "Lists jumpgates";
 	}
-
+	
 	@Override
-	public void processCommand(ICommandSender commandSender, String[] params) {
+	public void execute(MinecraftServer server, ICommandSender commandSender, String[] args) throws CommandException {
 		EntityPlayerMP player = (EntityPlayerMP) commandSender;
-		WarpDrive.addChatMessage(player, "Jumpgates: " + WarpDrive.jumpgates.commaList());
+		WarpDrive.addChatMessage(player, new TextComponentString("Jumpgates: " + WarpDrive.jumpgates.commaList()));
 	}
 }

@@ -378,6 +378,7 @@ function data_read()
       data = serialization.unserialize(rawData)
     end
     file:close()
+	if data == nil then data = {}; end
   end
   if data.reactor_mode == nil then data.reactor_mode = 0; end
   if data.reactor_rate == nil then data.reactor_rate = 100; end
@@ -810,6 +811,11 @@ function connections_page()
     SetColorSuccess()
     WriteLn(#reactorlasers .. " reactor stabilisation lasers detected")
   end
+  
+  WriteLn("")
+  SetColorTitle()
+  WriteLn("Please refer to below menu for keyboard controls")
+  WriteLn("For example, press 1 to access Reactor page")
 end
 
 -- peripheral boot up
@@ -877,4 +883,5 @@ until abort
 SetMonitorColorFrontBack(0xFFFFFF, 0x000000)
 term.clear()
 SetCursorPos(1, 1)
-Write("")
+WriteLn("Program terminated")
+WriteLn("Type reboot to restart it")

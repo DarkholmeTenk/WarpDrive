@@ -1,23 +1,23 @@
 package cr0s.warpdrive.data;
 
-import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.world.ChunkCoordIntPair;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.ChunkProviderServer;
-import net.minecraftforge.common.util.ForgeDirection;
 
 
 /**
  * Generic 3D vector for efficient block manipulation.
- * Loosely based on Mojang Vec3 and Calclavia Vector3. 
+ * Loosely based on Mojang Vec3d and Calclavia Vector3. 
  *
  * @author LemADEC
  */
@@ -46,27 +46,27 @@ public class VectorI implements Cloneable {
 	}
 	
 	public VectorI(final TileEntity tileEntity) {
-		x = tileEntity.xCoord;
-		y = tileEntity.yCoord;
-		z = tileEntity.zCoord;
+		x = tileEntity.getPos().getX();
+		y = tileEntity.getPos().getY();
+		z = tileEntity.getPos().getZ();
 	}
 	
-	public VectorI(final MovingObjectPosition movingObject) {
-		x = movingObject.blockX;
-		y = movingObject.blockY;
-		z = movingObject.blockZ;
+	public VectorI(final RayTraceResult movingObject) {
+		x = movingObject.getBlockPos().getX();
+		y = movingObject.getBlockPos().getY();
+		z = movingObject.getBlockPos().getZ();
 	}
 	
-	public VectorI(final ChunkCoordinates chunkCoordinates) {
-		x = chunkCoordinates.posX;
-		y = chunkCoordinates.posY;
-		z = chunkCoordinates.posZ;
+	public VectorI(final BlockPos blockPos) {
+		x = blockPos.getX();
+		y = blockPos.getY();
+		z = blockPos.getZ();
 	}
 	
-	public VectorI(final ForgeDirection direction) {
-		x = direction.offsetX;
-		y = direction.offsetY;
-		z = direction.offsetZ;
+	public VectorI(final EnumFacing direction) {
+		x = direction.getFrontOffsetX();
+		y = direction.getFrontOffsetY();
+		z = direction.getFrontOffsetZ();
 	}
 	
 	
@@ -85,23 +85,23 @@ public class VectorI implements Cloneable {
 	}
 	
 	// clone in a given direction
-	public VectorI clone(final ForgeDirection side) {
-		return new VectorI(x + side.offsetX, y + side.offsetY, z + side.offsetZ);
+	public VectorI clone(final EnumFacing side) {
+		return new VectorI(x + side.getFrontOffsetX(), y + side.getFrontOffsetY(), z + side.getFrontOffsetZ());
 	}
 	
-	public Block getBlock(IBlockAccess world) {
-		return world.getBlock(x, y, z);
+	public IBlockState getBlockState(IBlockAccess world) {
+		return world.getBlockState(new BlockPos(x, y, z));
 	}
 	
-	public Block getBlock_noChunkLoading(IBlockAccess world, ForgeDirection side) {
-		return getBlock_noChunkLoading(world, x + side.offsetX, y + side.offsetY, z + side.offsetZ);
+	public IBlockState getBlockState_noChunkLoading(IBlockAccess world, EnumFacing side) {
+		return getBlockState_noChunkLoading(world, x + side.getFrontOffsetX(), y + side.getFrontOffsetY(), z + side.getFrontOffsetZ());
 	}
 	
-	public Block getBlock_noChunkLoading(IBlockAccess world) {
-		return getBlock_noChunkLoading(world, x, y, z);
+	public IBlockState getBlockState_noChunkLoading(IBlockAccess world) {
+		return getBlockState_noChunkLoading(world, x, y, z);
 	}
 	
-	static public Block getBlock_noChunkLoading(IBlockAccess world, final int x, final int y, final int z) {
+	static public IBlockState getBlockState_noChunkLoading(IBlockAccess world, final int x, final int y, final int z) {
 		// skip unloaded worlds
 		if (world == null) {
 			return null;
@@ -109,10 +109,10 @@ public class VectorI implements Cloneable {
 		if (world instanceof WorldServer) {
 			boolean isLoaded;
 			if (((WorldServer)world).getChunkProvider() instanceof ChunkProviderServer) {
-				ChunkProviderServer chunkProviderServer = (ChunkProviderServer) ((WorldServer)world).getChunkProvider();
+				ChunkProviderServer chunkProviderServer = ((WorldServer)world).getChunkProvider();
 				try {
-					Chunk chunk = (Chunk) chunkProviderServer.loadedChunkHashMap.getValueByKey(ChunkCoordIntPair.chunkXZ2Int(x >> 4, z >> 4));
-					isLoaded = chunk != null && chunk.isChunkLoaded;
+					Chunk chunk = chunkProviderServer.id2ChunkMap.get(ChunkPos.chunkXZ2Int(x >> 4, z >> 4));
+					isLoaded = chunk != null && chunk.isLoaded();
 				} catch (NoSuchFieldError exception) {
 					isLoaded = chunkProviderServer.chunkExists(x >> 4, z >> 4);
 				}
@@ -124,23 +124,15 @@ public class VectorI implements Cloneable {
 				return null;
 			}
 		}
-		return world.getBlock(x, y, z);
+		return world.getBlockState(new BlockPos(x, y, z));
 	}
 	
 	public TileEntity getTileEntity(IBlockAccess world) {
-		return world.getTileEntity(x, y, z);
+		return world.getTileEntity(new BlockPos(x, y, z));
 	}
 	
-	public int getBlockMetadata(IBlockAccess world) {
-		return world.getBlockMetadata(x, y, z);
-	}
-	
-	public void setBlock(World worldObj, final Block block) {
-		worldObj.setBlock(x, y, z, block, 0, 3);
-	}
-	
-	public void setBlock(World worldObj, final Block block, final int metadata) {
-		worldObj.setBlock(x, y, z, block, metadata, 3);
+	public void setBlockState(World worldObj, final IBlockState blockState) {
+		worldObj.setBlockState(getBlockPos(), blockState, 3);
 	}
 	
 	
@@ -161,7 +153,7 @@ public class VectorI implements Cloneable {
 	}
 	
 	// modify current vector by translation of amount block in side direction
-	public VectorI translate(final ForgeDirection side, final int amount) {
+	public VectorI translate(final EnumFacing side, final int amount) {
 		switch (side) {
 		case DOWN:
 			y -= amount;
@@ -189,10 +181,10 @@ public class VectorI implements Cloneable {
 	}
 	
 	// modify current vector by translation of 1 block in side direction
-	public VectorI translate(final ForgeDirection side) {
-		x += side.offsetX;
-		y += side.offsetY;
-		z += side.offsetZ;
+	public VectorI translate(final EnumFacing side) {
+		x += side.getFrontOffsetX();
+		y += side.getFrontOffsetY();
+		z += side.getFrontOffsetZ();
 		return this;
 	}
 	
@@ -234,11 +226,11 @@ public class VectorI implements Cloneable {
 	
 	@Override
 	public int hashCode() {
-		return (x + " " + y + " " + z).hashCode();
+		return (x + "X" + y + "Y" + z + "lem").hashCode();
 	}
 	
 	public boolean equals(final TileEntity tileEntity) {
-		return (x == tileEntity.xCoord) && (y == tileEntity.yCoord) && (z == tileEntity.zCoord);
+		return (x == tileEntity.getPos().getX()) && (y == tileEntity.getPos().getY()) && (z == tileEntity.getPos().getZ());
 	}
 	
 	@Override
@@ -248,7 +240,7 @@ public class VectorI implements Cloneable {
 			return (x == vector.x) && (y == vector.y) && (z == vector.z);
 		} else if (object instanceof TileEntity) {
 			TileEntity tileEntity = (TileEntity) object;
-			return (x == tileEntity.xCoord) && (y == tileEntity.yCoord) && (z == tileEntity.zCoord);
+			return (x == tileEntity.getPos().getX()) && (y == tileEntity.getPos().getY()) && (z == tileEntity.getPos().getZ());
 		}
 		
 		return false;
@@ -299,9 +291,9 @@ public class VectorI implements Cloneable {
 	}
 	
 	public int distance2To(final TileEntity tileEntity) {
-		int newX = tileEntity.xCoord - x;
-		int newY = tileEntity.yCoord - y;
-		int newZ = tileEntity.zCoord - z;
+		int newX = tileEntity.getPos().getX() - x;
+		int newY = tileEntity.getPos().getY() - y;
+		int newZ = tileEntity.getPos().getZ() - z;
 		return (newX * newX + newY * newY + newZ * newZ);
 	}
 	
@@ -322,10 +314,10 @@ public class VectorI implements Cloneable {
 		return x * x + y * y + z * z;
 	}
 	
-	public VectorI scale(final int amount) {
-		x *= amount;
-		y *= amount;
-		z *= amount;
+	public VectorI scale(final float amount) {
+		x = Math.round(x * amount);
+		y = Math.round(y * amount);
+		z = Math.round(z * amount);
 		return this;
 	}
 	
@@ -358,5 +350,9 @@ public class VectorI implements Cloneable {
 		
 		y = (int)Math.round((-oldX * pitchSinus + oldZ * pitchCosinus * rollSinus
 			+ oldY * pitchCosinus * rollCosinus));
+	}
+
+	public BlockPos getBlockPos() {
+		return new BlockPos(x, y, z);
 	}
 }

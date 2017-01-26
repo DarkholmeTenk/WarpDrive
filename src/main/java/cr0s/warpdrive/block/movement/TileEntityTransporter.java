@@ -7,13 +7,17 @@ import java.util.Map;
 import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
-import cpw.mods.fml.common.Optional;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.StatCollector;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.EnumFacing;
 import cr0s.warpdrive.DamageTeleportation;
 import cr0s.warpdrive.WarpDrive;
 import cr0s.warpdrive.api.IUpgradable;
@@ -62,8 +66,8 @@ public class TileEntityTransporter extends TileEntityAbstractEnergy implements I
 	}
 
 	@Override
-	public void updateEntity() {
-		super.updateEntity();
+	public void update() {
+		super.update();
 
 		if (isLocked) {
 			if (lockStrengthMul > 0.8) {
@@ -75,13 +79,12 @@ public class TileEntityTransporter extends TileEntityAbstractEnergy implements I
 	}
 	
 	@Override
-	public String getStatus() {
-		return StatCollector.translateToLocalFormatted("warpdrive.guide.prefix",
-				getBlockType().getLocalizedName())
-				+ "\n" + getEnergyStatus()
-				+ "\n" + StatCollector.translateToLocalFormatted("warpdrive.transporter.status",
-						sourceVec.x, sourceVec.y, sourceVec.z,
-						destVec.x, destVec.y, destVec.z);
+	public ITextComponent getStatus() {
+		return super.getStatus()
+			.appendSibling(new TextComponentString("\n")).appendSibling(getEnergyStatus())
+			.appendSibling(new TextComponentString("\n")).appendSibling(new TextComponentTranslation("warpdrive.transporter.status",
+				sourceVec.x, sourceVec.y, sourceVec.z,
+				destVec.x, destVec.y, destVec.z));
 	}
 	
 	
@@ -219,9 +222,9 @@ public class TileEntityTransporter extends TileEntityAbstractEnergy implements I
 					vec.y = centreOnMe.y;
 					vec.z = centreOnMe.z;
 				} else {
-					vec.x = xCoord + centreOnMe.x;
-					vec.y = yCoord + centreOnMe.y;
-					vec.z = zCoord + centreOnMe.z;
+					vec.x = pos.getX() + centreOnMe.x;
+					vec.y = pos.getY() + centreOnMe.y;
+					vec.z = pos.getZ() + centreOnMe.z;
 				}
 			}
 		} catch (NumberFormatException e) {
@@ -325,13 +328,13 @@ public class TileEntityTransporter extends TileEntityAbstractEnergy implements I
 		if (ent instanceof EntityLivingBase) {
 			EntityLivingBase livingEnt = (EntityLivingBase) ent;
 			if (WarpDriveConfig.TRANSPORTER_USE_RELATIVE_COORDS) {
-				livingEnt.setPositionAndUpdate(xCoord + dest.x, yCoord + dest.y, zCoord + dest.z);
+				livingEnt.setPositionAndUpdate(pos.getX() + dest.x, pos.getY() + dest.y, pos.getZ() + dest.z);
 			} else {
 				livingEnt.setPositionAndUpdate(dest.x, dest.y, dest.z);
 			}
 		} else {
 			if (WarpDriveConfig.TRANSPORTER_USE_RELATIVE_COORDS) {
-				ent.setPosition(xCoord + dest.x, yCoord + dest.y, zCoord + dest.z);
+				ent.setPosition(pos.getX() + dest.x, pos.getY() + dest.y, pos.getZ() + dest.z);
 			} else {
 				ent.setPosition(dest.x, dest.y, dest.z);
 			}
@@ -377,12 +380,13 @@ public class TileEntityTransporter extends TileEntityAbstractEnergy implements I
 				}
 
 				for (int z = zL; z <= zU; z++) {
-					if (!worldObj.getBlock(x, y, z).isAssociatedBlock(WarpDrive.blockTransportBeacon)) {
+					IBlockState blockState = worldObj.getBlockState(new BlockPos(x, y, z));
+					if (!blockState.getBlock().isAssociatedBlock(WarpDrive.blockTransportBeacon)) {
 						continue;
 					}
 					double dist = 1 + Math.abs(x - xV) + Math.abs(y - yV) + Math.abs(z - zV);
 					beaconCount++;
-					if (worldObj.getBlockMetadata(x, y, z) == 0) {
+					if (blockState.getBlock().getMetaFromState(blockState) == 0) {
 						beacon += 1 / dist;
 					} else {
 						beacon -= 1 / dist;
@@ -433,8 +437,8 @@ public class TileEntityTransporter extends TileEntityAbstractEnergy implements I
 	private double getLockStrength() {
 		if (isLocked) {
 			double upgradeBoost = 1;
-			if (upgrades.containsKey(UpgradeType.Range))
-				upgradeBoost = Math.pow(1.2, upgrades.get(UpgradeType.Range));
+			if (deprecated_upgrades.containsKey(UpgradeType.Range))
+				upgradeBoost = Math.pow(1.2, deprecated_upgrades.get(UpgradeType.Range));
 			return clamp(0, 1, baseLockStrength * lockStrengthMul * Math.pow(2, powerBoost - 1) * upgradeBoost * (1 + beaconEffect));
 		}
 		return -1;
@@ -474,7 +478,7 @@ public class TileEntityTransporter extends TileEntityAbstractEnergy implements I
 			tS = sourceVec.clone().translate(scanPos);
 			bS = sourceVec.clone().translate(scanNeg);
 		}
-		return AxisAlignedBB.getBoundingBox(bS.x, bS.y, bS.z, tS.x, tS.y, tS.z);
+		return new AxisAlignedBB(bS.x, bS.y, bS.z, tS.x, tS.y, tS.z);
 	}
 
 	private ArrayList<Entity> findEntities(Vector3 source, double lockStrength) {
@@ -504,24 +508,25 @@ public class TileEntityTransporter extends TileEntityAbstractEnergy implements I
 	@Override
 	public int getMaxEnergyStored() {
 		int max = WarpDriveConfig.TRANSPORTER_MAX_ENERGY_STORED;
-		if (upgrades.containsKey(UpgradeType.Energy)) {
-			max = (int) Math.floor(max * Math.pow(1.2, upgrades.get(UpgradeType.Energy)));
+		if (deprecated_upgrades.containsKey(UpgradeType.Energy)) {
+			max = (int) Math.floor(max * Math.pow(1.2, deprecated_upgrades.get(UpgradeType.Energy)));
 		}
 		return max;
 	}
 
 	@Override
-	public boolean canInputEnergy(ForgeDirection from) {
-		if (from == ForgeDirection.UP) {
+	public boolean canInputEnergy(EnumFacing from) {
+		if (from == EnumFacing.UP) {
 			return false;
 		}
 		return true;
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound tag) {
-		super.writeToNBT(tag);
+	public NBTTagCompound writeToNBT(NBTTagCompound tag) {
+		tag = super.writeToNBT(tag);
 		tag.setDouble("powerBoost", powerBoost);
+		return tag;
 	}
 
 	@Override
@@ -543,21 +548,21 @@ public class TileEntityTransporter extends TileEntityAbstractEnergy implements I
 		if (max == 0)
 			return false;
 
-		if (upgrades.containsKey(upgradeType))
-			if (upgrades.get(upgradeType) >= max)
+		if (deprecated_upgrades.containsKey(upgradeType))
+			if (deprecated_upgrades.get(upgradeType) >= max)
 				return false;
 
 		if (!simulate) {
 			int c = 0;
-			if (upgrades.containsKey(upgradeType))
-				c = upgrades.get(upgradeType);
-			upgrades.put(upgradeType, c + 1);
+			if (deprecated_upgrades.containsKey(upgradeType))
+				c = deprecated_upgrades.get(upgradeType);
+			deprecated_upgrades.put(upgradeType, c + 1);
 		}
 		return true;
 	}
 
 	@Override
 	public Map<UpgradeType, Integer> getInstalledUpgrades() {
-		return upgrades;
+		return deprecated_upgrades;
 	}
 }

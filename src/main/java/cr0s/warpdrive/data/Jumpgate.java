@@ -1,17 +1,25 @@
 package cr0s.warpdrive.data;
 
-import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.math.AxisAlignedBB;
 import cr0s.warpdrive.world.JumpgateGenerator;
+import net.minecraft.util.math.BlockPos;
 
 public class Jumpgate {
 	public String name;
 	public int xCoord, yCoord, zCoord;
-	
+
 	public Jumpgate(final String name, final int x, final int y, final int z) {
 		this.name = name;
 		this.xCoord = x;
 		this.yCoord = y;
 		this.zCoord = z;
+	}
+	
+	public Jumpgate(final String name, final BlockPos blockPos) {
+		this.name = name;
+		this.xCoord = blockPos.getX();
+		this.yCoord = blockPos.getY();
+		this.zCoord = blockPos.getZ();
 	}
 	
 	public Jumpgate(final String line) {
@@ -36,7 +44,7 @@ public class Jumpgate {
 		yMax = yCoord + (JumpgateGenerator.GATE_SIZE_HALF);
 		zMin = zCoord - (JumpgateGenerator.GATE_SIZE_HALF);
 		zMax = zCoord + (JumpgateGenerator.GATE_SIZE_HALF);
-		return AxisAlignedBB.getBoundingBox(xMin, yMin, zMin, xMax, yMax, zMax);
+		return new AxisAlignedBB(xMin, yMin, zMin, xMax, yMax, zMax);
 	}
 	
 	@Override

@@ -5,9 +5,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.EnumHandSide;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import org.lwjgl.input.Keyboard;
@@ -16,13 +19,16 @@ import org.lwjgl.input.Mouse;
 import cr0s.warpdrive.WarpDrive;
 import cr0s.warpdrive.network.PacketHandler;
 
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+
 public final class EntityCamera extends EntityLivingBase {
 	// entity coordinates (x, y, z) are dynamically changed by player
 	
 	// camera block coordinates are fixed
-	public int cameraX;
-	public int cameraY;
-	public int cameraZ;
+	private int cameraX;
+	private int cameraY;
+	private int cameraZ;
 	
 	private EntityPlayer player;
 	
@@ -76,10 +82,12 @@ public final class EntityCamera extends EntityLivingBase {
 				return;
 			}
 			
-			Block block = worldObj.getBlock(cameraX, cameraY, cameraZ);
-			mc.renderViewEntity.rotationYaw = player.rotationYaw;
-			// mc.renderViewEntity.rotationYawHead = player.rotationYawHead;
-			mc.renderViewEntity.rotationPitch = player.rotationPitch;
+			Block block = worldObj.getBlockState(new BlockPos(cameraX, cameraY, cameraZ)).getBlock();
+			if (mc.getRenderViewEntity() != null) {
+				mc.getRenderViewEntity().rotationYaw = player.rotationYaw;
+				// mc.renderViewEntity.rotationYawHead = player.rotationYawHead;
+				mc.getRenderViewEntity().rotationPitch = player.rotationPitch;
+			}
 			
 			ClientCameraHandler.overlayLoggingMessage = "Mouse " + Mouse.isButtonDown(0) + " " + Mouse.isButtonDown(1) + " " + Mouse.isButtonDown(2) + " " + Mouse.isButtonDown(3) + "\nBackspace "
 					+ Keyboard.isKeyDown(Keyboard.KEY_BACKSLASH) + " Space " + Keyboard.isKeyDown(Keyboard.KEY_SPACE) + " Shift " + "";
@@ -115,7 +123,7 @@ public final class EntityCamera extends EntityLivingBase {
 					
 					// Make a shoot with camera-laser
 					if (block.isAssociatedBlock(WarpDrive.blockLaserCamera)) {
-						PacketHandler.sendLaserTargetingPacket(cameraX, cameraY, cameraZ, mc.renderViewEntity.rotationYaw, mc.renderViewEntity.rotationPitch);
+						PacketHandler.sendLaserTargetingPacket(cameraX, cameraY, cameraZ, mc.getRenderViewEntity().rotationYaw, mc.getRenderViewEntity().rotationPitch);
 					}
 				}
 			} else {
@@ -172,13 +180,28 @@ public final class EntityCamera extends EntityLivingBase {
 	/**/
 	
 	@Override
-	public AxisAlignedBB getBoundingBox() {
+	public AxisAlignedBB getCollisionBoundingBox() {
+		return null;
+	}
+	/*
+	@Override
+	public AxisAlignedBB getEntityBoundingBox() {
 		return null;
 	}
 	
 	@Override
+	public AxisAlignedBB getRenderBoundingBox() {
+		return null;
+	}
+	/**/
+	@Override
 	public boolean canBePushed() {
 		return false;
+	}
+	
+	@Override
+	public EnumHandSide getPrimaryHand() {
+		return EnumHandSide.RIGHT;
 	}
 	
 	@Override
@@ -202,21 +225,18 @@ public final class EntityCamera extends EntityLivingBase {
 	}
 	
 	@Override
-	public ItemStack getHeldItem() {
+	public Iterable<ItemStack> getArmorInventoryList() {
+		return new ArrayList<>();
+	}
+	
+	@Nullable
+	@Override
+	public ItemStack getItemStackFromSlot(EntityEquipmentSlot slotIn) {
 		return null;
 	}
 	
 	@Override
-	public void setCurrentItemOrArmor(int i, ItemStack itemstack) {
-	}
-	
-	@Override
-	public ItemStack[] getLastActiveItems() {
-		return null;
-	}
-	
-	@Override
-	public ItemStack getEquipmentInSlot(int i) {
-		return null;
+	public void setItemStackToSlot(EntityEquipmentSlot slotIn, @Nullable ItemStack stack) {
+		
 	}
 }

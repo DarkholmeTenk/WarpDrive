@@ -2,102 +2,72 @@ package cr0s.warpdrive.block.detection;
 
 import java.util.Random;
 
-import net.minecraft.block.Block;
+import cr0s.warpdrive.block.BlockAbstractBase;
+import cr0s.warpdrive.data.BlockProperties;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.item.Item;
-import net.minecraft.util.IIcon;
-import net.minecraftforge.common.util.ForgeDirection;
-import cr0s.warpdrive.WarpDrive;
+import net.minecraft.block.properties.PropertyBool;
+import net.minecraft.block.state.BlockStateContainer;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
-public class BlockCloakingCoil extends Block {
-	private IIcon[] iconBuffer;
+import javax.annotation.Nonnull;
+
+public class BlockCloakingCoil extends BlockAbstractBase {
 	
-	public BlockCloakingCoil() {
-		super(Material.iron);
+	public static final PropertyBool OUTER = PropertyBool.create("outer");
+	
+	public BlockCloakingCoil(final String registryName) {
+		super(registryName, Material.IRON);
 		setHardness(3.5F);
-		setStepSound(Block.soundTypeMetal);
-		setCreativeTab(WarpDrive.creativeTabWarpDrive);
-		setBlockName("warpdrive.detection.CloakingCoil");
+		setUnlocalizedName("warpdrive.detection.CloakingCoil");
+		
+		setDefaultState(getDefaultState().withProperty(BlockProperties.ACTIVE, false).withProperty(OUTER, false).withProperty(BlockProperties.FACING, EnumFacing.UP));
 	}
 	
-	static final boolean oldTextures = true;
+	@Nonnull
 	@Override
-	public void registerBlockIcons(IIconRegister par1IconRegister) {
-		iconBuffer = new IIcon[4];
-		if (oldTextures) {
-			iconBuffer[0] = par1IconRegister.registerIcon("warpdrive:detection/cloakingCoilSide");
-			iconBuffer[1] = par1IconRegister.registerIcon("warpdrive:detection/cloakingCoilSideActive");
-			iconBuffer[2] = par1IconRegister.registerIcon("warpdrive:detection/cloakingCoilTop");
-		} else {
-			iconBuffer[0] = par1IconRegister.registerIcon("warpdrive:detection/cloakingCoilInPassive");
-			iconBuffer[1] = par1IconRegister.registerIcon("warpdrive:detection/cloakingCoilOutPassive");
-			iconBuffer[2] = par1IconRegister.registerIcon("warpdrive:detection/cloakingCoilInActive");
-			iconBuffer[3] = par1IconRegister.registerIcon("warpdrive:detection/cloakingCoilOutActive");
+	protected BlockStateContainer createBlockState() {
+		return new BlockStateContainer(this, BlockProperties.ACTIVE, OUTER, BlockProperties.FACING);
+	}
+	
+	@SuppressWarnings("deprecation")
+	@Nonnull
+	@Override
+	public IBlockState getStateFromMeta(int metadata) {
+		boolean isActive = (metadata & 7) != 0;
+		boolean isOuter = (metadata & 7) > 1;
+		return getDefaultState()
+				.withProperty(BlockProperties.ACTIVE, isActive)
+				.withProperty(OUTER, isOuter)
+				.withProperty(BlockProperties.FACING, isOuter ? EnumFacing.getFront(metadata & 7 - 1) : EnumFacing.UP);
+	}
+	
+	@Override
+	public int getMetaFromState(IBlockState blockState) {
+		if (!blockState.getValue(BlockProperties.ACTIVE)) {
+			return 0;
+		}
+		if (!blockState.getValue(OUTER)) {
+			return 1;
+		}
+		return 2 + blockState.getValue(BlockProperties.FACING).ordinal();
+	}
+	
+	public static void setBlockState(@Nonnull World world, @Nonnull final BlockPos blockPos, final boolean isActive, final boolean isOuter, final EnumFacing enumFacing) {
+		IBlockState blockStateActual = world.getBlockState(blockPos);
+		IBlockState blockStateNew = blockStateActual.withProperty(BlockProperties.ACTIVE, isActive).withProperty(OUTER, isOuter);
+		if (enumFacing != null) {
+			blockStateNew = blockStateNew.withProperty(BlockProperties.FACING, enumFacing);
+		}
+		if (blockStateActual.getBlock().getMetaFromState(blockStateActual) != blockStateActual.getBlock().getMetaFromState(blockStateNew)) {
+			world.setBlockState(blockPos, blockStateNew);
 		}
 	}
 	
-	@Override
-	public IIcon getIcon(int side, int metadata) {
-		// Metadata values
-		// 0 = not linked
-		// 1 = inner coil passive
-		// 2-7 = outer coil passive
-		// 8 = (not used)
-		// 9 = inner coil active
-		// 10-15 = outer coil active
-		if (oldTextures) {
-			if (side == 0) {
-				return iconBuffer[2];
-			} else if (side == 1) {
-				return iconBuffer[2];
-			}
-			if (metadata < 8) {
-				return iconBuffer[0];
-			} else {
-				return iconBuffer[1];
-			}
-		} else {
-			// not linked or in inventory
-			if (metadata == 0) {
-				if (side == 2) {
-					return iconBuffer[0];
-				} else {
-					return iconBuffer[1];
-				}
-			}
-			
-			// inner coils
-			if (metadata == 1) {
-				return iconBuffer[0];
-			} else if (metadata == 9) {
-				return iconBuffer[2];
-			}
-			
-			// outer coils
-			int direction = (metadata & 7) - 2;
-			int activeOffset = (metadata < 8) ? 0 : 2; 
-			if (ForgeDirection.OPPOSITES[direction] == side) {
-				return iconBuffer[0 + activeOffset];
-			} else {
-				return iconBuffer[1 + activeOffset];
-			}
-		}
-	}
-	
-	/**
-	 * Returns the quantity of items to drop on block destruction.
-	 */
 	@Override
 	public int quantityDropped(Random par1Random) {
 		return 1;
-	}
-	
-	/**
-	 * Returns the ID of the items to drop on destruction.
-	 */
-	@Override
-	public Item getItemDropped(int par1, Random par2Random, int par3) {
-		return Item.getItemFromBlock(this);
 	}
 }

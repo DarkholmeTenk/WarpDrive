@@ -6,7 +6,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 import cr0s.warpdrive.WarpDrive;
@@ -56,7 +56,7 @@ public final class EntityStarCore extends Entity {
 		
 		yMin = yCoord - MAX_RANGE;
 		yMax = yCoord + MAX_RANGE;
-		AxisAlignedBB aabb = AxisAlignedBB.getBoundingBox(xMin, yMin, zMin, xMax, yMax, zMax);
+		AxisAlignedBB aabb = new AxisAlignedBB(xMin, yMin, zMin, xMax, yMax, zMax);
 		List list = worldObj.getEntitiesWithinAABBExcludingEntity(this, aabb);
 		
 		if (!isLogged) {
@@ -74,7 +74,7 @@ public final class EntityStarCore extends Entity {
 				//System.out.println("Found: " + entity.getEntityName() + " distance: " + entity.getDistanceToEntity(this));
 				
 				// creative bypass
-				if (entity.invulnerable) {
+				if (entity.isEntityInvulnerable(WarpDrive.damageWarm)) {
 					continue;
 				}
 				if (entity instanceof EntityPlayer) {
@@ -109,10 +109,6 @@ public final class EntityStarCore extends Entity {
 				   }
 				}*/
 		}
-	}
-	
-	public void killEntity() {
-		worldObj.removeEntity(this);
 	}
 	
 	@Override

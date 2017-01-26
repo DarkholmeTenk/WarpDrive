@@ -1,0 +1,40 @@
+{
+	"forge_marker": 1,
+	"defaults": {
+		"model": "minecraft:cube_directional",
+		"textures": {
+			"particle": "warpdrive:blocks/breathing/air_generator-side_inactive",
+			"down"    : "warpdrive:blocks/breathing/air_generator-side_inactive",
+			"up"      : "warpdrive:blocks/breathing/air_generator-side_inactive",
+			"north"   : "warpdrive:blocks/breathing/air_generator-connection",
+			"south"   : "warpdrive:blocks/breathing/air_generator-side_inactive",
+			"west"    : "warpdrive:blocks/breathing/air_generator-side_inactive",
+			"east"    : "warpdrive:blocks/breathing/air_generator-side_inactive"
+		},
+		"transform": "forge:default-block"
+	},
+	"variants": {
+		"normal": [{}],
+		"inventory": [{}],
+		"active": {
+			"false": {},
+			"true": {
+				"textures": {
+					"down" : "warpdrive:blocks/breathing/air_generator-side_active",
+					"up"   : "warpdrive:blocks/breathing/air_generator-side_active",
+					"south": "warpdrive:blocks/breathing/air_generator-side_active",
+					"west" : "warpdrive:blocks/breathing/air_generator-side_active",
+					"east" : "warpdrive:blocks/breathing/air_generator-side_active"
+				}
+			}
+		},
+		"facing": {
+			"north": {},
+			"south": { "y": 180 },
+			"west" : { "y": 270 },
+			"east" : { "y": 90 },
+			"up"   : { "x": -90 },
+			"down" : { "x": 90 }
+		}
+	}
+}

@@ -1,0 +1,23 @@
+{
+	"forge_marker": 1,
+	"defaults": {
+		"model": "minecraft:cube_bottom_top",
+		"textures": {
+			"side"  : "warpdrive:blocks/collection/mining_laser-side_scanning_low_power",
+			"bottom": "warpdrive:blocks/collection/mining_laser-bottom",
+			"top"   : "warpdrive:blocks/collection/mining_laser-top"
+		},
+		"transform": "forge:default-block"
+	},
+	"variants": {
+		"normal": [{}],
+		"inventory": [{}],
+		"mode": {
+			"inactive"          : { "textures": { "side"  : "warpdrive:blocks/collection/mining_laser-side_inactive" } },
+			"mining_low_power"  : { "textures": { "side"  : "warpdrive:blocks/collection/mining_laser-side_mining_low_power" } },
+			"mining_powered"    : { "textures": { "side"  : "warpdrive:blocks/collection/mining_laser-side_mining_powered" } },
+			"scanning_low_power": { "textures": { "side"  : "warpdrive:blocks/collection/mining_laser-side_scanning_low_power" } },
+			"scanning_powered"  : { "textures": { "side"  : "warpdrive:blocks/collection/mining_laser-side_scanning_powered" } }
+		}
+	}
+}

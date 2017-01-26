@@ -2,6 +2,7 @@ package cr0s.warpdrive.config.structures;
 
 import java.util.Random;
 
+import net.minecraft.util.math.BlockPos;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -37,8 +38,8 @@ public class MetaOrb extends Orb {
 	}
 	
 	@Override
-	public boolean generate(World world, Random random, int x, int y, int z) {
-		return instantiate(random).generate(world, random, x, y, z);
+	public boolean generate(World world, Random random, BlockPos blockPos) {
+		return instantiate(random).generate(world, random, blockPos);
 	}
 	
 	@Override

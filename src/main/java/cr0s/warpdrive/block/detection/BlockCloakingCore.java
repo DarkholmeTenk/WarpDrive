@@ -2,84 +2,80 @@ package cr0s.warpdrive.block.detection;
 
 import java.util.Random;
 
-import net.minecraft.block.Block;
+import cr0s.warpdrive.data.BlockProperties;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.state.BlockStateContainer;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import cr0s.warpdrive.WarpDrive;
 import cr0s.warpdrive.block.BlockAbstractContainer;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class BlockCloakingCore extends BlockAbstractContainer {
-	private IIcon[] iconBuffer;
 	
-	public BlockCloakingCore() {
-		super(Material.iron);
-		setBlockName("warpdrive.detection.CloakingCore");
-	}
-	
-	@Override
-	public void registerBlockIcons(IIconRegister par1IconRegister) {
-		iconBuffer = new IIcon[2];
-		iconBuffer[0] = par1IconRegister.registerIcon("warpdrive:detection/cloakingCoreInactive");
-		iconBuffer[1] = par1IconRegister.registerIcon("warpdrive:detection/cloakingCoreActive");
-	}
-	
-	@Override
-	public IIcon getIcon(IBlockAccess world, int x, int y, int z, int side) {
-		int metadata  = world.getBlockMetadata(x, y, z);
-		if (metadata < iconBuffer.length) {
-			return iconBuffer[metadata];
-		}
+	public BlockCloakingCore(final String registryName) {
+		super(registryName, Material.IRON);
+		setUnlocalizedName("warpdrive.detection.CloakingCore");
+		GameRegistry.registerTileEntity(TileEntityCloakingCore.class, WarpDrive.PREFIX + registryName);
 		
-		return null;
+		setDefaultState(getDefaultState().withProperty(BlockProperties.ACTIVE, false));
+	}
+	
+	@Nonnull
+	@Override
+	protected BlockStateContainer createBlockState() {
+		return new BlockStateContainer(this, BlockProperties.ACTIVE);
+	}
+	
+	@SuppressWarnings("deprecation")
+	@Nonnull
+	@Override
+	public IBlockState getStateFromMeta(int metadata) {
+		return getDefaultState()
+				.withProperty(BlockProperties.ACTIVE, metadata != 0);
 	}
 	
 	@Override
-	public IIcon getIcon(int side, int metadata) {
-		return iconBuffer[1];
+	public int getMetaFromState(IBlockState blockState) {
+		return blockState.getValue(BlockProperties.ACTIVE) ? 1 : 0;
 	}
 	
+	@Nonnull
 	@Override
-	public TileEntity createNewTileEntity(World var1, int i) {
+	public TileEntity createNewTileEntity(@Nonnull World world, int metadata) {
 		return new TileEntityCloakingCore();
 	}
 	
-	/**
-	 * Returns the quantity of items to drop on block destruction.
-	 */
 	@Override
 	public int quantityDropped(Random par1Random) {
 		return 1;
 	}
 	
-	/**
-	 * Returns the item to drop on destruction.
-	 */
 	@Override
-	public Item getItemDropped(int par1, Random par2Random, int par3) {
-		return Item.getItemFromBlock(this);
-	}
-	
-	@Override
-	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityPlayer, int side, float hitX, float hitY, float hitZ) {
+	public boolean onBlockActivated(World world, BlockPos blockPos, IBlockState blockState, EntityPlayer entityPlayer, EnumHand hand, @Nullable ItemStack itemStackHeld, EnumFacing side, float hitX, float hitY, float hitZ) {
 		if (world.isRemote) {
 			return false;
 		}
 		
-		TileEntity tileEntity = world.getTileEntity(x, y, z);
+		TileEntity tileEntity = world.getTileEntity(blockPos);
 		if (tileEntity instanceof TileEntityCloakingCore) {
 			TileEntityCloakingCore cloakingCore = (TileEntityCloakingCore)tileEntity;
-			if (entityPlayer.getHeldItem() == null) {
+			if (itemStackHeld == null) {
 				WarpDrive.addChatMessage(entityPlayer, cloakingCore.getStatus());
 				// + " isInvalid? " + te.isInvalid() + " Valid? " + te.isValid + " Cloaking? " + te.isCloaking + " Enabled? " + te.isEnabled
 				return true;
-			} else if (entityPlayer.getHeldItem().getItem() == Item.getItemFromBlock(Blocks.redstone_torch)) {
+			} else if (itemStackHeld.getItem() == Item.getItemFromBlock(Blocks.REDSTONE_TORCH)) {
 				cloakingCore.isEnabled = !cloakingCore.isEnabled;
 				WarpDrive.addChatMessage(entityPlayer, cloakingCore.getStatus());
 				return true;
@@ -93,14 +89,14 @@ public class BlockCloakingCore extends BlockAbstractContainer {
 	}
 	
 	@Override
-	public void breakBlock(World par1World, int par2, int par3, int par4, Block par5, int par6) {
-		TileEntity te = par1World.getTileEntity(par2, par3, par4);
+	public void breakBlock(World world, @Nonnull BlockPos blockPos, @Nonnull IBlockState blockState) {
+		TileEntity tileEntity = world.getTileEntity(blockPos);
 		
-		if (te != null && te instanceof TileEntityCloakingCore) {
-			((TileEntityCloakingCore)te).isEnabled = false;
-			((TileEntityCloakingCore)te).disableCloakingField();
+		if (tileEntity != null && tileEntity instanceof TileEntityCloakingCore) {
+			((TileEntityCloakingCore)tileEntity).isEnabled = false;
+			((TileEntityCloakingCore)tileEntity).disableCloakingField();
 		}
 		
-		super.breakBlock(par1World, par2, par3, par4, par5, par6);
+		super.breakBlock(world, blockPos, blockState);
 	}
 }

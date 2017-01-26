@@ -45,6 +45,6 @@ public abstract class AbstractSequencer {
 
 	abstract protected void readFromNBT(NBTTagCompound nbttagcompound);
 
-	abstract protected void writeToNBT(NBTTagCompound nbttagcompound);
+	abstract protected NBTTagCompound writeToNBT(NBTTagCompound nbttagcompound);
 	
 }

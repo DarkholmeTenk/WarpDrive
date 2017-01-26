@@ -2,8 +2,10 @@ package cr0s.warpdrive.data;
 
 import cr0s.warpdrive.config.WarpDriveConfig;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.ChunkCoordIntPair;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.WorldServer;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.ChunkProviderServer;
 import net.minecraftforge.common.DimensionManager;
 
@@ -18,8 +20,15 @@ public class GlobalPosition {
 		this.z = z;
 	}
 	
+	public GlobalPosition(final int dimensionId, final BlockPos blockPos) {
+		this.dimensionId = dimensionId;
+		this.x = blockPos.getX();
+		this.y = blockPos.getY();
+		this.z = blockPos.getZ();
+	}
+	
 	public GlobalPosition(TileEntity tileEntity) {
-		this(tileEntity.getWorldObj().provider.dimensionId, tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord);
+		this(tileEntity.getWorld().provider.getDimension(), tileEntity.getPos().getX(), tileEntity.getPos().getY(), tileEntity.getPos().getZ());
 	}
 	
 	public WorldServer getWorldServerIfLoaded() {
@@ -29,11 +38,15 @@ public class GlobalPosition {
 			return null;
 		}
 		
-		boolean isLoaded;
+		boolean isLoaded = false;
 		if (world.getChunkProvider() instanceof ChunkProviderServer) {
-			ChunkProviderServer chunkProviderServer = (ChunkProviderServer) world.getChunkProvider();
+			ChunkProviderServer chunkProviderServer = world.getChunkProvider();
 			try {
-				isLoaded = chunkProviderServer.loadedChunkHashMap.containsItem(ChunkCoordIntPair.chunkXZ2Int(x >> 4, z >> 4));
+				long i = ChunkPos.chunkXZ2Int(x >> 4, z >> 4);
+				Chunk chunk = chunkProviderServer.id2ChunkMap.get(i);
+				if (chunk != null) {
+					isLoaded = !chunk.unloaded;
+				}
 			} catch (NoSuchFieldError exception) {
 				isLoaded = chunkProviderServer.chunkExists(x >> 4, z >> 4);
 			}
@@ -73,8 +86,8 @@ public class GlobalPosition {
 	}
 	
 	public boolean equals(final TileEntity tileEntity) {
-		return dimensionId == tileEntity.getWorldObj().provider.dimensionId
-			&& x == tileEntity.xCoord && y == tileEntity.yCoord && z == tileEntity.zCoord;
+		return dimensionId == tileEntity.getWorld().provider.getDimension()
+			&& x == tileEntity.getPos().getX() && y == tileEntity.getPos().getY() && z == tileEntity.getPos().getZ();
 	}
 	
 	@Override

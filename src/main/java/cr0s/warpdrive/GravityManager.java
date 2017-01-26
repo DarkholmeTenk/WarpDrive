@@ -6,7 +6,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 
 public class GravityManager {
 	private static final double OVERWORLD_ENTITY_GRAVITY = 0.080000000000000002D;	// Default value from Vanilla
@@ -23,8 +24,8 @@ public class GravityManager {
 	
 	public static double getGravityForEntity(Entity entity) {
 		// Is entity in space or hyper-space?
-		boolean inSpace = entity.worldObj.provider.dimensionId == WarpDriveConfig.G_SPACE_DIMENSION_ID;
-		boolean inHyperspace = entity.worldObj.provider.dimensionId == WarpDriveConfig.G_HYPERSPACE_DIMENSION_ID;
+		boolean inSpace = entity.worldObj.provider.getDimension() == WarpDriveConfig.G_SPACE_DIMENSION_ID;
+		boolean inHyperspace = entity.worldObj.provider.getDimension() == WarpDriveConfig.G_HYPERSPACE_DIMENSION_ID;
 		
 		if (inSpace || inHyperspace) {
 			boolean insideGravField = isEntityInGraviField(entity);
@@ -43,8 +44,7 @@ public class GravityManager {
 					EntityPlayer player = (EntityPlayer) entity;
 					
 					if (player.isSneaking()) {
-						for (int i = 0; i < 4; i++) {
-							ItemStack armor = player.getCurrentArmor(i);
+						for (ItemStack armor : player.getArmorInventoryList()) {
 							if (armor != null) {
 								if (Dictionary.ITEMS_FLYINSPACE.contains(armor.getItem())) {
 									return SPACE_VOID_GRAVITY_JETPACK_SNEAK;
@@ -65,8 +65,8 @@ public class GravityManager {
 	}
 	
 	public static double getItemGravity(EntityItem entity) {
-		if ( entity.worldObj.provider.dimensionId == WarpDriveConfig.G_SPACE_DIMENSION_ID
-		  || entity.worldObj.provider.dimensionId == WarpDriveConfig.G_HYPERSPACE_DIMENSION_ID) {
+		if ( entity.worldObj.provider.getDimension() == WarpDriveConfig.G_SPACE_DIMENSION_ID
+		  || entity.worldObj.provider.getDimension() == WarpDriveConfig.G_HYPERSPACE_DIMENSION_ID) {
 			if (isEntityInGraviField(entity)) {
 				return SPACE_FIELD_ITEM_GRAVITY;
 			} else {
@@ -78,8 +78,8 @@ public class GravityManager {
 	}
 	
 	public static double getItemGravity2(EntityItem entity) {
-		if ( entity.worldObj.provider.dimensionId == WarpDriveConfig.G_SPACE_DIMENSION_ID
-		  || entity.worldObj.provider.dimensionId == WarpDriveConfig.G_HYPERSPACE_DIMENSION_ID) {
+		if ( entity.worldObj.provider.getDimension() == WarpDriveConfig.G_SPACE_DIMENSION_ID
+		  || entity.worldObj.provider.getDimension() == WarpDriveConfig.G_HYPERSPACE_DIMENSION_ID) {
 			if (isEntityInGraviField(entity)) {
 				return SPACE_FIELD_ITEM_GRAVITY2;
 			} else {
@@ -98,7 +98,7 @@ public class GravityManager {
 		
 		// Search non-air blocks under player
 		for (int ny = y; ny > (y - CHECK_DISTANCE); ny--) {
-			if (!entity.worldObj.isAirBlock(x, ny, z)) {
+			if (!entity.worldObj.isAirBlock(new BlockPos(x, ny, z))) {
 				return true;
 			}
 		}

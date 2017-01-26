@@ -269,6 +269,7 @@ function readInputText(currentValue)
   local inputAbort = false
   local input = string.format(currentValue)
   local x, y = term.getCursorPos()
+  Write(input)
   os.pullEventRaw() -- skip first char event
   repeat
     ClearWarning()
@@ -426,6 +427,7 @@ function data_read()
     local file = fs.open("shipdata.txt", "r")
     data = textutils.unserialize(file.readAll())
     file.close()
+	if data == nil then data = {}; end
   end
   if data.reactor_mode == nil then data.reactor_mode = 0; end
   if data.reactor_rate == nil then data.reactor_rate = 100; end
@@ -870,6 +872,11 @@ function connections_page()
     SetColorSuccess()
     WriteLn(#reactorlasers .. " reactor stabilisation lasers detected")
   end
+  
+  WriteLn("")
+  SetColorTitle()
+  WriteLn("Please refer to below menu for keyboard controls")
+  WriteLn("For example, press 1 to access Reactor page")
 end
 
 -- peripheral boot up
@@ -942,4 +949,5 @@ if monitors ~= nil then
   end
 end
 SetCursorPos(1, 1)
-Write("")
+WriteLn("Program terminated")
+WriteLn("Type startup to restart it")
